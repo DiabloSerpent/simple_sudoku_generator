@@ -3,10 +3,10 @@ struct Sudoku {
 }
 
 /* Structure:
-        bit 0: invalid bit
-        bit 1-9: can have numbers 1-9
-        bit 10-15: unused
-    */
+    bit 0: invalid bit
+    bit 1-9: can have numbers 1-9
+    bit 10-15: unused
+*/
 type Cell = i16;
 
 fn generate_number(c: Cell) -> i32 {
