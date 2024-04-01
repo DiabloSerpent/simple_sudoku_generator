@@ -11,6 +11,8 @@ struct Sudoku {
 */
 type Cell = i16;
 
+const DIGIT_MASK: Cell = 0b00000011_11111110;
+
 fn generate_number(c: Cell) -> i32 {
     let mut chosen = 0;
     let mut factor = 0.0;
@@ -31,7 +33,7 @@ fn generate_number(c: Cell) -> i32 {
 
 fn main() {
     println!("\nHello, sudoku!\n");
-    let coolidea: Cell = 16;
+    let coolidea: Cell = DIGIT_MASK;
     let _sud = Sudoku { cells: [0; 81] };
     println!("\n{}", generate_number(coolidea));
 }
