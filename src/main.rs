@@ -1,3 +1,5 @@
+use rand::Rng;
+
 struct Sudoku {
     cells: [Cell; 81],
 }
