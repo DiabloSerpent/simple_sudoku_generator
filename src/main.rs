@@ -8,18 +8,17 @@ struct Sudoku {
         bit 10-15: unused
     */
 type Cell = i16;
-waoijfdaulWshjkfeiufef
 
 fn generate_number(c: Cell) -> i32 {
-    for i in (1..9) {
-        println!(i);
+    for i in 1..9 {
+        println!("{}", c & (1 << i));
     }
     return 0;
 }
 
 fn main() {
     println!("\nHello, sudoku!\n");
-    let coolidea: Cell = Cell { state: 16 };
-    let sud = Sudoku { cells:  }
+    let coolidea: Cell = 16;
+    let _sud = Sudoku { cells: [0; 81] };
     generate_number(coolidea);
 }
