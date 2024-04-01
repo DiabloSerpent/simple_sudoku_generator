@@ -10,15 +10,26 @@ struct Sudoku {
 type Cell = i16;
 
 fn generate_number(c: Cell) -> i32 {
-    for i in 1..9 {
+    let mut chosen = 0;
+    let mut factor = 0.0;
+    let mut r = rand::thread_rng();
+
+    for i in 1..(9+1) {
         println!("{}", c & (1 << i));
+        if (c & (1 << i)) != 0 {
+            let f = r.gen_range(0.0..0.1);
+            if f > factor {
+                chosen = i;
+                factor = f;
+            }
+        }
     }
-    return 0;
+    return chosen;
 }
 
 fn main() {
     println!("\nHello, sudoku!\n");
     let coolidea: Cell = 16;
     let _sud = Sudoku { cells: [0; 81] };
-    generate_number(coolidea);
+    println!("\n{}", generate_number(coolidea));
 }
