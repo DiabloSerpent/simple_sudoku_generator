@@ -65,6 +65,5 @@ fn main() {
     println!("\nHello, sudoku!\n");
     let coolidea: Cell = DIGIT_MASK;
     let _sud = Sudoku { cells: [0; 81] };
-    println!("\n{}", generate_number(coolidea));
     println!("\n{:b}", generate_number(coolidea));
 }
