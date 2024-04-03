@@ -36,6 +36,7 @@ struct Sudoku {
 type Cell = i16;
 
 const DIGIT_MASK: Cell = 0b00000011_11111110;
+const INVALID_MASK: Cell = 0b00000000_0000001;
 
 fn generate_number(mut c: Cell) -> Cell {
     if (c & INVALID_MASK) == 1 {
