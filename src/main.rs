@@ -37,22 +37,27 @@ type Cell = i16;
 
 const DIGIT_MASK: Cell = 0b00000011_11111110;
 
-fn generate_number(c: Cell) -> i32 {
+fn generate_number(mut c: Cell) -> Cell {
+    if (c & INVALID_MASK) == 1 {
+        c = c | DIGIT_MASK;
+    }
     let mut chosen = 0;
-    let mut factor = 0.0;
+    let mut factor = -1.0;
     let mut r = rand::thread_rng();
 
     for i in 1..(9+1) {
-        println!("{}", c & (1 << i));
+        print!("{}", i);
         if (c & (1 << i)) != 0 {
-            let f = r.gen_range(0.0..0.1);
+            let f = r.gen_range(0.0..1.0);
+            print!(" {:.2}", f);
             if f > factor {
                 chosen = i;
                 factor = f;
             }
         }
+        println!("");
     }
-    return chosen;
+    return (c & !DIGIT_MASK) | (1 << chosen);
 }
 
 fn main() {
@@ -60,4 +65,5 @@ fn main() {
     let coolidea: Cell = DIGIT_MASK;
     let _sud = Sudoku { cells: [0; 81] };
     println!("\n{}", generate_number(coolidea));
+    println!("\n{:b}", generate_number(coolidea));
 }
