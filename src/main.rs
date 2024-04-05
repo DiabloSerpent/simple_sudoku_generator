@@ -46,10 +46,10 @@ fn generate_number(mut c: Cell) -> Cell {
     let mut factor = -1.0;
     let mut r = rand::thread_rng();
 
-    for i in 1..(9+1) {
+    for i in 1..=9 {
         print!("{}", i);
         if (c & (1 << i)) != 0 {
-            let f = r.gen_range(0.0..1.0);
+            let f = r.gen_range(0.0..=1.0);
             print!(" {:.2}", f);
             if f > factor {
                 chosen = i;
