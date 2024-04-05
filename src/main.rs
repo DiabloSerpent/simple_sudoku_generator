@@ -29,14 +29,17 @@ struct Sudoku {
 }
 
 /* Structure:
-    bit 0: invalid bit
+    bit 0: cell has no valid number
     bit 1-9: cell can have numbers 1-9
-    bit 10-15: unused
+    bit 10-13: the selected number, zero means none
+    bit 14-15: unused
 */
 type Cell = i16;
 
-const DIGIT_MASK: Cell = 0b00000011_11111110;
-const INVALID_MASK: Cell = 0b00000000_0000001;
+const INVALID_MASK: Cell = 0b00000000_00000001;
+const DIGIT_MASK: Cell   = 0b00000011_11111110; // Default initialization
+const NUMBER_MASK: Cell  = 0b00111100_00000000;
+
 
 fn generate_number(mut c: Cell) -> Cell {
     if (c & INVALID_MASK) == 1 {
@@ -58,7 +61,7 @@ fn generate_number(mut c: Cell) -> Cell {
         }
         println!("");
     }
-    return (c & !DIGIT_MASK) | (1 << chosen);
+    return (c & !DIGIT_MASK) | (1 << chosen) | (chosen << 10);
 }
 
 fn main() {
