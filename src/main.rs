@@ -77,6 +77,17 @@ impl fmt::Display for Sudoku {
     }
 }
 
+// cells, rows, cols, boxs are all 0 indexed
+fn row_of(cell_index: usize) -> usize {
+    cell_index / 9
+}
+fn col_of(cell_index: usize) -> usize {
+    cell_index % 9
+}
+fn box_of(cell_index: usize) -> usize {
+    (cell_index / 3) % 3 + (cell_index / 27) * 3
+}
+
 /* Structure:
     bit 0: cell has no valid number and should be filled randomly
     bit 1-9: cell can have numbers 1-9
