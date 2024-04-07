@@ -126,10 +126,20 @@ fn generate_number(mut c: Cell) -> Cell {
 }
 
 fn main() {
-    println!("\nHello, sudoku!\n");
-    let coolidea: Cell = DIGIT_MASK - (1 << 6);
-    let _sud = Sudoku { cells: [DIGIT_MASK; 81] };
-    let coolidea = generate_number(coolidea);
-    println!("\n{:0>16b}", coolidea);
-    println!("{}", (coolidea & NUMBER_MASK) >> 10);
+    let mut sud = Sudoku { cells: [DIGIT_MASK; 81] };
+
+    for i in 0..81 {
+        sud.cells[i] = generate_number(sud.cells[i]);
+
+        let (row, col, sbox) = (row_of(i), col_of(i), box_of(i));
+        for j in 0..81 {
+            let (jr, jc, jb) = (row_of(j), col_of(j), box_of(j));
+            if row == jr || col == jc || sbox == jb {
+                let remove_digit = (sud.cells[i] & NUMBER_MASK) >> NUM_SHIFT;
+                sud.cells[j] = sud.cells[j] & !(1 << remove_digit);
+            }
+        }
+    }
+
+    println!("{}", sud);
 }
