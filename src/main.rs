@@ -1,4 +1,5 @@
 use rand::Rng;
+use std::fmt;
 
 // Shamelessly ripped from:
 // https://codegolf.stackexchange.com/questions/126930/draw-a-sudoku-board-using-line-drawing-characters
@@ -24,8 +25,56 @@ const _SUDOKU_BOARD: &str = "\
 ║   │   │   ║   │   │   ║   │   │   ║\n\
 ╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝";
 
+#[derive(Debug)]
 struct Sudoku {
     cells: [Cell; 81],
+}
+
+// It's just, so PEAK
+impl fmt::Display for Sudoku {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let top  = "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗\n";
+        let mid  = "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢\n";
+        let boxl = "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣\n";
+        let bot  = "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝\n";
+        //let r = ;
+        match write!(f, "{}", top) {
+            Err(e) => return Err(e),
+            Ok(_) => {}
+        }
+        for i in 0..9 {
+            match write!(
+                f, "║ {} │ {} │ {} ║ {} │ {} │ {} ║ {} │ {} │ {} ║\n",
+                (self.cells[i*9 + 0] & NUMBER_MASK) >> NUM_SHIFT,
+                (self.cells[i*9 + 1] & NUMBER_MASK) >> NUM_SHIFT,
+                (self.cells[i*9 + 2] & NUMBER_MASK) >> NUM_SHIFT,
+                (self.cells[i*9 + 3] & NUMBER_MASK) >> NUM_SHIFT,
+                (self.cells[i*9 + 4] & NUMBER_MASK) >> NUM_SHIFT,
+                (self.cells[i*9 + 5] & NUMBER_MASK) >> NUM_SHIFT,
+                (self.cells[i*9 + 6] & NUMBER_MASK) >> NUM_SHIFT,
+                (self.cells[i*9 + 7] & NUMBER_MASK) >> NUM_SHIFT,
+                (self.cells[i*9 + 8] & NUMBER_MASK) >> NUM_SHIFT,
+            ) {
+                Err(e) => return Err(e),
+                Ok(_) => {}
+            }
+            // me when the "government" doesn't let me drive 120 mph in a school zone
+            match if i == 8 {
+                write!(f, "{}", bot)
+            }
+            else if i % 3 == 2 {
+                write!(f, "{}", boxl)
+            }
+            else {
+                write!(f, "{}", mid)
+            } {
+                Err(e) => return Err(e),
+                Ok(_) => {}
+            }
+        }
+
+        Ok(()) // HEHHEHEHHEHEH
+    }
 }
 
 /* Structure:
