@@ -37,7 +37,7 @@ impl fmt::Display for Sudoku {
         let mid  = "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢\n";
         let boxl = "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣\n";
         let bot  = "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝\n";
-        //let r = ;
+
         match write!(f, "{}", top) {
             Err(e) => return Err(e),
             Ok(_) => {}
