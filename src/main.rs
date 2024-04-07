@@ -135,6 +135,10 @@ fn main() {
     for i in 0..81 {
         sud.cells[i] = generate_number(sud.cells[i]);
 
+        if get_digit(sud.cells[i]) == 0 {
+            continue;
+        }
+
         let (row, col, sbox) = (row_of(i), col_of(i), box_of(i));
         for j in 0..81 {
             let (jr, jc, jb) = (row_of(j), col_of(j), box_of(j));
