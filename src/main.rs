@@ -95,7 +95,7 @@ fn box_of(cell_index: usize) -> usize {
         this should never have a value above decimal 10
     bit 14-15: unused
 */
-type Cell = i16;
+type Cell = u16;
 
 const INVALID_MASK: Cell = 0b00000000_00000001;
 const DIGIT_MASK: Cell   = 0b00000011_11111110; // Default initialization
