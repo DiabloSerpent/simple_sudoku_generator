@@ -3,7 +3,7 @@ use rand::Rng;
 // Shamelessly ripped from:
 // https://codegolf.stackexchange.com/questions/126930/draw-a-sudoku-board-using-line-drawing-characters
 
-const sudoku_board: &str = "\
+const _SUDOKU_BOARD: &str = "\
 ╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗\n\
 ║   │   │   ║   │   │   ║   │   │   ║\n\
 ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢\n\
