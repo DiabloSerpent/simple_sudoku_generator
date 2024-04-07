@@ -78,9 +78,10 @@ impl fmt::Display for Sudoku {
 }
 
 /* Structure:
-    bit 0: cell has no valid number
+    bit 0: cell has no valid number and should be filled randomly
     bit 1-9: cell can have numbers 1-9
-    bit 10-13: the selected number, zero means none
+    bit 10-13: the selected number in binary, zero means none
+        this should never have a value above decimal 10
     bit 14-15: unused
 */
 type Cell = i16;
