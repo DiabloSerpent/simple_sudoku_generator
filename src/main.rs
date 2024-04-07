@@ -102,6 +102,10 @@ const DIGIT_MASK: Cell   = 0b00000011_11111110; // Default initialization
 const NUMBER_MASK: Cell  = 0b00111100_00000000;
 const NUM_SHIFT: u32     = 10;
 
+fn get_digit(c: Cell) -> u16 {
+    (c & NUMBER_MASK) >> NUM_SHIFT
+}
+
 
 fn generate_number(mut c: Cell) -> Cell {
     if (c & INVALID_MASK) == 1 {
@@ -135,7 +139,7 @@ fn main() {
         for j in 0..81 {
             let (jr, jc, jb) = (row_of(j), col_of(j), box_of(j));
             if row == jr || col == jc || sbox == jb {
-                let remove_digit = (sud.cells[i] & NUMBER_MASK) >> NUM_SHIFT;
+                let remove_digit = get_digit(sud.cells[i]);
                 sud.cells[j] = sud.cells[j] & !(1 << remove_digit);
             }
         }
