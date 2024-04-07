@@ -39,6 +39,7 @@ type Cell = i16;
 const INVALID_MASK: Cell = 0b00000000_00000001;
 const DIGIT_MASK: Cell   = 0b00000011_11111110; // Default initialization
 const NUMBER_MASK: Cell  = 0b00111100_00000000;
+const NUM_SHIFT: u32     = 10;
 
 
 fn generate_number(mut c: Cell) -> Cell {
@@ -58,7 +59,7 @@ fn generate_number(mut c: Cell) -> Cell {
             }
         }
     }
-    return (c & !DIGIT_MASK) | (1 << chosen) | (chosen << 10);
+    return (c & !DIGIT_MASK) | (1 << chosen) | (chosen << NUM_SHIFT);
 }
 
 fn main() {
