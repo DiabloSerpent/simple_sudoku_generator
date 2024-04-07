@@ -30,6 +30,12 @@ struct Sudoku {
     cells: [Cell; 81],
 }
 
+impl Sudoku {
+    fn new() -> Sudoku {
+        Sudoku { cells: [DIGIT_MASK; 81] }
+    }
+}
+
 // It's just, so PEAK
 impl fmt::Display for Sudoku {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -130,7 +136,7 @@ fn generate_number(mut c: Cell) -> Cell {
 }
 
 fn main() {
-    let mut sud = Sudoku { cells: [DIGIT_MASK; 81] };
+    let mut sud = Sudoku::new();
 
     for i in 0..81 {
         sud.cells[i] = generate_number(sud.cells[i]);
