@@ -117,6 +117,8 @@ fn box_of(cell_index: usize) -> usize {
 */
 type Cell = u16;
 
+// I actually don't know if Windows is lil-endian or big-endian.
+// I also don't care.
 const INVALID_MASK: Cell = 0b00000000_00000001;
 const DIGIT_MASK: Cell   = 0b00000011_11111110; // Default initialization
 const NUMBER_MASK: Cell  = 0b00111100_00000000;
