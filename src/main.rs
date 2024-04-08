@@ -158,12 +158,14 @@ fn main() {
             sud.invalid_cells.push(i);
             continue;
         }
-        
+
         let remove_digit = get_digit(sud.cells[i]);
 
         let (row, col, sbox) = (row_of(i), col_of(i), box_of(i));
+
         for j in 0..81 {
             let (jr, jc, jb) = (row_of(j), col_of(j), box_of(j));
+
             if row == jr || col == jc || sbox == jb {
                 sud.cells[j] = sud.cells[j] & !(1 << remove_digit);
             }
