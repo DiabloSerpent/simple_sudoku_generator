@@ -108,10 +108,11 @@ fn box_of(cell_index: usize) -> usize {
 }
 
 /* Structure:
-    bit 0: cell has no valid number and should be filled randomly
+    bit 0: if set, cell should be filled randomly
     bit 1-9: cell can have numbers 1-9
-    bit 10-13: the selected number in binary, zero means none
+    bit 10-13: the selected number in binary
         this should never have a value above decimal 10
+        zero means no valid digit or no selected digit
     bit 14-15: unused
 */
 type Cell = u16;
