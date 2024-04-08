@@ -152,7 +152,7 @@ fn main() {
     let mut sud = Sudoku::new();
 
     // Would be nice if there was a convenient way to randomly select
-    // a cell each time. It's not really necesary tho.
+    // a cell each time. It's not really necessary tho.
     for i in 0..81 {
         sud.cells[i] = generate_number(sud.cells[i]);
 
