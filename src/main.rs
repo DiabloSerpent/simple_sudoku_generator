@@ -28,11 +28,19 @@ const _SUDOKU_BOARD: &str = "\
 #[derive(Debug)]
 struct Sudoku {
     cells: [Cell; 81],
+    invalid_cells: Vec<usize>,
+    newly_solved_cells: Vec<usize>,
+    modified_cells: Vec<usize>
 }
 
 impl Sudoku {
     fn new() -> Sudoku {
-        Sudoku { cells: [DIGIT_MASK; 81] }
+        Sudoku {
+            cells: [DIGIT_MASK; 81],
+            invalid_cells: Vec::new(),
+            newly_solved_cells: Vec::new(),
+            modified_cells: Vec::new(),
+        }
     }
 }
 
@@ -79,7 +87,12 @@ impl fmt::Display for Sudoku {
             }
         }
 
-        Ok(()) // HEHHEHEHHEHEH
+        if self.invalid_cells.len() == 0 {
+            write!(f, "No invalid cells")
+        }
+        else {
+            write!(f, "{} invalid cells", self.invalid_cells.len())
+        }
     }
 }
 
@@ -142,6 +155,7 @@ fn main() {
         sud.cells[i] = generate_number(sud.cells[i]);
 
         if get_digit(sud.cells[i]) == 0 {
+            sud.invalid_cells.push(i);
             continue;
         }
         
