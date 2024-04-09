@@ -107,6 +107,39 @@ fn box_of(cell_index: usize) -> usize {
     (cell_index / 3) % 3 + (cell_index / 27) * 3
 }
 
+// OPTIMIZE LATER
+fn of_row(row_index: usize) -> [usize; 9] {
+    let mut r: [usize; 9] = [0; 9];
+
+    for i in 0..9 {
+        r[i] = i + (row_index * 9);
+    }
+
+    r
+}
+fn of_col(col_index: usize) -> [usize; 9] {
+    let mut r: [usize; 9] = [0; 9];
+
+    for i in 0..9 {
+        r[i] = i * 9 + col_index;
+    }
+
+    r
+}
+
+fn of_box(box_index: usize) -> [usize; 9] {
+    let mut r: [usize; 9] = [0; 9];
+    let start = (box_index % 3) * 3 + (box_index / 3) * 27;
+
+    for i in 0..3 {
+        r[i] = start + i;
+        r[i+3] = start + i + 9;
+        r[i+6] = start + i + 18;
+    }
+
+    r
+}
+
 /* Structure:
     bit 0: if set, cell should be filled randomly
     bit 1-9: cell can have numbers 1-9
