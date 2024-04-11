@@ -188,6 +188,14 @@ fn related_cells(index: usize) -> [usize; 21] {
 // the cell.
 // It would just be a lil inconvenient to access
 // and also would need to be updated manually.
+// to accomplish: remove invalid digit, shift digit/number masks right by 1
+//      then, let bits 13-15 be the digit count.
+//      bit values of 1-7 will mean a count of 2-8
+//      bit value of 0 will mean 0, 1, or 9
+//      to differentiate them:
+//          count of 0: cell & digit_mask == 0
+//          count of 9: cell & digit_mask == digit_mask
+//          count of 1: cell & digit_mask != 0, != digit_mask
 
 /* Structure:
     bit 0: if set, cell should be filled randomly
