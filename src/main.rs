@@ -126,7 +126,6 @@ fn of_col(col_index: usize) -> [usize; 9] {
 
     r
 }
-
 fn of_box(box_index: usize) -> [usize; 9] {
     let mut r: [usize; 9] = [0; 9];
     let start = (box_index % 3) * 3 + (box_index / 3) * 27;
