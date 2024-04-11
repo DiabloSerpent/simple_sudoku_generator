@@ -99,15 +99,15 @@ impl fmt::Display for Sudoku {
         for i in 0..9 {
             match write!(
                 f, "║ {} │ {} │ {} ║ {} │ {} │ {} ║ {} │ {} │ {} ║\n",
-                (self.cells[i*9 + 0] & NUMBER_MASK) >> NUM_SHIFT,
-                (self.cells[i*9 + 1] & NUMBER_MASK) >> NUM_SHIFT,
-                (self.cells[i*9 + 2] & NUMBER_MASK) >> NUM_SHIFT,
-                (self.cells[i*9 + 3] & NUMBER_MASK) >> NUM_SHIFT,
-                (self.cells[i*9 + 4] & NUMBER_MASK) >> NUM_SHIFT,
-                (self.cells[i*9 + 5] & NUMBER_MASK) >> NUM_SHIFT,
-                (self.cells[i*9 + 6] & NUMBER_MASK) >> NUM_SHIFT,
-                (self.cells[i*9 + 7] & NUMBER_MASK) >> NUM_SHIFT,
-                (self.cells[i*9 + 8] & NUMBER_MASK) >> NUM_SHIFT,
+                get_number(self.cells[i*9 + 0]),
+                get_number(self.cells[i*9 + 1]),
+                get_number(self.cells[i*9 + 2]),
+                get_number(self.cells[i*9 + 3]),
+                get_number(self.cells[i*9 + 4]),
+                get_number(self.cells[i*9 + 5]),
+                get_number(self.cells[i*9 + 6]),
+                get_number(self.cells[i*9 + 7]),
+                get_number(self.cells[i*9 + 8]),
             ) {
                 Err(e) => return Err(e),
                 Ok(_) => {}
