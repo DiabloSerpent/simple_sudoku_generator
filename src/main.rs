@@ -138,6 +138,10 @@ fn of_box(box_index: usize) -> [usize; 9] {
 
     r
 }
+fn related_cells(index: usize) -> [usize; 21] {
+    // size of returned array will be 9 + 8 + 4;
+    [0; 21]
+}
 
 /* Structure:
     bit 0: if set, cell should be filled randomly
