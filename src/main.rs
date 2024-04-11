@@ -27,6 +27,7 @@ const _SUDOKU_BOARD: &str = "\
 
 #[derive(Debug)]
 struct Sudoku {
+    // May want to replace array w/ set or smth
     cells: [Cell; 81],
     invalid_cells: Vec<usize>,
     newly_solved_cells: Vec<usize>,
