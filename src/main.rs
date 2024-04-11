@@ -43,6 +43,49 @@ impl Sudoku {
             modified_cells: Vec::new(),
         }
     }
+
+    fn solve(&mut self) {
+        // Idea:
+        // loop through all rules until none result in a modification.
+        // 
+        // Important: digits should only be removed, never added
+        // 
+        // if/when a rule finishes applying changes,
+        // the loop should restart.
+        // if a rule solves a cell, then the loop at the top should run again.
+        // will prolly be more convenient if rules have state
+        // 
+        // rule 1: solved cells remove digit from related cells
+        // rule 2: cells w/ only 1 digit should be solved
+        // rule 3: if a cell is the only one with a given digit
+        //         in its row/box/col, then it should be solved
+        // so on, so forth
+
+        let mut finished = false;
+        while !finished {
+            for rule in Self::RULE_ORDER {
+                if rule(self) {
+                    break;
+                }
+            }
+            finished = true;
+        }
+    }
+
+    // Each rule returns true if sudoku was modified,
+    // false otherwise.
+    const RULE_ORDER: [fn(&mut Sudoku) -> bool; 3] = [
+        Sudoku::cell_solved,
+        Sudoku::naked_single,
+        Sudoku::hidden_single,
+    ];
+
+    fn cell_solved(&mut self) -> bool {
+        false
+    }
+
+    fn naked_single(&mut self) -> bool {false}
+    fn hidden_single(&mut self) -> bool {false}
 }
 
 // It's just, so PEAK
