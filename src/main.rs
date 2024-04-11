@@ -30,8 +30,6 @@ struct Sudoku {
     // May want to replace array w/ set or smth
     cells: [Cell; 81],
     invalid_cells: Vec<usize>,
-    newly_solved_cells: Vec<usize>,
-    modified_cells: Vec<usize>
 }
 
 impl Sudoku {
@@ -39,8 +37,6 @@ impl Sudoku {
         Sudoku {
             cells: [DIGIT_MASK; 81],
             invalid_cells: Vec::new(),
-            newly_solved_cells: Vec::new(),
-            modified_cells: Vec::new(),
         }
     }
 
