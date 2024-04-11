@@ -183,6 +183,12 @@ fn related_cells(index: usize) -> [usize; 21] {
     [0; 21]
 }
 
+// If I removed the invalid bit, it would be possible
+// to also store the digit count of the cell within
+// the cell.
+// It would just be a lil inconvenient to access
+// and also would need to be updated manually.
+
 /* Structure:
     bit 0: if set, cell should be filled randomly
     bit 1-9: cell can have numbers 1-9
