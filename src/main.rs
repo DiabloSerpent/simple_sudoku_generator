@@ -160,6 +160,18 @@ fn get_number(c: Cell) -> u16 {
     (c & NUMBER_MASK) >> NUM_SHIFT
 }
 
+fn count_digits(c: Cell) -> u32 {
+    let mut s = 0;
+
+    for i in 1..=9 {
+        if (c & (1 << i)) == 1 {
+            s += 1;
+        }
+    }
+
+    s
+}
+
 
 fn generate_number(mut c: Cell) -> Cell {
     if (c & INVALID_MASK) == 1 {
