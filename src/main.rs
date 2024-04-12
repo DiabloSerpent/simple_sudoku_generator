@@ -179,8 +179,9 @@ fn of_box(box_index: usize) -> [usize; 9] {
     r
 }
 fn related_cells(index: usize) -> [usize; 21] {
-    // size of returned array will be 9 + 8 + 4;
-    [0; 21]
+    // size of returned array will be 9 + 8 + 4
+    // maybe start w/ box, then add row/col?
+    todo!()
 }
 
 // If I removed the invalid bit, it would be possible
