@@ -57,14 +57,13 @@ impl Sudoku {
         //         in its row/box/col, then it should be solved
         // so on, so forth
 
-        let mut finished = false;
-        while !finished {
+        'ruling: loop {
             for rule in Self::RULE_ORDER {
                 if rule(self) {
-                    break;
+                    continue 'ruling;
                 }
             }
-            finished = true;
+            break;
         }
     }
 
