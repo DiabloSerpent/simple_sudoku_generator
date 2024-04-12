@@ -82,26 +82,26 @@ impl Sudoku {
     fn cell_solved(&mut self) -> bool {
         // A solved cell should remove the solution from
         // the related digits
-        todo!()
+        false // TODO
     }
 
     fn naked_single(&mut self) -> bool {
         // A cell has only one digit left
-        todo!()
+        false // TODO
     }
     fn hidden_single(&mut self) -> bool {
         // A row/col/box has only one cell with a particular digit
-        todo!()
+        false // TODO
     }
     fn naked_pair(&mut self) -> bool {
         // A row/box/col has a pair of cells that only have
         // 2 equal digits remaining
-        todo!()
+        false // TODO
     }
     fn hidden_pair(&mut self) -> bool {
         // A row/box/col has a pair of cells that are the only cells
         // that can hold 2 digits
-        todo!()
+        false // TODO
     }
     fn naked_group(&mut self) -> bool {
         // A row/box/col has a group of cells that
@@ -109,7 +109,7 @@ impl Sudoku {
         // The group size must be >3 and <=7
         // Total amt of digits shared must be equal to group size
         // Maximum amt of groups in a row/box/col: 3
-        todo!()
+        false // TODO
     }
 }
 
