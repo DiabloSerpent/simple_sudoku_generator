@@ -101,15 +101,21 @@ impl Sudoku {
     fn cell_solved(&mut self) -> bool {
         // A solved cell should remove the solution from
         // the related digits
+        // 
+        // Memory usage: 81 bools
         false // TODO
     }
 
     fn naked_single(&mut self) -> bool {
         // A cell has only one digit left
+        // 
+        // Memory usage: shared w/ cell_solved
         false // TODO
     }
     fn hidden_single(&mut self) -> bool {
         // A row/col/box has only one cell with a particular digit
+        // 
+        // Memory usage: N/A, won't save time using it
         false // TODO
     }
     fn naked_pair(&mut self) -> bool {
