@@ -30,13 +30,32 @@ struct Sudoku {
     // May want to replace array w/ set or smth
     cells: [Cell; 81],
     invalid_cells: Vec<usize>,
+    cell_flags: [u8; 81],
 }
+
+/* Specs:
+    cells:
+        all cells in a sudoku board, index 0 is top left,
+        index 80 is the bottom right.
+        goes left to right, top to bottom
+
+    cell_flags:
+        flags associated with each individual cell,
+        used by the sudoku rule associated functions.
+        bit 0: (of each value)
+            used by cell_solved()
+            1 denotes a cell that already has a solution
+            and was checked by cell_solved(), 0 otherwise
+*/
+
+const CELL_SOLVED = 0b00000001;
 
 impl Sudoku {
     fn new() -> Sudoku {
         Sudoku {
             cells: [DIGIT_MASK; 81],
             invalid_cells: Vec::new(),
+            cell_flags: [0; 81],
         }
     }
 
