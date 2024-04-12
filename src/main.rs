@@ -70,18 +70,47 @@ impl Sudoku {
 
     // Each rule returns true if sudoku was modified,
     // false otherwise.
-    const RULE_ORDER: [fn(&mut Sudoku) -> bool; 3] = [
+    const RULE_ORDER: [fn(&mut Sudoku) -> bool; 6] = [
         Sudoku::cell_solved,
         Sudoku::naked_single,
         Sudoku::hidden_single,
+        Sudoku::naked_pair,
+        Sudoku::hidden_pair,
+        Sudoku::naked_group,
     ];
 
     fn cell_solved(&mut self) -> bool {
-        false
+        // A solved cell should remove the solution from
+        // the related digits
+        todo!()
     }
 
-    fn naked_single(&mut self) -> bool {false}
-    fn hidden_single(&mut self) -> bool {false}
+    fn naked_single(&mut self) -> bool {
+        // A cell has only one digit left
+        todo!()
+    }
+    fn hidden_single(&mut self) -> bool {
+        // A row/col/box has only one cell with a particular digit
+        todo!()
+    }
+    fn naked_pair(&mut self) -> bool {
+        // A row/box/col has a pair of cells that only have
+        // 2 equal digits remaining
+        todo!()
+    }
+    fn hidden_pair(&mut self) -> bool {
+        // A row/box/col has a pair of cells that are the only cells
+        // that can hold 2 digits
+        todo!()
+    }
+    fn naked_group(&mut self) -> bool {
+        // A row/box/col has a group of cells that
+        // must be a particular set of digits
+        // The group size must be >3 and <=7
+        // Total amt of digits shared must be equal to group size
+        // Maximum amt of groups in a row/box/col: 3
+        todo!()
+    }
 }
 
 // It's just, so PEAK
