@@ -59,6 +59,43 @@ impl Sudoku {
         }
     }
 
+    fn check(&self) {
+        let sections = [of_row, of_col, of_box];
+        let names = ["Row", "Col", "Box"];
+
+        for i in 0..9 {
+            for (s, ident) in sections.iter().zip(names.iter()) {
+                let section_cells = s(i);
+                let mut digit_count = [0; 9];
+
+                for j in section_cells {
+                    let n: usize = get_number(self.cells[j]).into();
+                    if n == 0 {
+                        continue;
+                    }
+
+                    digit_count[n-1] += 1;
+                }
+
+                if digit_count.iter().position(|&x| x != 1) == None {
+                    continue;
+                }
+
+                print!("{ident} {i}:");
+
+                for j in 0..9 {
+                    if digit_count[j] != 1 {
+                        print!(" {} {}'s", digit_count[j], j+1);
+                    }
+                    else {
+                        print!("      ");
+                    }
+                }
+                println!("");
+            }
+        }
+    }
+
     fn solve(&mut self) {
         // Idea:
         // loop through all rules until none result in a modification.
@@ -375,5 +412,7 @@ fn main() {
         }*/
     }
 
-    println!("{}", sud);
+    println!("{}\n", sud);
+
+    sud.check();
 }
