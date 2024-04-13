@@ -103,7 +103,23 @@ impl Sudoku {
         // the related digits
         // 
         // Memory usage: 81 bools
-        false // TODO
+        let mut r = false;
+        for i in 0..81 {
+            if (self.cell_flags[i] & CELL_SOLVED) == 0
+               && get_number(self.cells[i]) != 0 {
+                r = true;
+                let remove_mask = !(1 << get_number(self.cells[i]));
+                let (irow, icol, ibox) = (of_row(row_of(i)), of_col(col_of(i)), of_box(box_of(i)));
+                for j in 0..9 {
+                    self.cells[irow[j]] &= remove_mask;
+                    self.cells[icol[j]] &= remove_mask;
+                    self.cells[ibox[j]] &= remove_mask;
+                }
+                self.cell_flags[i] |= CELL_SOLVED;
+            }
+        }
+
+        r
     }
 
     fn naked_single(&mut self) -> bool {
