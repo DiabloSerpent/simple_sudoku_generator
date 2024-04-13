@@ -48,7 +48,7 @@ struct Sudoku {
             and was checked by cell_solved(), 0 otherwise
 */
 
-const CELL_SOLVED = 0b00000001;
+const CELL_SOLVED: u8 = 0b00000001;
 
 impl Sudoku {
     fn new() -> Sudoku {
