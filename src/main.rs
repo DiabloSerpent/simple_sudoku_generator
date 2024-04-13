@@ -337,7 +337,9 @@ fn main() {
             continue;
         }
 
-        let remove_digit = get_number(sud.cells[i]);
+        sud.solve();
+
+        /*let remove_digit = get_number(sud.cells[i]);
 
         let (row, col, sbox) = (row_of(i), col_of(i), box_of(i));
 
@@ -347,7 +349,7 @@ fn main() {
             if row == jr || col == jc || sbox == jb {
                 sud.cells[j] = sud.cells[j] & !(1 << remove_digit);
             }
-        }
+        }*/
     }
 
     println!("{}", sud);
