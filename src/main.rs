@@ -126,7 +126,29 @@ impl Sudoku {
         // A cell has only one digit left
         // 
         // Memory usage: shared w/ cell_solved
-        false // TODO
+        let mut r = false;
+
+        'cell_loop: for i in 0..81 {
+            if get_number(self.cells[i]) == 0 
+               && self.cells[i] & DIGIT_MASK != 0 {
+                let mut digit = 0;
+                for d in 1..=9 {
+                    if self.cells[i] & (1 << d) != 0 {
+                        if digit == 0 {
+                            digit = d;
+                        }
+                        else {
+                            continue 'cell_loop;
+                        }
+                    }
+                }
+
+                self.cells[i] |= digit << NUM_SHIFT;
+                r = true;
+            }
+        }
+
+        r
     }
     fn hidden_single(&mut self) -> bool {
         // A row/col/box has only one cell with a particular digit
