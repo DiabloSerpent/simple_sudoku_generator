@@ -301,7 +301,6 @@ fn count_digits(c: Cell) -> u32 {
     s
 }
 
-
 fn generate_number(mut c: Cell) -> Cell {
     if (c & INVALID_MASK) == 1 {
         c = c | DIGIT_MASK;
@@ -323,6 +322,7 @@ fn generate_number(mut c: Cell) -> Cell {
     }
     return (c & !DIGIT_MASK) | (1 << chosen) | (chosen << NUM_SHIFT);
 }
+
 
 fn main() {
     let mut sud = Sudoku::new();
