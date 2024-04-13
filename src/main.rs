@@ -103,11 +103,9 @@ impl Sudoku {
         // the related digits
         // 
         // Memory usage: 81 bools
-        let mut r = false;
         for i in 0..81 {
             if (self.cell_flags[i] & CELL_SOLVED) == 0
                && get_number(self.cells[i]) != 0 {
-                r = true;
                 let remove_mask = !(1 << get_number(self.cells[i]));
                 let (irow, icol, ibox) = (of_row(row_of(i)), of_col(col_of(i)), of_box(box_of(i)));
                 for j in 0..9 {
@@ -119,7 +117,10 @@ impl Sudoku {
             }
         }
 
-        r
+        // This rule doesn't solve any cells,
+        // so it will never need to loop back
+        // to itself. (assuming it always goes first!)
+        false
     }
 
     fn naked_single(&mut self) -> bool {
