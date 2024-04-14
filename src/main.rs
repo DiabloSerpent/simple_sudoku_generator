@@ -63,7 +63,15 @@ impl Sudoku {
     fn check(&self) {
         let sections = [of_row, of_col, of_box];
         let names = ["Row", "Col", "Box"];
+
+        // Each sub array of section_status holds
+        // a count of the solved numbers in the section.
+        // Structure:
+        //      entry 0: holds whether or not there is an error,
+        //      entries 1-9: how many cells hold the number
+        //                   corresponding to the entry
         let mut section_status = [[0; 10]; 27];
+
         let mut do_print = false;
 
         for i in 0..9 {
