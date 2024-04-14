@@ -192,7 +192,46 @@ impl Sudoku {
         // A row/col/box has only one cell with a particular digit
         // 
         // Memory usage: N/A, won't save time using it
-        false // TODO
+        let mut r = false;
+
+        // This code is half copied from Sudoku::check
+
+        let sections = [of_row, of_col, of_box];
+
+        for i in 0..9 {
+            for s in sections {
+                let section_cell_indices = s(i);
+                let mut digit_count = [0; 9];
+
+                for ci in section_cell_indices {
+                    for j in 1..=9 {
+                        if self.cells[ci] & (1 << j) != 0 {
+                            digit_count[j-1] += 1;
+                        }
+                    }
+                }
+
+                for j in 1..=9 {
+                    let count = digit_count[j-1];
+
+                    if count == 1 {
+                        for ci in section_cell_indices {
+                            if get_number(self.cells[ci]) == 0
+                               && self.cells[ci] & (1 << j) != 0 {
+
+                                self.cells[ci] &= !DIGIT_MASK;
+                                self.cells[ci] |= 1 << j;
+                                self.cells[ci] |= (j << NUM_SHIFT) as Cell;
+
+                                r = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        r
     }
     fn naked_pair(&mut self) -> bool {
         // A row/box/col has a pair of cells that only have
