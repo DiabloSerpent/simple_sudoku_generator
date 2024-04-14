@@ -33,11 +33,11 @@ struct Sudoku {
     cell_flags: [u8; 81],
 }
 
-/* Specs:
+/* Structure:
     cells:
         all cells in a sudoku board, index 0 is top left,
         index 80 is the bottom right.
-        goes left to right, top to bottom
+        Read left to right, top to bottom.
 
     cell_flags:
         flags associated with each individual cell,
