@@ -144,13 +144,20 @@ impl Sudoku {
         for i in 0..81 {
             if (self.cell_flags[i] & CELL_SOLVED) == 0
                && get_number(self.cells[i]) != 0 {
+
                 let remove_mask = !(1 << get_number(self.cells[i]));
-                let (irow, icol, ibox) = (of_row(row_of(i)), of_col(col_of(i)), of_box(box_of(i)));
+                let (irow, icol, ibox) = (
+                    of_row(row_of(i)),
+                    of_col(col_of(i)),
+                    of_box(box_of(i))
+                );
+
                 for j in 0..9 {
                     self.cells[irow[j]] &= remove_mask;
                     self.cells[icol[j]] &= remove_mask;
                     self.cells[ibox[j]] &= remove_mask;
                 }
+
                 self.cell_flags[i] |= CELL_SOLVED;
             }
         }
@@ -170,7 +177,9 @@ impl Sudoku {
         'cell_loop: for i in 0..81 {
             if get_number(self.cells[i]) == 0 
                && self.cells[i] & DIGIT_MASK != 0 {
+
                 let mut digit = 0;
+
                 for d in 1..=9 {
                     if self.cells[i] & (1 << d) != 0 {
                         if digit == 0 {
@@ -183,12 +192,14 @@ impl Sudoku {
                 }
 
                 self.cells[i] |= digit << NUM_SHIFT;
+
                 r = true;
             }
         }
 
         r
     }
+
     fn hidden_single(&mut self) -> bool {
         // A row/col/box has only one cell with a particular digit
         // 
