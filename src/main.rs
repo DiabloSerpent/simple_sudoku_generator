@@ -63,36 +63,53 @@ impl Sudoku {
     fn check(&self) {
         let sections = [of_row, of_col, of_box];
         let names = ["Row", "Col", "Box"];
+        let mut section_status = [[0; 10]; 27];
+        let mut do_print = false;
 
         for i in 0..9 {
-            for (s, ident) in sections.iter().zip(names.iter()) {
+            for (si, s) in sections.iter().enumerate() {
                 let section_cell_indices = s(i);
-                let mut number_count = [0; 9];
+                let number_count = &mut section_status[i*3 + si];
 
                 for j in section_cell_indices {
-                    let n: usize = get_number(self.cells[j]).into();
-                    if n == 0 {
-                        continue;
+                    let n = get_number(self.cells[j]) as usize;
+                    if n != 0 {
+                        number_count[n] += 1;
                     }
-
-                    number_count[n-1] += 1;
                 }
 
-                if number_count.iter().position(|&x| x != 1) == None {
+                // number_count[0] = 1 if sudoku error, 0 otherwise
+                if number_count[1..].iter().position(|&x| x != 1) != None {
+                    number_count[0] = 1;
+                    do_print = true;
+                }
+            }
+        }
+
+        if !do_print {
+            return;
+        }
+
+        println!("       | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |");
+
+        for i in 0..9 {
+            for si in 0..3 {
+                let number_count = &section_status[i*3 + si];
+                if number_count[0] == 0 {
                     continue;
                 }
 
-                print!("{ident} {i}:");
+                print!("{} {i}: |", names[si]);
 
-                for j in 0..9 {
-                    if number_count[j] != 1 {
-                        print!(" {} {}'s", number_count[j], j+1);
+                for j in 1..=9 {
+                    if number_count[j] == 1 {
+                        print!("   |");
                     }
                     else {
-                        print!("      ");
+                        print!(" {} |", number_count[j]);
                     }
                 }
-                println!("");
+                println!();
             }
         }
     }
