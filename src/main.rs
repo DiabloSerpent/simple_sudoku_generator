@@ -424,10 +424,17 @@ type Cell = u16;
 // I actually don't know if Windows is lil-endian or big-endian.
 // I also don't care.
 const INVALID_MASK: Cell = 0b00000000_00000001;
+const SOLUTION_MASK: Cell= 0b00000000_00000001;
 const DIGIT_MASK: Cell   = 0b00000011_11111110; // Default initialization
 const NUMBER_MASK: Cell  = 0b00111100_00000000;
+const COUNT_MASK: Cell   = NUMBER_MASK;
+const UNUSED_MASK: Cell  = 0b11000000_00000000;
+
 const DIGIT_RANGE: RangeInclusive<u16> = 1..=9;
-const NUM_SHIFT: u16     = 10;
+const DIGIT: fn(u32) -> Cell           = |x: u32| 1 << x;
+
+const NUM_SHIFT: u16   = 10;
+const COUNT_SHIFT: u16 = NUM_SHIFT;
 
 fn get_number(c: Cell) -> u16 {
     (c & NUMBER_MASK) >> NUM_SHIFT
