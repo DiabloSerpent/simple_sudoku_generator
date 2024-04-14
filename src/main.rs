@@ -1,5 +1,6 @@
 use rand::Rng;
 use std::fmt;
+use std::ops::RangeInclusive;
 
 // Shamelessly ripped from:
 // https://codegolf.stackexchange.com/questions/126930/draw-a-sudoku-board-using-line-drawing-characters
@@ -383,6 +384,7 @@ const INVALID_MASK: Cell = 0b00000000_00000001;
 const DIGIT_MASK: Cell   = 0b00000011_11111110; // Default initialization
 const NUMBER_MASK: Cell  = 0b00111100_00000000;
 const NUM_SHIFT: u32     = 10;
+const DIGIT_RANGE: RangeInclusive<u16> = 1..=9;
 
 fn get_number(c: Cell) -> u16 {
     (c & NUMBER_MASK) >> NUM_SHIFT
