@@ -55,7 +55,7 @@ impl Sudoku {
     fn new() -> Sudoku {
         Sudoku {
             cells: [DIGIT_MASK; 81],
-            invalid_cells: Vec::new(),
+            invalid_cells: Vec::new(), // blank_cells ?
             cell_flags: [0; 81],
         }
     }
@@ -268,6 +268,8 @@ impl Sudoku {
 // It's just, so PEAK
 impl fmt::Display for Sudoku {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // This is only intended to display a completed sudoku.
+
         let top  = "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗\n";
         let mid  = "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢\n";
         let boxl = "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣\n";
@@ -362,6 +364,7 @@ fn of_box(box_index: usize) -> [usize; 9] {
 fn related_cells(index: usize) -> [usize; 21] {
     // size of returned array will be 9 + 8 + 4
     // maybe start w/ box, then add row/col?
+    // It may also just be too complicated to exclude duplicates
     todo!()
 }
 
@@ -378,6 +381,10 @@ fn related_cells(index: usize) -> [usize; 21] {
 //          count of 0: cell & digit_mask == 0
 //          count of 9: cell & digit_mask == digit_mask
 //          count of 1: cell & digit_mask != 0, != digit_mask
+// It might also be possible to use the number mask
+// for both the solved cell and the cell count,
+// as a solved cell will always have a count of 1.
+// Also would need to switch invalid bit to solution bit.
 
 /* Structure:
     bit 0: if set, cell should be filled randomly
