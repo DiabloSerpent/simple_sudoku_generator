@@ -109,7 +109,7 @@ impl Sudoku {
 
                 print!("{} {i}: |", names[si]);
 
-                for j in 1..=9 {
+                for j in DIGIT_RANGE {
                     if number_count[j] == 1 {
                         print!("   |");
                     }
@@ -205,10 +205,10 @@ impl Sudoku {
 
                 let mut digit = 0;
 
-                for d in 1..=9 {
+                for d in DIGIT_RANGE {
                     if self.cells[i] & (1 << d) != 0 {
                         if digit == 0 {
-                            digit = d;
+                            digit = d as Cell;
                         }
                         else {
                             continue 'cell_loop;
@@ -241,14 +241,14 @@ impl Sudoku {
                 let mut digit_count = [0; 9];
 
                 for ci in section_cell_indices {
-                    for j in 1..=9 {
+                    for j in DIGIT_RANGE {
                         if self.cells[ci] & (1 << j) != 0 {
                             digit_count[j-1] += 1;
                         }
                     }
                 }
 
-                for j in 1..=9 {
+                for j in DIGIT_RANGE {
                     let count = digit_count[j-1];
 
                     if count == 1 {
@@ -430,8 +430,8 @@ const NUMBER_MASK: Cell  = 0b00111100_00000000;
 const COUNT_MASK: Cell   = NUMBER_MASK;
 const UNUSED_MASK: Cell  = 0b11000000_00000000;
 
-const DIGIT_RANGE: RangeInclusive<u16> = 1..=9;
-const DIGIT: fn(u32) -> Cell           = |x: u32| 1 << x;
+const DIGIT_RANGE: RangeInclusive<usize> = 1..=9;
+const DIGIT: fn(u32) -> Cell             = |x: u32| 1 << x;
 
 const NUM_SHIFT: u16   = 10;
 const COUNT_SHIFT: u16 = NUM_SHIFT;
@@ -443,7 +443,7 @@ fn get_number(c: Cell) -> u16 {
 fn count_digits(c: Cell) -> u32 {
     let mut s = 0;
 
-    for i in 1..=9 {
+    for i in DIGIT_RANGE {
         if (c & (1 << i)) == 1 {
             s += 1;
         }
@@ -462,11 +462,11 @@ fn generate_number(mut c: Cell) -> Cell {
 
     // Not sure if this is absolutely perfect,
     // but it works.
-    for i in 1..=9 {
+    for i in DIGIT_RANGE {
         if (c & (1 << i)) != 0 {
             let f = r.gen_range(0.0..=1.0);
             if f > factor {
-                chosen = i;
+                chosen = i as Cell;
                 factor = f;
             }
         }
