@@ -65,27 +65,27 @@ impl Sudoku {
 
         for i in 0..9 {
             for (s, ident) in sections.iter().zip(names.iter()) {
-                let section_cells = s(i);
-                let mut digit_count = [0; 9];
+                let section_cell_indices = s(i);
+                let mut number_count = [0; 9];
 
-                for j in section_cells {
+                for j in section_cell_indices {
                     let n: usize = get_number(self.cells[j]).into();
                     if n == 0 {
                         continue;
                     }
 
-                    digit_count[n-1] += 1;
+                    number_count[n-1] += 1;
                 }
 
-                if digit_count.iter().position(|&x| x != 1) == None {
+                if number_count.iter().position(|&x| x != 1) == None {
                     continue;
                 }
 
                 print!("{ident} {i}:");
 
                 for j in 0..9 {
-                    if digit_count[j] != 1 {
-                        print!(" {} {}'s", digit_count[j], j+1);
+                    if number_count[j] != 1 {
+                        print!(" {} {}'s", number_count[j], j+1);
                     }
                     else {
                         print!("      ");
