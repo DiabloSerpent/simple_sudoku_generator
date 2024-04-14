@@ -394,8 +394,8 @@ type Cell = u16;
 const INVALID_MASK: Cell = 0b00000000_00000001;
 const DIGIT_MASK: Cell   = 0b00000011_11111110; // Default initialization
 const NUMBER_MASK: Cell  = 0b00111100_00000000;
-const NUM_SHIFT: u32     = 10;
 const DIGIT_RANGE: RangeInclusive<u16> = 1..=9;
+const NUM_SHIFT: u16     = 10;
 
 fn get_number(c: Cell) -> u16 {
     (c & NUMBER_MASK) >> NUM_SHIFT
