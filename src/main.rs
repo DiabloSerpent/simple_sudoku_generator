@@ -139,10 +139,10 @@ impl Sudoku {
         //         in its row/box/col, then it should be solved
         // so on, so forth
 
-        // This is basically just a complicated goto statement
         'ruling: loop {
             for rule in Self::RULE_ORDER {
                 if rule(self) {
+                    // This is basically just a complicated goto statement
                     continue 'ruling;
                 }
             }
