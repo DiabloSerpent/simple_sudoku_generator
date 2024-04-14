@@ -139,7 +139,7 @@ impl Sudoku {
         // A solved cell should remove the solution from
         // the related digits
         // 
-        // Memory usage: 81 bools
+        // Struct memory usage: 81 bools
         for i in 0..81 {
             if (self.cell_flags[i] & CELL_SOLVED) == 0
                && get_number(self.cells[i]) != 0 {
@@ -163,7 +163,7 @@ impl Sudoku {
     fn naked_single(&mut self) -> bool {
         // A cell has only one digit left
         // 
-        // Memory usage: shared w/ cell_solved
+        // Struct Memory usage: N/A
         let mut r = false;
 
         'cell_loop: for i in 0..81 {
@@ -191,7 +191,7 @@ impl Sudoku {
     fn hidden_single(&mut self) -> bool {
         // A row/col/box has only one cell with a particular digit
         // 
-        // Memory usage: N/A, won't save time using it
+        // Struct memory usage: N/A, won't save time using it
         let mut r = false;
 
         // This code is half copied from Sudoku::check
@@ -358,7 +358,7 @@ fn related_cells(index: usize) -> [usize; 21] {
 // the cell.
 // It would just be a lil inconvenient to access
 // and also would need to be updated manually.
-// to accomplish: remove invalid digit, shift digit/number masks right by 1
+// to accomplish: remove invalid bit, shift digit/number masks right by 1
 //      then, let bits 13-15 be the digit count.
 //      bit values of 1-7 will mean a count of 2-8
 //      bit value of 0 will mean 0, 1, or 9
