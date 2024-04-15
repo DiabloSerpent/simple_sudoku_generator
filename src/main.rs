@@ -110,6 +110,7 @@ impl Sudoku {
                 print!("{} {i}: |", names[si]);
 
                 for j in DIGIT_RANGE {
+                    let j = j as usize;
                     if number_count[j] == 1 {
                         print!("   |");
                     }
@@ -170,7 +171,7 @@ impl Sudoku {
             if (self.cell_flags[i] & CELL_SOLVED) == 0
                && get_number(self.cells[i]) != 0 {
 
-                let remove_mask = !(1 << get_number(self.cells[i]));
+                let remove_mask = !DIGIT(get_number(self.cells[i]));
                 let (irow, icol, ibox) = (
                     of_row(row_of(i)),
                     of_col(col_of(i)),
@@ -206,7 +207,7 @@ impl Sudoku {
                 let mut digit = 0;
 
                 for d in DIGIT_RANGE {
-                    if self.cells[i] & (1 << d) != 0 {
+                    if self.cells[i] & DIGIT(d) != 0 {
                         if digit == 0 {
                             digit = d as Cell;
                         }
@@ -242,22 +243,24 @@ impl Sudoku {
 
                 for ci in section_cell_indices {
                     for j in DIGIT_RANGE {
-                        if self.cells[ci] & (1 << j) != 0 {
-                            digit_count[j-1] += 1;
+                        if self.cells[ci] & DIGIT(j) != 0 {
+                            let ji = j as usize;
+                            digit_count[ji - 1] += 1;
                         }
                     }
                 }
 
                 for j in DIGIT_RANGE {
-                    let count = digit_count[j-1];
+                    let ji = j as usize;
+                    let count = digit_count[ji - 1];
 
                     if count == 1 {
                         for ci in section_cell_indices {
                             if get_number(self.cells[ci]) == 0
-                               && self.cells[ci] & (1 << j) != 0 {
+                               && self.cells[ci] & DIGIT(j) != 0 {
 
                                 self.cells[ci] &= !DIGIT_MASK;
-                                self.cells[ci] |= 1 << j;
+                                self.cells[ci] |= DIGIT(j);
                                 self.cells[ci] |= (j << NUM_SHIFT) as Cell;
 
                                 r = true;
@@ -430,8 +433,10 @@ const NUMBER_MASK: Cell  = 0b00111100_00000000;
 const COUNT_MASK: Cell   = NUMBER_MASK;
 const UNUSED_MASK: Cell  = 0b11000000_00000000;
 
-const DIGIT_RANGE: RangeInclusive<usize> = 1..=9;
-const DIGIT: fn(u32) -> Cell             = |x: u32| 1 << x;
+const DIGIT_RANGE: RangeInclusive<Cell> = 1..=9;
+fn DIGIT(x: Cell) -> Cell {
+    1 << x
+}
 
 const NUM_SHIFT: u16   = 10;
 const COUNT_SHIFT: u16 = NUM_SHIFT;
@@ -444,7 +449,7 @@ fn count_digits(c: Cell) -> u32 {
     let mut s = 0;
 
     for i in DIGIT_RANGE {
-        if (c & (1 << i)) == 1 {
+        if (c & DIGIT(i)) == 1 {
             s += 1;
         }
     }
@@ -463,15 +468,15 @@ fn generate_number(mut c: Cell) -> Cell {
     // Not sure if this is absolutely perfect,
     // but it works.
     for i in DIGIT_RANGE {
-        if (c & (1 << i)) != 0 {
+        if (c & DIGIT(i)) != 0 {
             let f = r.gen_range(0.0..=1.0);
             if f > factor {
-                chosen = i as Cell;
+                chosen = i;
                 factor = f;
             }
         }
     }
-    return (c & !DIGIT_MASK) | (1 << chosen) | (chosen << NUM_SHIFT);
+    return (c & !DIGIT_MASK) | DIGIT(chosen) | (chosen << NUM_SHIFT);
 }
 
 
