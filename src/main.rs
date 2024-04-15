@@ -432,7 +432,7 @@ const SOLUTION_MASK: Cell= 0b00000000_00000001;
 const DIGIT_MASK: Cell   = 0b00000011_11111110; // Default initialization
 const NUMBER_MASK: Cell  = 0b00111100_00000000;
 const COUNT_MASK: Cell   = NUMBER_MASK;
-const UNUSED_MASK: Cell  = 0b11000000_00000000;
+const _UNUSED_MASK: Cell = 0b11000000_00000000;
 
 const DIGIT_RANGE: RangeInclusive<Cell> = 1..=9;
 fn DIGIT(x: Cell) -> Cell {
