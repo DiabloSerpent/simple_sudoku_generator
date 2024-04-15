@@ -43,7 +43,8 @@ struct Sudoku {
     cell_flags:
         flags associated with each individual cell,
         used by the sudoku rule associated functions.
-        bit 0: (of each value)
+        For each element:
+        bit 0:
             used by cell_solved()
             1 denotes a cell that already has a solution
             and was checked by cell_solved(), 0 otherwise
