@@ -55,7 +55,7 @@ const CELL_SOLVED: u8 = 0b00000001;
 impl Sudoku {
     fn new() -> Sudoku {
         Sudoku {
-            cells: [DIGIT_MASK; 81],
+            cells: [CELL_INIT; 81],
             invalid_cells: Vec::new(), // blank_cells ?
             cell_flags: [0; 81],
         }
@@ -81,7 +81,7 @@ impl Sudoku {
                 let number_count = &mut section_status[i*3 + si];
 
                 for j in section_cell_indices {
-                    let n = get_number(self.cells[j]) as usize;
+                    let n = self.cells[j].get_number() as usize;
                     if n != 0 {
                         number_count[n] += 1;
                     }
@@ -170,9 +170,10 @@ impl Sudoku {
         // Struct memory usage: 81 bools
         for i in 0..81 {
             if (self.cell_flags[i] & CELL_SOLVED) == 0
-               && get_number(self.cells[i]) != 0 {
+               && self.cells[i].is_solved() {
 
-                let remove_mask = !DIGIT(get_number(self.cells[i]));
+                let to_remove = self.cells[i].get_number();
+
                 let (irow, icol, ibox) = (
                     of_row(row_of(i)),
                     of_col(col_of(i)),
@@ -180,9 +181,10 @@ impl Sudoku {
                 );
 
                 for j in 0..9 {
-                    self.cells[irow[j]] &= remove_mask;
-                    self.cells[icol[j]] &= remove_mask;
-                    self.cells[ibox[j]] &= remove_mask;
+                    // Remove digit
+                    self.cells[irow[j]].remove_digit(to_remove);
+                    self.cells[icol[j]].remove_digit(to_remove);
+                    self.cells[ibox[j]].remove_digit(to_remove);
                 }
 
                 self.cell_flags[i] |= CELL_SOLVED;
@@ -202,15 +204,15 @@ impl Sudoku {
         let mut r = false;
 
         'cell_loop: for i in 0..81 {
-            if get_number(self.cells[i]) == 0 
-               && self.cells[i] & DIGIT_MASK != 0 {
+            if !self.cells[i].is_solved()  // if cell is not solved
+               && self.cells[i].0 & DIGIT_MASK != 0 { // if cell has any digit
 
                 let mut digit = 0;
 
                 for d in DIGIT_RANGE {
-                    if self.cells[i] & DIGIT(d) != 0 {
+                    if self.cells[i].has_digit(d) {
                         if digit == 0 {
-                            digit = d as Cell;
+                            digit = d as CellSize;
                         }
                         else {
                             continue 'cell_loop;
@@ -218,7 +220,8 @@ impl Sudoku {
                     }
                 }
 
-                self.cells[i] |= digit << NUM_SHIFT;
+                // Solve cell
+                self.cells[i].solve_cell(digit);
 
                 r = true;
             }
@@ -244,7 +247,7 @@ impl Sudoku {
 
                 for ci in section_cell_indices {
                     for j in DIGIT_RANGE {
-                        if self.cells[ci] & DIGIT(j) != 0 {
+                        if self.cells[ci].has_digit(j) {
                             let ji = j as usize;
                             digit_count[ji - 1] += 1;
                         }
@@ -257,12 +260,10 @@ impl Sudoku {
 
                     if count == 1 {
                         for ci in section_cell_indices {
-                            if get_number(self.cells[ci]) == 0
-                               && self.cells[ci] & DIGIT(j) != 0 {
+                            if !self.cells[ci].is_solved()
+                               && self.cells[ci].has_digit(j) {
 
-                                self.cells[ci] &= !DIGIT_MASK;
-                                self.cells[ci] |= DIGIT(j);
-                                self.cells[ci] |= (j << NUM_SHIFT) as Cell;
+                                self.cells[ci].solve_cell(j);
 
                                 r = true;
                             }
@@ -311,15 +312,15 @@ impl fmt::Display for Sudoku {
         for i in 0..9 {
             match write!(
                 f, "║ {} │ {} │ {} ║ {} │ {} │ {} ║ {} │ {} │ {} ║\n",
-                get_number(self.cells[i*9 + 0]),
-                get_number(self.cells[i*9 + 1]),
-                get_number(self.cells[i*9 + 2]),
-                get_number(self.cells[i*9 + 3]),
-                get_number(self.cells[i*9 + 4]),
-                get_number(self.cells[i*9 + 5]),
-                get_number(self.cells[i*9 + 6]),
-                get_number(self.cells[i*9 + 7]),
-                get_number(self.cells[i*9 + 8]),
+                self.cells[i*9 + 0].get_number(),
+                self.cells[i*9 + 1].get_number(),
+                self.cells[i*9 + 2].get_number(),
+                self.cells[i*9 + 3].get_number(),
+                self.cells[i*9 + 4].get_number(),
+                self.cells[i*9 + 5].get_number(),
+                self.cells[i*9 + 6].get_number(),
+                self.cells[i*9 + 7].get_number(),
+                self.cells[i*9 + 8].get_number(),
             ) {
                 Err(e) => return Err(e),
                 Ok(_) => {}
@@ -397,87 +398,113 @@ fn related_cells(index: usize) -> [usize; 21] {
     todo!()
 }
 
-// If I removed the invalid bit, it would be possible
-// to also store the digit count of the cell within
-// the cell.
-// It would just be a lil inconvenient to access
-// and also would need to be updated manually.
-// to accomplish: remove invalid bit, shift digit/number masks right by 1
-//      then, let bits 13-15 be the digit count.
-//      bit values of 1-7 will mean a count of 2-8
-//      bit value of 0 will mean 0, 1, or 9
-//      to differentiate them:
-//          count of 0: cell & digit_mask == 0
-//          count of 9: cell & digit_mask == digit_mask
-//          count of 1: cell & digit_mask != 0, != digit_mask
-// It might also be possible to use the number mask
-// for both the solved cell and the cell count,
-// as a solved cell will always have a count of 1.
-// Also would need to switch invalid bit to solution bit.
 
 /* Structure:
-    bit 0: if set, cell should be filled randomly
+    bit 0: if set, cell is considered to be solved
+        there should only be one digit set or none
+        this also controls the meaning of bits 10-13:
+            if bit 0 is set, they signify the number and the count is 1
+            if unset, they signify the count of digits and the number is N/A
     bit 1-9: cell can have numbers 1-9
-    bit 10-13: the selected number in binary
+    bit 10-13: the selected number in binary,
+               or the count of the digits
         this should never have a value above decimal 10
         zero means no valid digit or no selected digit
     bit 14-15: unused
 */
-type Cell = u16;
+type CellSize = u16;
+
+#[derive(Debug, Clone, Copy)]
+struct Cell(CellSize);
 
 // I actually don't know if Windows is lil-endian or big-endian.
 // I also don't care.
-const INVALID_MASK: Cell = 0b00000000_00000001;
-const SOLUTION_MASK: Cell= 0b00000000_00000001;
-const DIGIT_MASK: Cell   = 0b00000011_11111110; // Default initialization
-const NUMBER_MASK: Cell  = 0b00111100_00000000;
-const COUNT_MASK: Cell   = NUMBER_MASK;
-const _UNUSED_MASK: Cell = 0b11000000_00000000;
+const SOLUTION_MASK: CellSize = 0b00000000_00000001;
+const DIGIT_MASK:    CellSize = 0b00000011_11111110;
+const NUMBER_MASK:   CellSize = 0b00111100_00000000;
+const COUNT_MASK:    CellSize = NUMBER_MASK;
+const _UNUSED_MASK:  CellSize = 0b11000000_00000000;
 
-const DIGIT_RANGE: RangeInclusive<Cell> = 1..=9;
-fn DIGIT(x: Cell) -> Cell {
+const DIGIT_RANGE: RangeInclusive<CellSize> = 1..=9;
+fn DIGIT(x: CellSize) -> CellSize {
+    // assert(DIGIT_RANGE.contains(x));
     1 << x
 }
 
 const NUM_SHIFT: u16   = 10;
 const COUNT_SHIFT: u16 = NUM_SHIFT;
 
-fn get_number(c: Cell) -> u16 {
-    (c & NUMBER_MASK) >> NUM_SHIFT
-}
+const CELL_INIT: Cell = Cell(DIGIT_MASK | (9 << COUNT_SHIFT));
 
-fn count_digits(c: Cell) -> u32 {
-    let mut s = 0;
+impl Cell {
+    fn get_number(&self) -> CellSize {
+        // assert(self.has_solution());
+        (self.0 & NUMBER_MASK) >> NUM_SHIFT
+    }
 
-    for i in DIGIT_RANGE {
-        if (c & DIGIT(i)) == 1 {
-            s += 1;
+    fn get_count(&self) -> CellSize {
+        if self.is_solved() {
+            // Idk if a number of 0 should return a count of 0 or 1.
+            1
+        }
+        else {
+            (self.0 & COUNT_MASK) >> COUNT_SHIFT
         }
     }
 
-    s
-}
-
-fn generate_number(mut c: Cell) -> Cell {
-    if (c & INVALID_MASK) == 1 {
-        c = c | DIGIT_MASK;
+    fn has_digit(&self, digit: CellSize) -> bool {
+        self.0 & (1 << digit) != 0
     }
-    let mut chosen = 0;
-    let mut factor = -1.0;
-    let mut r = rand::thread_rng();
 
-    // Not sure if this is absolutely perfect,
-    // but it works.
-    for i in DIGIT_RANGE {
-        if (c & DIGIT(i)) != 0 {
-            let f = r.gen_range(0.0..=1.0);
-            if f > factor {
-                chosen = i;
-                factor = f;
+    fn remove_digit(&mut self, digit: CellSize) {
+        // assert(digit is in digit_range);
+        // assert(digit is not solved);
+
+        // this doesn't work yet for some reason
+        /*if self.has_digit(digit) {
+            let c = self.get_count() - 1;
+            self.0 = (self.0 & !COUNT_MASK) | (c << COUNT_SHIFT);
+        }*/
+        self.0 &= !DIGIT(digit);
+    }
+
+    fn solve_cell(&mut self, digit: CellSize) {
+        if self.is_solved() {
+            return;
+        }
+        self.0 = ((self.0 & !DIGIT_MASK) & !COUNT_MASK)
+                   | DIGIT(digit)
+                   | (digit << NUM_SHIFT)
+                   | SOLUTION_MASK;
+    }
+
+    fn is_solved(&self) -> bool {
+        (self.0 & SOLUTION_MASK) != 0
+    }
+
+    fn generate_number(&mut self) {
+        if self.is_solved() {
+            return;
+        }
+
+        let mut chosen = 0;
+        let mut factor = -1.0;
+        let mut r = rand::thread_rng();
+
+        // Not sure if this is absolutely perfect,
+        // but it works.
+        for i in DIGIT_RANGE {
+            if self.has_digit(i) {
+                let f = r.gen_range(0.0..=1.0);
+                if f > factor {
+                    chosen = i;
+                    factor = f;
+                }
             }
         }
+
+        self.solve_cell(chosen);
     }
-    return (c & !DIGIT_MASK) | DIGIT(chosen) | (chosen << NUM_SHIFT);
 }
 
 
@@ -487,9 +514,9 @@ fn main() {
     // Would be nice if there was a convenient way to randomly select
     // a cell each time. It's not really necessary tho.
     for i in 0..81 {
-        sud.cells[i] = generate_number(sud.cells[i]);
+        sud.cells[i].generate_number();
 
-        if get_number(sud.cells[i]) == 0 {
+        if !sud.cells[i].is_solved() {
             sud.invalid_cells.push(i);
             continue;
         }
