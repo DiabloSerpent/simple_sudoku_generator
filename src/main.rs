@@ -102,15 +102,16 @@ impl Sudoku {
         }
 
         println!("       | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |");
+        println!("       |---|---|---|---|---|---|---|---|---|");
 
-        for i in 0..9 {
-            for si in 0..3 {
+        for si in 0..3 {
+            for i in 0..9 {
                 let number_count = &section_status[i*3 + si];
                 if number_count[0] == 0 {
                     continue;
                 }
 
-                print!("{} {i}: |", names[si]);
+                print!("{} {}: |", names[si], i + 1);
 
                 for j in DIGIT_RANGE {
                     let j = j as usize;
@@ -122,6 +123,9 @@ impl Sudoku {
                     }
                 }
                 println!();
+            }
+            if si != 2 {
+                println!("       |---|---|---|---|---|---|---|---|---|");
             }
         }
     }
