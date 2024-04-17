@@ -437,7 +437,7 @@ fn related_cells(index: usize) -> [usize; 21] {
         there should only be one digit set or none
         this also controls the meaning of bits 10-13:
             if bit 0 is set, they signify the number and the count is 1
-            if unset, they signify the count of digits and the number is N/A
+            if unset, they signify the count of digits and the number is 0
     bit 1-9: cell can have numbers 1-9
     bit 10-13: the selected number in binary,
                or the count of the digits
@@ -471,8 +471,12 @@ const CELL_INIT: Cell = Cell(DIGIT_MASK | (9 << COUNT_SHIFT));
 
 impl Cell {
     fn get_number(&self) -> CellSize {
-        // assert(self.has_solution());
-        (self.0 & NUMBER_MASK) >> NUM_SHIFT
+        if self.is_solved() {
+            (self.0 & NUMBER_MASK) >> NUM_SHIFT
+        }
+        else {
+            0
+        }
     }
 
     fn get_count(&self) -> CellSize {
