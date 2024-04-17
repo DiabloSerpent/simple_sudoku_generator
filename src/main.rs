@@ -491,13 +491,14 @@ impl Cell {
 
     fn remove_digit(&mut self, digit: CellSize) {
         // assert(digit is in digit_range);
-        // assert(digit is not solved);
+        if self.is_solved() {
+            return;
+        }
 
-        // this doesn't work yet for some reason
-        /*if self.has_digit(digit) {
+        if self.has_digit(digit) {
             let c = self.get_count() - 1;
             self.0 = (self.0 & !COUNT_MASK) | (c << COUNT_SHIFT);
-        }*/
+        }
         self.0 &= !DIGIT(digit);
     }
 
