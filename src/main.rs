@@ -207,7 +207,7 @@ impl Sudoku {
 
         'cell_loop: for i in 0..81 {
             if !self.cells[i].is_solved()
-               && self.cells[i].0 & DIGIT_MASK != 0 { // if cell has any digit
+               && self.cells[i].get_count() != 0 {
 
                 let mut digit = 0;
 
