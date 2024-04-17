@@ -30,7 +30,6 @@ const _SUDOKU_BOARD: &str = "\
 struct Sudoku {
     // May want to replace array w/ set or smth
     cells: [Cell; 81],
-    invalid_cells: Vec<usize>,
     cell_flags: [u8; 81],
 }
 
@@ -56,7 +55,6 @@ impl Sudoku {
     fn new() -> Sudoku {
         Sudoku {
             cells: [CELL_INIT; 81],
-            invalid_cells: Vec::new(), // blank_cells ?
             cell_flags: [0; 81],
         }
     }
@@ -96,7 +94,11 @@ impl Sudoku {
         }
 
         if !do_print {
+            println!("No invalid cells");
             return;
+        }
+        else {
+            println!("Invalid solutions:");
         }
 
         println!("       | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |");
@@ -373,12 +375,7 @@ impl fmt::Display for Sudoku {
             }
         }
 
-        if self.invalid_cells.len() == 0 {
-            write!(f, "No invalid cells")
-        }
-        else {
-            write!(f, "{} invalid cells", self.invalid_cells.len())
-        }
+        Ok(())
     }
 }
 
@@ -554,15 +551,10 @@ fn main() {
     for i in 0..81 {
         sud.cells[i].generate_number();
 
-        if !sud.cells[i].is_solved() {
-            sud.invalid_cells.push(i);
-            continue;
-        }
-
         sud.solve();
     }
 
-    println!("{}\n", sud);
+    println!("{}", sud);
 
     sud.check();
 }
