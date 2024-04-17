@@ -291,6 +291,39 @@ impl Sudoku {
         // The group size must be >3 and <=7
         // Total amt of digits shared must be equal to group size
         // Maximum amt of groups in a row/box/col: 3
+
+        /* this alg also does hidden/naked pairs
+           going into this, there should be no hidden/naked singles
+
+           it might also be prudent to have this restart every time
+           a change is made, as it can modify the things it is searching for.
+
+            for each section:
+                // Unforch magic number (5); this is just the maximum
+                // amt of cells/groups that can fit in a section:
+                // 4 pairs and 1 cell
+                let there be 5 groups, each with an accumulator cell
+                    and a count of cells in the group
+                sort cells of section by increasing digit count
+                let the first group start with the first cell, with
+                    count equal to the count of the cell
+                for each cell in section (sorted, excluding first):
+                    for g in groups:
+                        if g.acc.digits & cell.digits != 0:
+                            g.acc = g.acc union cell
+                            g.count++
+                    if cell wasn't in any group:
+                        create a new group starting w/ the cell
+                    if a group has a count equal to the count of its digits:
+                        consider the group to be "cemented" and remove it
+                            from the list of groups being iterated over
+
+                // Ideally, all of the groups will be "cemented" at this point
+                for g in groups:
+                    for cell in section:
+                        if cell and g.acc have overlapping digits:
+                            remove the non-overlapping digits from cell
+        */
         false // TODO
     }
 }
