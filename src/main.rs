@@ -316,6 +316,7 @@ impl Sudoku {
                 let there be 5 groups, each with an accumulator cell
                     and a count of cells in the group
                 sort cells of section by increasing digit count
+                    and remove solved cells
                 let the first group start with the first cell, with
                     count equal to the count of the cell
                 for each cell in section (sorted, excluding first):
