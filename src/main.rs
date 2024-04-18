@@ -504,7 +504,7 @@ impl Cell {
     }
 
     fn has_digit(&self, digit: CellSize) -> bool {
-        self.0 & (1 << digit) != 0
+        self.0 & DIGIT(digit) != 0
     }
 
     fn remove_digit(&mut self, digit: CellSize) {
