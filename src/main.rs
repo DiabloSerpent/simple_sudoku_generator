@@ -26,6 +26,9 @@ const _SUDOKU_BOARD: &str = "\
 ║   │   │   ║   │   │   ║   │   │   ║\n\
 ╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝";
 
+// Helpful website:
+// https://www.sudokuwiki.org/Getting_Started
+
 #[derive(Debug)]
 struct Sudoku {
     // May want to replace array w/ set or smth
