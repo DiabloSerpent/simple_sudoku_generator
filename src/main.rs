@@ -482,8 +482,12 @@ impl Cell {
 
     fn get_count(&self) -> CellSize {
         if self.is_solved() {
-            // Idk if a number of 0 should return a count of 0 or 1.
-            1
+            if self.0 & DIGIT_MASK == 0 {
+                0
+            }
+            else {
+                1
+            }
         }
         else {
             (self.0 & COUNT_MASK) >> COUNT_SHIFT
