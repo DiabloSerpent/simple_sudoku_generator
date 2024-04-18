@@ -213,24 +213,19 @@ impl Sudoku {
         // Struct Memory usage: N/A
         let mut r = false;
 
-        'cell_loop: for i in 0..81 {
+        for i in 0..81 {
             if !self.cells[i].is_solved()
-               && self.cells[i].get_count() != 0 {
+               && self.cells[i].get_count() == 1 {
 
                 let mut digit = 0;
 
                 for d in DIGIT_RANGE {
                     if self.cells[i].has_digit(d) {
-                        if digit == 0 {
-                            digit = d as CellSize;
-                        }
-                        else {
-                            continue 'cell_loop;
-                        }
+                        digit = d as CellSize;
+                        break;
                     }
                 }
 
-                // Solve cell
                 self.cells[i].solve_cell(digit);
 
                 r = true;
