@@ -512,6 +512,8 @@ impl Cell {
             let c = self.get_count() - 1;
             self.0 = (self.0 & !COUNT_MASK) | (c << COUNT_SHIFT);
         }
+
+        // It doesn't matter if the cell has the digit for this operation
         self.0 &= !DIGIT(digit);
     }
 
