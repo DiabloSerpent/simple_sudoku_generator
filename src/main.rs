@@ -532,6 +532,14 @@ impl Cell {
         (self.0 & SOLUTION_MASK) != 0
     }
 
+    fn union(&self, c: Cell) -> Cell {
+        todo!()
+    }
+
+    fn intersection(&self, c: Cell) -> Cell {
+        todo!()
+    }
+
     fn generate_number(&mut self) {
         if self.is_solved() {
             return;
