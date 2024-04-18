@@ -523,6 +523,7 @@ impl Cell {
         if self.is_solved() {
             return;
         }
+
         self.0 = ((self.0 & !DIGIT_MASK) & !COUNT_MASK)
                    | DIGIT(digit)
                    | (digit << NUM_SHIFT)
