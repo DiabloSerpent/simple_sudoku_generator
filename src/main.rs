@@ -163,6 +163,7 @@ impl Sudoku {
     const RULE_ORDER: [fn(&mut Sudoku) -> bool; 6] = [
         Sudoku::cell_solved,
         Sudoku::naked_single,
+        // Update section count?
         Sudoku::hidden_single,
         Sudoku::naked_pair,
         Sudoku::hidden_pair,
