@@ -442,7 +442,7 @@ fn related_cells(index: usize) -> [usize; 21] {
     bit 1-9: cell can have numbers 1-9
     bit 10-13: the selected number in binary,
                or the count of the digits
-        this should never have a value above decimal 10
+        this should never have a value above decimal 9
         zero means no valid digit or no selected digit
     bit 14-15: unused
 */
