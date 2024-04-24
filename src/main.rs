@@ -220,7 +220,7 @@ impl Sudoku {
 
                 for d in DIGIT_RANGE {
                     if self.cells[i].has_digit(d) {
-                        digit = d as CellSize;
+                        digit = d;
                         break;
                     }
                 }
