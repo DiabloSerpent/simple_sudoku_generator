@@ -469,7 +469,7 @@ fn DIGIT(x: CellSize) -> CellSize {
     1 << x
 }
 
-const NUM_SHIFT: u16   = 10;
+const NUM_SHIFT:   u16 = 10;
 const COUNT_SHIFT: u16 = NUM_SHIFT;
 
 const CELL_INIT: Cell = Cell(DIGIT_MASK | (9 << COUNT_SHIFT));
