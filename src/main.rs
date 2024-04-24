@@ -296,6 +296,10 @@ impl Sudoku {
         // Total amt of digits shared must be equal to group size
         // Maximum amt of groups in a row/box/col: 3
 
+        // Def of group:
+        // a set of cells whose total count of digits is equal to
+        // the size of the set and cannot be resolved to a simpler group.
+
         /* this alg also does hidden/naked pairs
            going into this, there should be no hidden/naked singles
 
