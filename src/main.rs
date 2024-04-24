@@ -351,12 +351,12 @@ impl fmt::Display for Sudoku {
         let boxl = "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣\n";
         let bot  = "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝\n";
 
-        match write!(f, "{}", top) {
-            Err(e) => return Err(e),
-            Ok(_) => {}
+        if let Err(e) = write!(f, "{}", top) {
+            return Err(e);
         }
+
         for i in 0..9 {
-            match write!(
+            if let Err(e) = write!(
                 f, "║ {} │ {} │ {} ║ {} │ {} │ {} ║ {} │ {} │ {} ║\n",
                 self.cells[i*9 + 0].get_number(),
                 self.cells[i*9 + 1].get_number(),
@@ -368,8 +368,7 @@ impl fmt::Display for Sudoku {
                 self.cells[i*9 + 7].get_number(),
                 self.cells[i*9 + 8].get_number(),
             ) {
-                Err(e) => return Err(e),
-                Ok(_) => {}
+                return Err(e);
             }
             // me when the "government" doesn't let me drive 120 mph in a school zone
             match if i == 8 {
