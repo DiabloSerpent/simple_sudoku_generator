@@ -191,7 +191,6 @@ impl Sudoku {
                 );
 
                 for j in 0..9 {
-                    // Remove digit
                     self.cells[irow[j]].remove_digit(to_remove);
                     self.cells[icol[j]].remove_digit(to_remove);
                     self.cells[ibox[j]].remove_digit(to_remove);
