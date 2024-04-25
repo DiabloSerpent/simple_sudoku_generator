@@ -529,9 +529,11 @@ impl Cell {
         }
 
         self.0 = ((self.0 & !DIGIT_MASK) & !COUNT_MASK)
-                   | DIGIT(digit)
-                   | (digit << NUM_SHIFT)
                    | SOLUTION_MASK;
+
+        if digit != 0 {
+            self.0 |= DIGIT(digit) | (digit << NUM_SHIFT);
+        }
     }
 
     fn is_solved(&self) -> bool {
