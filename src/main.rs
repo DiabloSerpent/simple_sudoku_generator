@@ -182,7 +182,13 @@ impl Sudoku {
             if (self.cell_flags[i] & CELL_SOLVED) == 0
                && self.cells[i].is_solved() {
 
+                self.cell_flags[i] |= CELL_SOLVED;
+
                 let to_remove = self.cells[i].get_number();
+
+                if to_remove == 0 {
+                    continue;
+                }
 
                 let (irow, icol, ibox) = (
                     of_row(row_of(i)),
@@ -195,8 +201,6 @@ impl Sudoku {
                     self.cells[icol[j]].remove_digit(to_remove);
                     self.cells[ibox[j]].remove_digit(to_remove);
                 }
-
-                self.cell_flags[i] |= CELL_SOLVED;
             }
         }
 
