@@ -467,7 +467,11 @@ const _UNUSED_MASK:  CellSize = 0b11000000_00000000;
 
 const DIGIT_RANGE: RangeInclusive<CellSize> = 1..=9;
 fn DIGIT(x: CellSize) -> CellSize {
-    // assert(DIGIT_RANGE.contains(x));
+    debug_assert!(
+        *DIGIT_RANGE.start() <= x && x <= *DIGIT_RANGE.end(),
+        "{x} is not a valid digit!"
+    );
+    
     1 << x
 }
 
