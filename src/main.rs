@@ -539,9 +539,15 @@ impl Cell {
             return;
         }
 
+        debug_assert!(
+            digit == 0 || self.has_digit(digit),
+            "digit {digit} is not available in {self}"
+        );
+
         self.0 = ((self.0 & !DIGIT_MASK) & !COUNT_MASK)
                    | SOLUTION_MASK;
 
+        // A cell not having a valid digit is an expected error
         if digit != 0 {
             self.0 |= DIGIT(digit) | (digit << NUM_SHIFT);
         }
