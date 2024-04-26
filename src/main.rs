@@ -300,7 +300,14 @@ impl Sudoku {
         // Total amt of digits shared must be equal to group size
         // Maximum amt of groups in a row/box/col: 3
 
-        // Def of group:
+        // Could make it so that the program loops through each
+        // type of section before returning when a change is made,
+        // so that none of the sections changed overlap with each other.
+
+        // note: the function should return after a change is made,
+        //       b/c it could read cells it has already changed.
+
+        // Def of naked group:
         // a set of cells whose total count of digits is equal to
         // the size of the set and cannot be resolved to a simpler group.
 
