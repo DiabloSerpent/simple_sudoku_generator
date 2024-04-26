@@ -577,6 +577,12 @@ impl Cell {
     }
 }
 
+impl fmt::Display for Cell {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Cell({:0>16b})", self.0)
+    }
+}
+
 
 fn main() {
     let mut sud = Sudoku::new();
