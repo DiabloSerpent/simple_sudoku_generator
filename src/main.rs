@@ -238,6 +238,13 @@ impl Sudoku {
         r
     }
 
+    fn update_section_digit_count(&mut self) -> bool {
+        // Update the contents of the variable that keeps track of
+        // the count of digits by section
+
+        false // TODO
+    }
+
     fn hidden_single(&mut self) -> bool {
         // A row/col/box has only one cell with a particular digit
         // 
