@@ -163,11 +163,12 @@ impl Sudoku {
 
     // Each rule returns true if sudoku was modified,
     // false otherwise.
-    const RULE_ORDER: [fn(&mut Sudoku) -> bool; 6] = [
+    const RULE_ORDER: [fn(&mut Sudoku) -> bool; 8] = [
         Sudoku::cell_solved,
         Sudoku::naked_single,
-        // Update section count?
+        Sudoku::update_section_digit_count,
         Sudoku::hidden_single,
+        Sudoku::intersection_removal,
         Sudoku::naked_pair,
         Sudoku::hidden_pair,
         Sudoku::naked_group,
