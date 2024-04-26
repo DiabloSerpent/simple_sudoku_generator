@@ -283,6 +283,13 @@ impl Sudoku {
 
         r
     }
+
+    fn intersection_removal(&mut self) -> bool {
+        // Remove digits that are outside of an intersection.
+
+        false // TODO
+    }
+
     fn naked_pair(&mut self) -> bool {
         // A row/box/col has a pair of cells that only have
         // 2 equal digits remaining
