@@ -411,7 +411,7 @@ fn box_of(cell_index: usize) -> usize {
     (cell_index / 3) % 3 + (cell_index / 27) * 3
 }
 
-// OPTIMIZE LATER
+// OPTIMIZE LATER (These only need to be computed once)
 fn of_row(row_index: usize) -> [usize; 9] {
     let mut r: [usize; 9] = [0; 9];
 
