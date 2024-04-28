@@ -35,7 +35,7 @@ struct Sudoku {
     // May want to replace array w/ set or smth
     cells: [Cell; 81],
     cell_flags: [u8; 81],
-    section_digit_sum: [[CellSize; 9]; 27],
+    section_digit_sum: [[CellSize; 10]; 27],
 }
 
 /* Structure:
@@ -48,10 +48,17 @@ struct Sudoku {
         flags associated with each individual cell,
         used by the sudoku rule associated functions.
         For each element:
-        bit 0:
-            used by cell_solved()
-            1 denotes a cell that already has a solution
-            and was checked by cell_solved(), 0 otherwise
+            bit 0:
+                used by cell_solved()
+                1 denotes a cell that already has a solution
+                and was checked by cell_solved(), 0 otherwise
+
+    section_digit_sum:
+        sum of each digit in each section
+        the first 9 sections are the rows, then cols, then boxes
+        each element will have:
+            first entry: sum of entries in section w/ sum above 1
+            entries 1-9: sum of count corresponding to each digit
 */
 
 const CELL_SOLVED: u8 = 0b00000001;
@@ -61,7 +68,7 @@ impl Sudoku {
         Sudoku {
             cells: [CELL_INIT; 81],
             cell_flags: [0; 81],
-            section_digit_sum: [[0; 9]; 27],
+            section_digit_sum: [[0; 10]; 27],
         }
     }
 
