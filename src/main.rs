@@ -34,6 +34,7 @@ struct Sudoku {
     // May want to replace array w/ set or smth
     cells: [Cell; 81],
     cell_flags: [u8; 81],
+    section_digit_sum: [[CellSize; 9]; 27],
 }
 
 /* Structure:
@@ -59,6 +60,7 @@ impl Sudoku {
         Sudoku {
             cells: [CELL_INIT; 81],
             cell_flags: [0; 81],
+            section_digit_sum: [[0; 9]; 27],
         }
     }
 
@@ -166,7 +168,7 @@ impl Sudoku {
     const RULE_ORDER: [fn(&mut Sudoku) -> bool; 8] = [
         Sudoku::cell_solved,
         Sudoku::naked_single,
-        Sudoku::update_section_digit_count,
+        Sudoku::update_section_digit_sum,
         Sudoku::hidden_single,
         Sudoku::intersection_removal,
         Sudoku::naked_pair,
@@ -239,7 +241,7 @@ impl Sudoku {
         r
     }
 
-    fn update_section_digit_count(&mut self) -> bool {
+    fn update_section_digit_sum(&mut self) -> bool {
         // Update the contents of the variable that keeps track of
         // the count of digits by section
 
