@@ -334,7 +334,8 @@ impl Sudoku {
 
            I think this alg would break on something like:
            2 cells w/ 478, 1 cell w/ 48, 1 cell w/ 49
-           b/c it would assume the 48 and 49 cell form a group/
+           b/c it would assume the 48 and 49 cell form a
+           group when they do not
 
             for each section:
                 // Unforch magic number (5); this is just the maximum
