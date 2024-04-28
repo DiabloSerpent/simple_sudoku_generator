@@ -563,7 +563,7 @@ impl Cell {
         self.0 = ((self.0 & !DIGIT_MASK) & !COUNT_MASK)
                    | SOLUTION_MASK;
 
-        // A cell not having a valid digit is an expected error
+        // A cell being solved to 0 should be allowed
         if digit != 0 {
             self.0 |= DIGIT(digit) | (digit << NUM_SHIFT);
         }
