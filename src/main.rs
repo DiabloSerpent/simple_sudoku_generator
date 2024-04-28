@@ -480,10 +480,13 @@ fn related_cells(index: CellIndex) -> [CellIndex; 21] {
     todo!()
 }
 
-const SECTION_RANGE: Range<usize> = 0..3;
-const ROW_SECTION: usize = 0;
-const COL_SECTION: usize = 1;
-const BOX_SECTION: usize = 2;
+enum SectionType {
+    RowSection(RowIndex),
+    ColSection(ColIndex),
+    BoxSection(BoxIndex),
+}
+
+use SectionType::*;
 
 const SECTION_INDICES: [[CellIndex; 9]; 27] = make_section_index();
 
@@ -511,8 +514,23 @@ const fn make_section_index() -> [[CellIndex; 9]; 27] {
     temp
 }
 
-fn from_section(si: SecIndex) -> (usize, usize) {
-    (si % 3, si / 3)
+fn section_of(s: SectionType) -> SecIndex {
+    match s {
+        RowSection(i) => i,
+        ColSection(i) => i + 9,
+        BoxSection(i) => i + 18,
+    }
+}
+
+fn of_section(si: SecIndex) -> SectionType {
+    let i = si / 3;
+
+    match si % 3 {
+        0 => RowSection(i),
+        1 => ColSection(i),
+        2 => BoxSection(i),
+        _ => panic!("Unreachable code")
+    }
 }
 
 
