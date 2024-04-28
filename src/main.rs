@@ -1,6 +1,6 @@
 use rand::Rng;
 use std::fmt;
-use std::ops::RangeInclusive;
+use std::ops::{RangeInclusive, Range};
 
 // Shamelessly ripped from:
 // https://codegolf.stackexchange.com/questions/126930/draw-a-sudoku-board-using-line-drawing-characters
@@ -419,53 +419,100 @@ impl fmt::Display for Sudoku {
     }
 }
 
+type CellIndex = usize;
+type RowIndex = usize;
+type ColIndex = usize;
+type BoxIndex = usize;
+type SecIndex = usize;
+
 // cells, rows, cols, boxs are all 0 indexed
-fn row_of(cell_index: usize) -> usize {
+fn row_of(cell_index: CellIndex) -> RowIndex {
     cell_index / 9
 }
-fn col_of(cell_index: usize) -> usize {
+fn col_of(cell_index: CellIndex) -> ColIndex {
     cell_index % 9
 }
-fn box_of(cell_index: usize) -> usize {
+fn box_of(cell_index: CellIndex) -> BoxIndex {
     (cell_index / 3) % 3 + (cell_index / 27) * 3
 }
 
 // OPTIMIZE LATER (These only need to be computed once)
-fn of_row(row_index: usize) -> [usize; 9] {
+const fn of_row(row_index: RowIndex) -> [CellIndex; 9] {
     let mut r: [usize; 9] = [0; 9];
 
-    for i in 0..9 {
+    let mut i = 0;
+    while i < 9 {
         r[i] = i + (row_index * 9);
+        i += 1;
     }
 
     r
 }
-fn of_col(col_index: usize) -> [usize; 9] {
+const fn of_col(col_index: ColIndex) -> [CellIndex; 9] {
     let mut r: [usize; 9] = [0; 9];
 
-    for i in 0..9 {
+    let mut i = 0;
+    while i < 9 {
         r[i] = i * 9 + col_index;
+        i += 1;
     }
 
     r
 }
-fn of_box(box_index: usize) -> [usize; 9] {
+const fn of_box(box_index: BoxIndex) -> [CellIndex; 9] {
     let mut r: [usize; 9] = [0; 9];
     let start = (box_index % 3) * 3 + (box_index / 3) * 27;
 
-    for i in 0..3 {
+    let mut i = 0;
+    while i < 3 {
         r[i] = start + i;
         r[i+3] = start + i + 9;
         r[i+6] = start + i + 18;
+        i += 1;
     }
 
     r
 }
-fn related_cells(index: usize) -> [usize; 21] {
+fn related_cells(index: CellIndex) -> [CellIndex; 21] {
     // size of returned array will be 9 + 8 + 4
     // maybe start w/ box, then add row/col?
     // It may also just be too complicated to exclude duplicates
     todo!()
+}
+
+const SECTION_RANGE: Range<usize> = 0..3;
+const ROW_SECTION: usize = 0;
+const COL_SECTION: usize = 1;
+const BOX_SECTION: usize = 2;
+
+const SECTION_INDICES: [[CellIndex; 9]; 27] = make_section_index();
+
+const fn make_section_index() -> [[CellIndex; 9]; 27] {
+    let mut temp = [[0; 9]; 27];
+
+    // I love code repetition
+
+    let mut i = 0;
+    while i < 9 {
+        temp[i] = of_row(i / 3);
+        i += 1;
+    }
+    let mut i = 0;
+    while i < 9 {
+        temp[i+9] = of_col(i / 3);
+        i += 1;
+    }
+    let mut i = 0;
+    while i < 9 {
+        temp[i+18] = of_box(i / 3);
+        i += 1;
+    }
+
+    temp
+}
+
+fn from_section(si: SecIndex) -> (usize, usize) {
+    (si % 3, si / 3)
 }
 
 
