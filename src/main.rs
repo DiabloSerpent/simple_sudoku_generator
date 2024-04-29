@@ -57,8 +57,8 @@ struct Sudoku {
         sum of each digit in each section
         the first 9 sections are the rows, then cols, then boxes
         each element will have:
-            first entry: sum of entries in section w/ sum above 1
-            entries 1-9: sum of count corresponding to each digit
+            first entry: sum of entries in the section w/ sum above 1
+            entries 1-9: sum of count per section corresponding to each digit
 */
 
 const CELL_SOLVED: u8 = 0b00000001;
