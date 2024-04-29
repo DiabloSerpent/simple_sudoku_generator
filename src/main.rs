@@ -254,7 +254,28 @@ impl Sudoku {
         // Update the contents of the variable that keeps track of
         // the count of digits by section
 
-        false // TODO
+        for si in SECTION_RANGE {
+            let mut temp = [0; 10];
+
+            for ci in SECTION_INDICES[si] {
+                for di in DIGIT_RANGE {
+                    if self.cells[ci].has_digit(di) {
+                        let di = di as usize;
+
+                        if temp[di] == 1 {
+                            temp[0] += 1;
+                        }
+
+                        temp[di] += 1;
+                    }
+                }
+            }
+
+            self.section_digit_sum[si] = temp;
+        }
+
+        // This method does not modify the sudoku board
+        false
     }
 
     fn hidden_single(&mut self) -> bool {
