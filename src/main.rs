@@ -488,6 +488,8 @@ fn related_cells(index: CellIndex) -> [CellIndex; 21] {
     todo!()
 }
 
+const SECTION_RANGE: Range<SecIndex> = 0..27;
+
 enum SectionType {
     RowSection(RowIndex),
     ColSection(ColIndex),
