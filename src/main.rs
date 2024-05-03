@@ -73,36 +73,22 @@ impl Sudoku {
     }
 
     fn check(&self) {
-        let sections = [of_row, of_col, of_box];
-        let names = ["Row", "Col", "Box"];
-
         // Each sub array of section_status holds
         // a count of the solved numbers in the section.
         // Structure:
         //      entry 0: holds whether or not there is an error,
         //      entries 1-9: how many cells hold the number
         //                   corresponding to the entry
-        let mut section_status = [[0; 10]; 27];
+        let mut section_status = [false; 27];
 
         let mut do_print = false;
 
-        for i in 0..9 {
-            for (si, s) in sections.iter().enumerate() {
-                let section_cell_indices = s(i);
-                let number_count = &mut section_status[i*3 + si];
+        for si in SECTION_RANGE {
+            let sums = self.section_digit_sum[si];
 
-                for j in section_cell_indices {
-                    let n = self.cells[j].get_number() as usize;
-                    if n != 0 {
-                        number_count[n] += 1;
-                    }
-                }
-
-                // number_count[0] = 1 if sudoku error, 0 otherwise
-                if number_count[1..].iter().position(|&x| x != 1) != None {
-                    number_count[0] = 1;
-                    do_print = true;
-                }
+            if sums[1..].iter().position(|&x| x != 1) != None {
+                section_status[si] = true;
+                do_print = true;
             }
         }
 
@@ -115,31 +101,30 @@ impl Sudoku {
         }
 
         println!("       | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |");
-        println!("       |---|---|---|---|---|---|---|---|---|");
 
-        for si in 0..3 {
-            for i in 0..9 {
-                let number_count = &section_status[i*3 + si];
-                if number_count[0] == 0 {
-                    continue;
-                }
-
-                print!("{} {}: |", names[si], i + 1);
-
-                for j in DIGIT_RANGE {
-                    let j = j as usize;
-                    if number_count[j] == 1 {
-                        print!("   |");
-                    }
-                    else {
-                        print!(" {} |", number_count[j]);
-                    }
-                }
-                println!();
-            }
-            if si != 2 {
+        for si in SECTION_RANGE {
+            if si % 9 == 0 {
                 println!("       |---|---|---|---|---|---|---|---|---|");
             }
+
+            let sums = self.section_digit_sum[si];
+
+            if !section_status[si] {
+                continue;
+            }
+
+            print!("{}: |", of_section(si));
+
+            for j in DIGIT_RANGE {
+                let j = j as usize;
+                if sums[j] == 1 {
+                    print!("   |");
+                }
+                else {
+                    print!(" {} |", sums[j]);
+                }
+            }
+            println!();
         }
     }
 
@@ -284,37 +269,20 @@ impl Sudoku {
         // Struct memory usage: N/A, won't save time using it
         let mut r = false;
 
-        // This code is half copied from Sudoku::check
+        for si in SECTION_RANGE {
+            let sums = self.section_digit_sum[si];
 
-        let sections = [of_row, of_col, of_box];
+            for j in DIGIT_RANGE {
+                let count = sums[j as usize];
 
-        for i in 0..9 {
-            for s in sections {
-                let section_cell_indices = s(i);
-                let mut digit_count = [0; 9];
+                if count == 1 {
+                    for ci in SECTION_INDICES[si] {
+                        if !self.cells[ci].is_solved()
+                           && self.cells[ci].has_digit(j) {
 
-                for ci in section_cell_indices {
-                    for j in DIGIT_RANGE {
-                        if self.cells[ci].has_digit(j) {
-                            let ji = j as usize;
-                            digit_count[ji - 1] += 1;
-                        }
-                    }
-                }
+                            self.cells[ci].solve_cell(j);
 
-                for j in DIGIT_RANGE {
-                    let ji = j as usize;
-                    let count = digit_count[ji - 1];
-
-                    if count == 1 {
-                        for ci in section_cell_indices {
-                            if !self.cells[ci].is_solved()
-                               && self.cells[ci].has_digit(j) {
-
-                                self.cells[ci].solve_cell(j);
-
-                                r = true;
-                            }
+                            r = true;
                         }
                     }
                 }
@@ -515,6 +483,16 @@ enum SectionType {
     RowSection(RowIndex),
     ColSection(ColIndex),
     BoxSection(BoxIndex),
+}
+
+impl fmt::Display for SectionType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            RowSection(i) => write!(f, "Row {}", i + 1),
+            ColSection(i) => write!(f, "Col {}", i + 1),
+            BoxSection(i) => write!(f, "Box {}", i + 1),
+        }
+    }
 }
 
 use SectionType::*;
