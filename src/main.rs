@@ -554,13 +554,13 @@ fn section_of(s: SectionType) -> SecIndex {
 }
 
 fn of_section(si: SecIndex) -> SectionType {
-    let i = si / 3;
+    let i = si % 9;
 
-    match si % 3 {
+    match si / 9 {
         0 => RowSection(i),
         1 => ColSection(i),
         2 => BoxSection(i),
-        _ => panic!("Unreachable code")
+        _ => panic!("Invalid section index {i}")
     }
 }
 
