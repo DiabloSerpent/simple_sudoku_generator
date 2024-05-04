@@ -512,17 +512,17 @@ const fn make_section_index() -> [[CellIndex; 9]; 27] {
 
     let mut i = 0;
     while i < 9 {
-        temp[i] = of_row(i / 3);
+        temp[i] = of_row(i);
         i += 1;
     }
     let mut i = 0;
     while i < 9 {
-        temp[i+9] = of_col(i / 3);
+        temp[i+9] = of_col(i);
         i += 1;
     }
     let mut i = 0;
     while i < 9 {
-        temp[i+18] = of_box(i / 3);
+        temp[i+18] = of_box(i);
         i += 1;
     }
 
