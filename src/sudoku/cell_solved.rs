@@ -1,0 +1,49 @@
+use crate::Sudoku;
+use crate::sudoku::CELL_SOLVED;
+use crate::index_manip::*;
+
+impl Sudoku {
+    // I think it would be fairly simple to consolidate this
+    // and the naked_single function. It would just require
+    // that "solving" a cell converts it into a naked single,
+    // and then that is processed by the naked_single
+    // function to set the solved bit and remove the digit
+    // from all related cells.
+    pub fn cell_solved(&mut self) -> bool {
+        // A solved cell should remove the solution from
+        // the related digits
+        // 
+        // Struct memory usage: 81 bools
+        for i in 0..81 {
+            if (self.cell_flags[i] & CELL_SOLVED) == 0
+               && self.cells[i].is_solved() {
+
+                self.cell_flags[i] |= CELL_SOLVED;
+
+                let to_remove = self.cells[i].get_number();
+
+                if to_remove == 0 {
+                    continue;
+                }
+
+                let (irow, icol, ibox) = (
+                    of_row(row_of(i)),
+                    of_col(col_of(i)),
+                    of_box(box_of(i))
+                );
+
+                for j in 0..9 {
+                    self.cells[irow[j]].remove_digit(to_remove);
+                    self.cells[icol[j]].remove_digit(to_remove);
+                    self.cells[ibox[j]].remove_digit(to_remove);
+                }
+            }
+            // TODO: add else stmt to handle zeroed cells
+        }
+
+        // This rule doesn't solve any cells,
+        // so it will never need to loop back
+        // to itself. (assuming it always goes first!)
+        false
+    }
+}
