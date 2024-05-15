@@ -29,6 +29,7 @@ const COUNT_MASK:    CellSize = NUMBER_MASK;
 const _UNUSED_MASK:  CellSize = 0b11000000_00000000;
 
 pub const DIGIT_RANGE: RangeInclusive<CellSize> = 1..=9;
+#[allow(non_snake_case)]
 pub fn DIGIT(x: CellSize) -> CellSize {
     debug_assert!(
         *DIGIT_RANGE.start() <= x && x <= *DIGIT_RANGE.end(),
@@ -110,10 +111,12 @@ impl Cell {
         (self.0 & SOLUTION_MASK) != 0
     }
 
+    #[allow(dead_code)]
     pub fn union(&self, _c: Cell) -> Cell {
         todo!()
     }
 
+    #[allow(dead_code)]
     pub fn intersection(&self, _c: Cell) -> Cell {
         todo!()
     }
