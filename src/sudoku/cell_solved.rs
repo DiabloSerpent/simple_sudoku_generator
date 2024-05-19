@@ -2,13 +2,14 @@ use crate::Sudoku;
 use crate::sudoku::CELL_SOLVED;
 use crate::index_manip::*;
 
+
+// I think it would be fairly simple to consolidate this
+// and the naked_single function. It would just require
+// that "solving" a cell converts it into a naked single,
+// and then that is processed by the naked_single
+// function to set the solved bit and remove the digit
+// from all related cells.
 impl Sudoku {
-    // I think it would be fairly simple to consolidate this
-    // and the naked_single function. It would just require
-    // that "solving" a cell converts it into a naked single,
-    // and then that is processed by the naked_single
-    // function to set the solved bit and remove the digit
-    // from all related cells.
     pub fn cell_solved(&mut self) -> bool {
         // A solved cell should remove the solution from
         // the related digits
