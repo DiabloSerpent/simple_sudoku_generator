@@ -39,7 +39,6 @@ impl Sudoku {
                     self.cells[ibox[j]].remove_digit(to_remove);
                 }
             }
-            // TODO: add else stmt to handle zeroed cells
         }
 
         // This rule doesn't solve any cells,
