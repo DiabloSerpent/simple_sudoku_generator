@@ -51,12 +51,6 @@ impl Sudoku {
     }
 
     pub fn check(&self) {
-        // Each sub array of section_status holds
-        // a count of the solved numbers in the section.
-        // Structure:
-        //      entry 0: holds whether or not there is an error,
-        //      entries 1-9: how many cells hold the number
-        //                   corresponding to the entry
         let mut section_status = [false; 27];
 
         let mut do_print = false;
