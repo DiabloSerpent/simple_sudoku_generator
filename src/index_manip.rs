@@ -123,6 +123,6 @@ pub fn of_section(si: SecIndex) -> SectionType {
         0 => RowSection(i),
         1 => ColSection(i),
         2 => BoxSection(i),
-        _ => panic!("Invalid section index {i}")
+        _ => panic!("Invalid section index {si}")
     }
 }
