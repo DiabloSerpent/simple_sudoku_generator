@@ -80,7 +80,7 @@ impl fmt::Display for SectionType {
     }
 }
 
-use SectionType::*;
+pub use SectionType::*;
 
 pub const SECTION_INDICES: [[CellIndex; 9]; 27] = make_section_index();
 
