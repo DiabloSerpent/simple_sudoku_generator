@@ -6,3 +6,4 @@ TODO:
 - finish Sudoku::intersection_removal
 - add method to Sudoku struct that initializes from an array of cells
 - Change main to fill cells randomly instead of by index
+- Fix/Formalize spacing of definitions
