@@ -284,17 +284,20 @@ impl fmt::Debug for Sudoku {
         // This shows all cells as a collection of digits,
         // regardless of whether they are already solved.
 
-        let top  = "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗\n";
-        let mid  = "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢\n";
-        let boxl = "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣\n";
-        let bot  = "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝\n";
-        //║   │   │   ║   │   │   ║   │   │   ║
+        let top  = "╔═══════╤═══════╤═══════╦═══════╤═══════╤═══════╦═══════╤═══════╤═══════╗\n";
+        let mid  = "╟───────┼───────┼───────╫───────┼───────┼───────╫───────┼───────┼───────╢\n";
+        let boxl = "╠═══════╪═══════╪═══════╬═══════╪═══════╪═══════╬═══════╪═══════╪═══════╣\n";
+        let bot  = "╚═══════╧═══════╧═══════╩═══════╧═══════╧═══════╩═══════╧═══════╧═══════╝\n";
+        //║       │       │       ║       │       │       ║       │       │       ║
 
         write!(f, "{}", top)?;
 
         for ri in 0..9 {
             for digit_row in 0..3 {
                 for ci in 0..9 {
+                    if ci != 0 {
+                        write!(f, " ")?;
+                    }
                     if ci % 3 == 0 {
                         write!(f, "║")?;
                     }
@@ -306,14 +309,14 @@ impl fmt::Debug for Sudoku {
 
                     for di in 0..3 {
                         if cell.has_digit(digit_row * 3 + di + 1) {
-                            write!(f, "{}", digit_row * 3 + di + 1)?;
+                            write!(f, " {}", digit_row * 3 + di + 1)?;
                         }
                         else {
-                            write!(f, " ")?;
+                            write!(f, "  ")?;
                         }
                     }
                 }
-                write!(f, "║\n")?;
+                write!(f, " ║\n")?;
             }
 
             if ri == 8 {
