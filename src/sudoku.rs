@@ -8,7 +8,6 @@ mod hidden_single;
 mod intersection_removal;
 mod naked_single;
 
-#[derive(Debug)]
 pub struct Sudoku {
     // May want to replace array w/ set or smth
     pub cells: [Cell; 81],
@@ -269,6 +268,58 @@ impl fmt::Display for Sudoku {
                 write!(f, "{}", bot)?;
             }
             else if i % 3 == 2 {
+                write!(f, "{}", boxl)?;
+            }
+            else {
+                write!(f, "{}", mid)?;
+            }
+        }
+
+        Ok(())
+    }
+}
+
+impl fmt::Debug for Sudoku {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // This shows all cells as a collection of digits,
+        // regardless of whether they are already solved.
+
+        let top  = "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗\n";
+        let mid  = "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢\n";
+        let boxl = "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣\n";
+        let bot  = "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝\n";
+        //║   │   │   ║   │   │   ║   │   │   ║
+
+        write!(f, "{}", top)?;
+
+        for ri in 0..9 {
+            for digit_row in 0..3 {
+                for ci in 0..9 {
+                    if ci % 3 == 0 {
+                        write!(f, "║")?;
+                    }
+                    else {
+                        write!(f, "│")?;
+                    }
+
+                    let cell = self.cells[((ri * 9) + ci) as usize];
+
+                    for di in 0..3 {
+                        if cell.has_digit(digit_row * 3 + di + 1) {
+                            write!(f, "{}", digit_row * 3 + di + 1)?;
+                        }
+                        else {
+                            write!(f, " ")?;
+                        }
+                    }
+                }
+                write!(f, "║\n")?;
+            }
+
+            if ri == 8 {
+                write!(f, "{}", bot)?;
+            }
+            else if ri % 3 == 2 {
                 write!(f, "{}", boxl)?;
             }
             else {
