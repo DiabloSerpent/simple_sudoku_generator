@@ -106,10 +106,6 @@ impl Sudoku {
 
                     for ci in of_box(b) {
                         if !v.contains(&ci) && self.cells[ci].has_digit(di) {
-                            /*println!("v: {v:?}");
-                            println!("ref sec: {}", of_section(si));
-                            println!("Removing {}, {}, digit {di} from {}", RowSection(row_of(ci)), ColSection(col_of(ci)), BoxSection(b));
-                            println!("{self:?}\n");*/
                             self.cells[ci].remove_digit(di);
                             r = true;
                         }
@@ -187,10 +183,6 @@ impl Sudoku {
 
                     for ci in of_row(ro) {
                         if !v.contains(&ci) && self.cells[ci].has_digit(di) {
-                            /*println!("v: {v:?}");
-                            println!("v: {v:?}");
-                            println!("Removing {}, {}, digit {di} from {}", RowSection(ro), ColSection(col_of(ci)), RowSection(ro));
-                            println!("{self:?}\n");*/
                             self.cells[ci].remove_digit(di);
                             r = true;
                         }
@@ -206,10 +198,6 @@ impl Sudoku {
 
                     for ci in of_col(c) {
                         if !v.contains(&ci) && self.cells[ci].has_digit(di) {
-                            /*println!("v: {v:?}");
-                            println!("ref sec: {}", of_section(si));
-                            println!("Removing {}, {}, digit {di} from {}", RowSection(row_of(ci)), ColSection(c), ColSection(c));
-                            println!("{self:?}\n");*/
                             self.cells[ci].remove_digit(di);
                             r = true;
                         }
