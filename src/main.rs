@@ -101,6 +101,9 @@ fn main() {
     // Would be nice if there was a convenient way to randomly select
     // a cell each time. It's not really necessary tho.
     for i in 0..81 {
+        if sud.cells[i].is_solved() {
+            continue;
+        }
         sud.cells[i].generate_number();
 
         sud.solve();
