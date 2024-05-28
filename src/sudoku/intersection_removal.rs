@@ -73,14 +73,16 @@ impl Sudoku {
                 }
 
                 let b = box_of(ci);
-                let bsi = section_of(BoxSection(b));
 
-                for di in DIGIT_RANGE {
-                    let di = di as usize;
+                for d in DIGIT_RANGE {
+                    let di = d as usize;
+
+                    if !self.cells[ci].has_digit(d) {
+                        continue;
+                    }
 
                     if self.section_digit_sum[si][di] > 1
-                       && self.section_digit_sum[si][di] <= 3
-                       && self.section_digit_sum[bsi][di] > 2 {
+                       && self.section_digit_sum[si][di] <= 3 {
 
                         if let Some(v) = &mut profile[di - 1] {
                             if !v.is_empty() && box_of(v[v.len() - 1]) != b {
@@ -104,8 +106,10 @@ impl Sudoku {
 
                     for ci in of_box(b) {
                         if !v.contains(&ci) && self.cells[ci].has_digit(di) {
+                            /*println!("v: {v:?}");
+                            println!("ref sec: {}", of_section(si));
                             println!("Removing {}, {}, digit {di} from {}", RowSection(row_of(ci)), ColSection(col_of(ci)), BoxSection(b));
-                            println!("{self:?}\n");
+                            println!("{self:?}\n");*/
                             self.cells[ci].remove_digit(di);
                             r = true;
                         }
@@ -136,39 +140,37 @@ impl Sudoku {
                 }
 
                 let ro = row_of(ci);
-                let rsi = section_of(RowSection(ro));
-                let c = col_of(ci);
-                let csi = section_of(ColSection(c));
+                let c  = col_of(ci);
 
-                for di in DIGIT_RANGE {
-                    let di = di as usize;
+                for d in DIGIT_RANGE {
+                    let di = d as usize;
+
+                    if !self.cells[ci].has_digit(d) {
+                        continue;
+                    }
 
                     if self.section_digit_sum[si][di] > 1
                        && self.section_digit_sum[si][di] <= 3 {
 
-                        if self.section_digit_sum[rsi][di] > 2 {
-                            if let Some(v) = &mut row_profile[di - 1] {
-                                if !v.is_empty()
-                                   && row_of(v[v.len() - 1]) != ro {
+                        if let Some(v) = &mut row_profile[di - 1] {
+                            if !v.is_empty()
+                               && row_of(v[v.len() - 1]) != ro {
 
-                                    row_profile[di - 1] = None;
-                                }
-                                else {
-                                    v.push(ci);
-                                }
+                                row_profile[di - 1] = None;
+                            }
+                            else {
+                                v.push(ci);
                             }
                         }
 
-                        if self.section_digit_sum[csi][di] > 2 {
-                            if let Some(v) = &mut col_profile[di - 1] {
-                                if !v.is_empty()
-                                   && col_of(v[v.len() - 1]) != c {
+                        if let Some(v) = &mut col_profile[di - 1] {
+                            if !v.is_empty()
+                               && col_of(v[v.len() - 1]) != c {
 
-                                    col_profile[di - 1] = None;
-                                }
-                                else {
-                                    v.push(ci);
-                                }
+                                col_profile[di - 1] = None;
+                            }
+                            else {
+                                v.push(ci);
                             }
                         }
                     }
@@ -177,7 +179,7 @@ impl Sudoku {
 
             for di in DIGIT_RANGE {
                 if let Some(v) = &mut row_profile[di as usize - 1] {
-                    if v.len() <= 1 {
+                    if v.is_empty() {
                         continue;
                     }
 
@@ -185,8 +187,10 @@ impl Sudoku {
 
                     for ci in of_row(ro) {
                         if !v.contains(&ci) && self.cells[ci].has_digit(di) {
+                            /*println!("v: {v:?}");
+                            println!("v: {v:?}");
                             println!("Removing {}, {}, digit {di} from {}", RowSection(ro), ColSection(col_of(ci)), RowSection(ro));
-                            println!("{self:?}\n");
+                            println!("{self:?}\n");*/
                             self.cells[ci].remove_digit(di);
                             r = true;
                         }
@@ -194,7 +198,7 @@ impl Sudoku {
                 }
 
                 if let Some(v) = &mut col_profile[di as usize - 1] {
-                    if v.len() <= 1 {
+                    if v.is_empty() {
                         continue;
                     }
 
@@ -202,8 +206,10 @@ impl Sudoku {
 
                     for ci in of_col(c) {
                         if !v.contains(&ci) && self.cells[ci].has_digit(di) {
+                            /*println!("v: {v:?}");
+                            println!("ref sec: {}", of_section(si));
                             println!("Removing {}, {}, digit {di} from {}", RowSection(row_of(ci)), ColSection(c), ColSection(c));
-                            println!("{self:?}\n");
+                            println!("{self:?}\n");*/
                             self.cells[ci].remove_digit(di);
                             r = true;
                         }
