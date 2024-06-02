@@ -234,6 +234,52 @@ impl Sudoku {
                         if cell and g.acc have overlapping digits:
                             remove the non-overlapping digits from cell
         */}
+
+        false // TODO
+    }
+    fn group_removal(&mut self) -> bool {
+        // Identify hidden and naked groups within each section
+        // and remove offending digits.
+
+        // Also detects hidden/naked pairs
+
+        // the maximum size of a group should be 4, or floor(9 / 2)
+
+        // function should return if a change is detected, but only
+        // when changing the type of section (ie rows to cols, cols to boxes)
+
+        // Def of naked group:
+        // a set of cells whose total count of digits is equal to
+        // the size of the set.
+
+        // Def of hidden group:
+        // a set of cells where the amount of digits in the group that
+        // satisfy f(x) equals the amount of cells in the set.
+        //
+        // let f(x) = true if amount of cells in group that have digit x
+        //                    == amount of cells in section that have digit x,
+        //            false otherwise
+
+        {/*Algorithm:
+            (assumes that a self.section_profile variable exists)
+
+            for si in section_range:
+                if r and (si % 9 == 0):
+                    return true;
+
+                for n in 2..=4:
+                    loop through all combinations of size n of cells in section:
+                        if combination is a naked group:
+                            remove offending digits
+                            r = true if changes occurred
+                            continue section loop
+
+                        if combination is hidden group:
+                            remove offending digits
+                            r = true if changes occurred
+                            continue section loop
+        */}
+
         false // TODO
     }
 }
