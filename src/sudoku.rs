@@ -196,7 +196,7 @@ impl Sudoku {
         // a set of cells whose total count of digits is equal to
         // the size of the set and cannot be resolved to a simpler group.
 
-        /* this alg also does hidden/naked pairs
+        {/* this alg also does hidden/naked pairs
            going into this, there should be no hidden/naked singles
 
            it might also be prudent to have this restart every time
@@ -233,7 +233,7 @@ impl Sudoku {
                     for cell in section:
                         if cell and g.acc have overlapping digits:
                             remove the non-overlapping digits from cell
-        */
+        */}
         false // TODO
     }
 }
