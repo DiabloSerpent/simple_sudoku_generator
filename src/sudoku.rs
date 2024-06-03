@@ -280,7 +280,61 @@ impl Sudoku {
                             continue section loop
         */}
 
-        false // TODO
+        let r = false;
+
+        for si in SECTION_RANGE {
+            if r && (si % 9 == 0) {
+                return true;
+            }
+
+            let sec = SECTION_INDICES[si];
+
+            for n in 2..=4 {
+                let mut g = Vec::new();
+                let mut max = Vec::new();
+                let mut acc = [0; 10];
+
+                for i in 0..n {
+                    g.push(i);
+                    max.push(8-i);
+                }
+
+                max.reverse();
+
+                // choose n cells from 9 possible cells
+                loop {
+                    // extract info
+
+                    // naked
+
+                    // hidden
+
+                    // next
+                    let mut i = n;
+
+                    while i > 0 && g[i - 1] == max[i - 1] {
+                        i -= 1;
+                    }
+
+                    if i == 0 {
+                        break;
+                    }
+
+                    g[i - 1] += 1;
+
+                    if i == n {
+                        continue;
+                    }
+
+                    while i < n {
+                        g[i] = g[i - 1] + 1;
+                        i += 1;
+                    }
+                }
+            }
+        }
+
+        r
     }
 }
 
