@@ -237,7 +237,7 @@ impl Sudoku {
 
         false // TODO
     }
-    fn group_removal(&mut self) -> bool {
+    pub fn group_removal(&mut self) -> bool {
         // Identify hidden and naked groups within each section
         // and remove offending digits.
 
