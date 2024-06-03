@@ -12,6 +12,9 @@ TODO:
   to see what changes can be made to make it more convenient to use
 - add method to Sudoku struct that initializes from an array of cells
 - Change main to fill cells randomly instead of by index
+  - could add Sudoku::free_cells and revamp Sudoku::cell_solved
+    to use that instead of Sudoku::cell_flags, as it seems there
+    won't be any other use case for it.
 - Fix/Formalize spacing of definitions
 - Make it so that the debug print statement in main.rs can be ignored by git
   somehow.
