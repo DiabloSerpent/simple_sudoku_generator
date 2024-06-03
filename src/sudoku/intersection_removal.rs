@@ -63,6 +63,7 @@ impl Sudoku {
 
                     let b = box_of(v[0]);
 
+                    // TODO: convert of_box to SECTION_INDICES
                     for ci in of_box(b) {
                         if !v.contains(&ci) && self.cells[ci].has_digit(di) {
                             self.cells[ci].remove_digit(di);
