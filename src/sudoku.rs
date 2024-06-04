@@ -130,13 +130,13 @@ impl Sudoku {
 
     // Each rule returns true if sudoku was modified,
     // false otherwise.
-    const RULE_ORDER: [fn(&mut Sudoku) -> bool; 6] = [
-        Sudoku::cell_solved,
-        Sudoku::naked_single,
-        Sudoku::update_section_digit_sum,
-        Sudoku::hidden_single,
-        Sudoku::intersection_removal,
-        Sudoku::group_removal,
+    const RULE_ORDER: [fn(&mut Self) -> bool; 6] = [
+        Self::cell_solved,
+        Self::naked_single,
+        Self::update_section_digit_sum,
+        Self::hidden_single,
+        Self::intersection_removal,
+        Self::group_removal,
     ];
 
     fn update_section_digit_sum(&mut self) -> bool {
