@@ -21,3 +21,4 @@ TODO:
   Idk what a convenient solution to it would be tho.
 - figure out a more convenient way to manage the type difference b/t
   usize and CellSize
+- use Self instead of Sudoku for rules in Sudoku::RULE_ORDER
