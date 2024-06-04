@@ -169,7 +169,7 @@ impl Sudoku {
                 // remove offending digits
 
                 if naked {
-                    for ci in SECTION_INDICES[si] {
+                    for ci in sec {
                         if !group.contains(&ci) {
                             for d in DIGIT_RANGE {
                                 let di = d as usize;
