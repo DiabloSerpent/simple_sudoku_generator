@@ -7,7 +7,6 @@ TODO:
 - add a variable to Sudoku struct that, per section, per digit,
   lists the cells that belong to each digit
   - this could remove the need for the Sudoku::section_digit_sum variable
-- Complete Sudoku::naked_group and the pair variants
 - figure out what information exactly is needed from index_manip
   to see what changes can be made to make it more convenient to use
 - add method to Sudoku struct that initializes from an array of cells
@@ -21,4 +20,3 @@ TODO:
   Idk what a convenient solution to it would be tho.
 - figure out a more convenient way to manage the type difference b/t
   usize and CellSize
-- use Self instead of Sudoku for rules in Sudoku::RULE_ORDER
