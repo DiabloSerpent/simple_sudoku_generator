@@ -281,7 +281,7 @@ impl Sudoku {
                             continue section loop
         */}
 
-        let r = false;
+        let mut r = false;
 
         for si in SECTION_RANGE {
             if r && (si % 9 == 0) {
@@ -289,11 +289,14 @@ impl Sudoku {
             }
 
             let sec = SECTION_INDICES[si];
+            let mut naked  = false;
+            let mut hidden = false;
+            let mut group = Vec::new();
+            let mut acc = [0; 10];
 
             for n in 2..=4 {
                 let mut g = Vec::new();
                 let mut max = Vec::new();
-                let mut acc = [0; 10];
 
                 for i in 0..n {
                     g.push(i);
@@ -305,10 +308,69 @@ impl Sudoku {
                 // choose n cells from 9 possible cells
                 loop {
                     // extract info
+                    let mut gc = Vec::with_capacity(n);
+                    acc = [0; 10];
 
-                    // naked
+                    for i in 0..n {
+                        gc.push(sec[g[i]]);
+                    }
 
-                    // hidden
+                    naked = false;
+                    hidden = false;
+
+                    'big: loop {
+                        for ci in &gc {
+                            if self.cells[*ci].is_solved() {
+                                // Skip to next iteration
+                                break 'big;
+                            }
+
+                            for d in DIGIT_RANGE {
+                                if self.cells[*ci].has_digit(d) {
+                                    if acc[d as usize] == 0 {
+                                        acc[0] += 1;
+                                    }
+                                    acc[d as usize] += 1;
+                                }
+                            }
+                        }
+
+                        naked = acc[0] == n;
+
+                        let sec_sums = self.section_digit_sum[si];
+                        let mut sum = 0;
+
+                        for d in DIGIT_RANGE {
+                            let di = d as usize;
+                            if sec_sums[di] == 0 {
+                                continue;
+                            }
+                            sum += if acc[di] == sec_sums[di].into() { 1 }
+                                   else { 0 };
+                        }
+
+                        hidden = sum == n;
+
+                        break;
+                    }
+
+                    // handle group type
+                    if naked != hidden {
+                        group = gc;
+                        break;
+                    }
+
+                    // I think this iteration stuff wastes ~5 ms total
+                    // of time. Not sure if it needs to be optimized,
+                    // but computing this at compile time would be doable.
+
+                    // Alternatively, a separate function could compute
+                    // the unsolved cells that each section has and
+                    // this could iterate over just those.
+
+                    // OR, this function could save groups that have been
+                    // already found and remove them from the pool of cells
+                    // to be looked at until they are further modified.
 
                     // next
                     let mut i = n;
@@ -332,6 +394,54 @@ impl Sudoku {
                         i += 1;
                     }
                 }
+
+                if !group.is_empty() {
+                    break;
+                }
+            }
+
+            if !group.is_empty() {
+                println!("naked: {naked}, hidden: {hidden}");
+                println!("{:?}", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+                println!("{acc:?}\n{:?}", self.section_digit_sum[si]);
+                println!("{} {group:?}", of_section(si));
+                println!("{self:?}");
+
+                // get digits to remove
+                // go through cells in section or group to remove digits
+                if naked {
+                    for ci in SECTION_INDICES[si] {
+                        if !group.contains(&ci) {
+                            for d in DIGIT_RANGE {
+                                let di = d as usize;
+                                if acc[di] > 0 {
+                                    if self.cells[ci].has_digit(d) {
+                                        r = true;
+                                    }
+                                    self.cells[ci].remove_digit(d);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if hidden {
+                    for ci in group {
+                        for d in DIGIT_RANGE {
+                            let di = d as usize;
+                            if acc[di] > 0
+                               && acc[di] != self.section_digit_sum[si][di].into() {
+
+                                if self.cells[ci].has_digit(d) {
+                                    r = true;
+                                }
+                                self.cells[ci].remove_digit(d);
+                            }
+                        }
+                    }
+                }
+
+                println!("after:\n{self:?}");
             }
         }
 
