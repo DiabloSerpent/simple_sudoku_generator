@@ -33,8 +33,8 @@ impl Sudoku {
                     of_box(box_of(i))
                 );
 
-                // Cell::remove_digit will check if the cell is solved,
-                // the newly solved cell won't be zeroed.
+                // Cell::remove_digit will check if the cell is solved;
+                // the newly solved cell won't be zeroed by this.
                 for j in 0..9 {
                     self.cells[irow[j]].remove_digit(to_remove);
                     self.cells[icol[j]].remove_digit(to_remove);
