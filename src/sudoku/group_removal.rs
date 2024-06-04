@@ -166,14 +166,8 @@ impl Sudoku {
             }
 
             if !group.is_empty() {
-                println!("naked: {naked}, hidden: {hidden}");
-                println!("{:?}", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-                println!("{acc:?}\n{:?}", self.section_digit_sum[si]);
-                println!("{} {group:?}", of_section(si));
-                println!("{self:?}");
+                // remove offending digits
 
-                // get digits to remove
-                // go through cells in section or group to remove digits
                 if naked {
                     for ci in SECTION_INDICES[si] {
                         if !group.contains(&ci) {
@@ -205,8 +199,6 @@ impl Sudoku {
                         }
                     }
                 }
-
-                println!("after:\n{self:?}");
             }
         }
 
