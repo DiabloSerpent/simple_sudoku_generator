@@ -130,15 +130,12 @@ impl Sudoku {
 
     // Each rule returns true if sudoku was modified,
     // false otherwise.
-    const RULE_ORDER: [fn(&mut Sudoku) -> bool; 9] = [
+    const RULE_ORDER: [fn(&mut Sudoku) -> bool; 6] = [
         Sudoku::cell_solved,
         Sudoku::naked_single,
         Sudoku::update_section_digit_sum,
         Sudoku::hidden_single,
         Sudoku::intersection_removal,
-        Sudoku::naked_pair,
-        Sudoku::hidden_pair,
-        Sudoku::naked_group,
         Sudoku::group_removal,
     ];
 
@@ -168,76 +165,6 @@ impl Sudoku {
 
         // This method does not modify the sudoku board
         false
-    }
-
-    fn naked_pair(&mut self) -> bool {
-        // A row/box/col has a pair of cells that only have
-        // 2 equal digits remaining
-        false // TODO
-    }
-    fn hidden_pair(&mut self) -> bool {
-        // A row/box/col has a pair of cells that are the only cells
-        // that can hold 2 digits
-        false // TODO
-    }
-    fn naked_group(&mut self) -> bool {
-        // A row/box/col has a group of cells that
-        // must be a particular set of digits
-        // The group size must be >3 and <=7
-        // Total amt of digits shared must be equal to group size
-        // Maximum amt of groups in a row/box/col: 3
-
-        // Could make it so that the program loops through each
-        // type of section before returning when a change is made,
-        // so that none of the sections changed overlap with each other.
-
-        // note: the function should return after a change is made,
-        //       b/c it could read cells it has already changed.
-
-        // Def of naked group:
-        // a set of cells whose total count of digits is equal to
-        // the size of the set and cannot be resolved to a simpler group.
-
-        {/* this alg also does hidden/naked pairs
-           going into this, there should be no hidden/naked singles
-
-           it might also be prudent to have this restart every time
-           a change is made, as it can modify the things it is searching for.
-
-           I think this alg would break on something like:
-           2 cells w/ 478, 1 cell w/ 48, 1 cell w/ 49
-           b/c it would assume the 48 and 49 cell form a
-           group when they do not
-
-            for each section:
-                // Unforch magic number (5); this is just the maximum
-                // amt of cells/groups that can fit in a section:
-                // 4 pairs and 1 cell
-                let there be 5 groups, each with an accumulator cell
-                    and a count of cells in the group
-                sort cells of section by increasing digit count
-                    and remove solved cells
-                let the first group start with the first cell, with
-                    count equal to the count of the cell
-                for each cell in section (sorted, excluding first):
-                    for g in groups:
-                        if g.acc.digits & cell.digits != 0:
-                            g.acc = g.acc union cell
-                            g.count++
-                    if cell wasn't in any group:
-                        create a new group starting w/ the cell
-                    if a group has a count equal to the count of its digits:
-                        consider the group to be "cemented" and remove it
-                            from the list of groups being iterated over
-
-                // Ideally, all of the groups will be "cemented" at this point
-                for g in groups:
-                    for cell in section:
-                        if cell and g.acc have overlapping digits:
-                            remove the non-overlapping digits from cell
-        */}
-
-        false // TODO
     }
 }
 
