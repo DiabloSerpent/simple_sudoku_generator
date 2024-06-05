@@ -59,7 +59,7 @@ impl Sudoku {
             let mut group = Vec::new();
             let mut acc = [0; 10];
 
-            for n in 2..=4 {
+            'combo: for n in 2..=4 {
                 let mut g = Vec::new();
                 let mut max = Vec::new();
 
@@ -122,7 +122,7 @@ impl Sudoku {
                     // handle group type
                     if naked != hidden {
                         group = gc;
-                        break;
+                        break 'combo;
                     }
 
                     // I think this iteration stuff wastes ~5 ms total
@@ -158,10 +158,6 @@ impl Sudoku {
                         g[i] = g[i - 1] + 1;
                         i += 1;
                     }
-                }
-
-                if !group.is_empty() {
-                    break;
                 }
             }
 
