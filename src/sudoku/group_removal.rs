@@ -201,3 +201,52 @@ impl Sudoku {
         r
     }
 }
+
+
+fn combo_array(n: usize, r: usize) -> ComboIter {
+    let mut s = ComboIter {
+        r,
+        current: Vec::from_iter((0..n).take(r)),
+        max: Vec::from_iter((0..n).rev().take(r).rev()),
+    };
+
+    s.current[r - 1] -= 1;
+    println!("{:?}", s.max);
+
+    s
+}
+
+struct ComboIter {
+    r: usize,
+    current: Vec<usize>,
+    max: Vec<usize>,
+}
+
+impl Iterator for ComboIter {
+    type Item = Vec<usize>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut i = self.r;
+
+        while i > 0 && self.current[i - 1] >= self.max[i - 1] {
+            i -= 1;
+        }
+
+        if i == 0 {
+            return None;
+        }
+
+        self.current[i - 1] += 1;
+
+        if i == self.r {
+            return Some(self.current.clone());
+        }
+
+        while i < self.r {
+            self.current[i] = self.current[i - 1] + 1;
+            i += 1;
+        }
+
+        Some(self.current.clone())
+    }
+}
