@@ -203,7 +203,10 @@ impl Sudoku {
 }
 
 
-fn combo_array(n: usize, r: usize) -> ComboIter {
+// Currently unusable, increases program time by ~100 ms
+// prolly because of the cloning, need to figure out lifetime stuff
+
+/*fn combo_array(n: usize, r: usize) -> ComboIter {
     let mut s = ComboIter {
         r,
         current: Vec::from_iter((0..n).take(r)),
@@ -248,4 +251,4 @@ impl Iterator for ComboIter {
 
         Some(self.current.clone())
     }
-}
+}*/
