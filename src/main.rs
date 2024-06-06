@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 mod cell;
 mod index_manip;
 mod sudoku;
@@ -96,6 +98,8 @@ const _SUDOKU_BOARD: &str = "\
 
 
 fn main() {
+    let time = Instant::now();
+
     let mut sud = Sudoku::new();
 
     // Would be nice if there was a convenient way to randomly select
@@ -112,4 +116,6 @@ fn main() {
     println!("{}", sud);
 
     sud.check();
+    
+    println!("Program time: {:?}", time.elapsed());
 }
