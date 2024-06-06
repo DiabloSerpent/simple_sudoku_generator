@@ -211,7 +211,6 @@ fn combo_array(n: usize, r: usize) -> ComboIter {
     };
 
     s.current[r - 1] -= 1;
-    println!("{:?}", s.max);
 
     s
 }
