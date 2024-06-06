@@ -20,3 +20,11 @@ TODO:
   Idk what a convenient solution to it would be tho.
 - figure out a more convenient way to manage the type difference b/t
   usize and CellSize
+- optimize Sudoku::group_removal
+  - make it so that the iteration work is done in separate method
+    (for readability).
+  - store already discovered groups separately. they can be analyzed only when
+    changed, and also don't need to check outside of group for new subgroups.
+  - according to testing, the group_removal takes ~140 ms.
+    The rest of the program takes ~7 ms, ~4 ms of which is intersection_removal.
+    This means that group_removal is taking ~95% of the total runtime.
