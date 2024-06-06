@@ -111,6 +111,8 @@ fn main() {
         sud.cells[i].generate_number();
 
         sud.solve();
+
+        //println!("{sud:?}");
     }
 
     println!("{}", sud);
