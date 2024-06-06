@@ -15,14 +15,12 @@ TODO:
     to use that instead of Sudoku::cell_flags, as it seems there
     won't be any other use case for it.
 - Fix/Formalize spacing of definitions
-- Make it so that the debug print statement in main.rs can be ignored by git
-  somehow.
-  Idk what a convenient solution to it would be tho.
 - figure out a more convenient way to manage the type difference b/t
   usize and CellSize
 - optimize Sudoku::group_removal
   - make it so that the iteration work is done in separate method
     (for readability).
+    - need to figure out how to make it not slow
   - store already discovered groups separately. they can be analyzed only when
     changed, and also don't need to check outside of group for new subgroups.
   - according to testing, the group_removal takes ~140 ms.
