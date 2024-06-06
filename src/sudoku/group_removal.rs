@@ -54,18 +54,21 @@ impl Sudoku {
             }
 
             let sec = SECTION_INDICES[si];
+            let sec_sums = self.section_digit_sum[si];
             let mut naked  = false;
             let mut hidden = false;
             let mut group = Vec::new();
             let mut acc = [0; 10];
 
             'combo: for n in 2..=4 {
-                let mut g = Vec::new();
-                let mut max = Vec::new();
+                let mut g   = Vec::with_capacity(n);
+                let mut gc  = Vec::with_capacity(n);
+                let mut max = Vec::with_capacity(n);
 
                 for i in 0..n {
                     g.push(i);
-                    max.push(8-i);
+                    gc.push(0);  // this value will be discarded
+                    max.push(9 - 1 - i);
                 }
 
                 max.reverse();
@@ -73,13 +76,13 @@ impl Sudoku {
                 // choose n cells from 9 possible cells
                 loop {
                     // extract info
-                    let mut gc = Vec::with_capacity(n);
                     acc = [0; 10];
 
                     for i in 0..n {
-                        gc.push(sec[g[i]]);
+                        gc[i] = sec[g[i]];
                     }
 
+                    // In case values are left over from previous iteration.
                     naked = false;
                     hidden = false;
 
@@ -102,7 +105,6 @@ impl Sudoku {
 
                         naked = acc[0] == n;
 
-                        let sec_sums = self.section_digit_sum[si];
                         let mut sum = 0;
 
                         for d in DIGIT_RANGE {
@@ -184,9 +186,7 @@ impl Sudoku {
                     for ci in group {
                         for d in DIGIT_RANGE {
                             let di = d as usize;
-                            if acc[di] > 0
-                               && acc[di] != self.section_digit_sum[si][di].into() {
-
+                            if acc[di] > 0 && acc[di] != sec_sums[di].into() {
                                 if self.cells[ci].has_digit(d) {
                                     r = true;
                                 }
