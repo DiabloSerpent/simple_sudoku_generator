@@ -82,10 +82,6 @@ impl Sudoku {
                         gc[i] = sec[g[i]];
                     }
 
-                    // In case values are left over from previous iteration.
-                    naked = false;
-                    hidden = false;
-
                     'big: loop {
                         for ci in &gc {
                             if self.cells[*ci].is_solved() {
@@ -118,13 +114,13 @@ impl Sudoku {
 
                         hidden = sum == n;
 
-                        break;
-                    }
+                        // handle group type
+                        if naked != hidden {
+                            group = gc;
+                            break 'combo;
+                        }
 
-                    // handle group type
-                    if naked != hidden {
-                        group = gc;
-                        break 'combo;
+                        break;
                     }
 
                     // I think this iteration stuff wastes ~5 ms total
