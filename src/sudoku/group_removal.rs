@@ -53,6 +53,12 @@ impl Sudoku {
 
             let sec = SECTION_INDICES[si];
             let sec_sums = self.section_digit_sum[si];
+
+            // No point in checking if there are <4 unsolved cells
+            if sec_sums[0] < 4 {
+                continue;
+            }
+
             let mut naked  = false;
             let mut hidden = false;
             let mut group = Vec::new();
