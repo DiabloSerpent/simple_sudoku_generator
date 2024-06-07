@@ -27,8 +27,6 @@ impl Sudoku {
         //            false otherwise
 
         {/*Algorithm:
-            (assumes that a self.section_profile variable exists)
-
             for si in section_range:
                 if r and (si % 9 == 0):
                     return true;
