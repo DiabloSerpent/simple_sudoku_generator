@@ -55,6 +55,12 @@ impl Sudoku {
             let sec_sums = self.section_digit_sum[si];
 
             // No point in checking if there are <4 unsolved cells
+            //
+            // Basically, if there are only 3 cells left, then the largest
+            // group size would be 2. However, there will always be a "group"
+            // of size 1 to complement that group. This size 1 group can be
+            // handled by a simpler function, and thus isn't interesting to
+            // this function.
             if sec_sums[0] < 4 {
                 continue;
             }
