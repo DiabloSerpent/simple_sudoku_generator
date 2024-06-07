@@ -133,8 +133,8 @@ impl Sudoku {
                         break;
                     }
 
-                    // I think this iteration stuff wastes ~5 ms total
-                    // of time. Not sure if it needs to be optimized,
+                    // I think this iteration management stuff wastes ~5 ms
+                    // total of time. Not sure if it needs to be optimized,
                     // but computing this at compile time would be doable.
 
                     // Alternatively, a separate function could compute
