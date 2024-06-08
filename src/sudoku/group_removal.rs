@@ -44,6 +44,37 @@ impl Sudoku {
                             continue section loop
         */}
 
+        {/*Algorithm: (unimplemented)
+            for si in section_range:
+                if ret and (si % 9 == 0):
+                    return true
+
+                for sg in self.subgroups[si]:
+                    // would it be convenient to just remove these?
+                    if sg.length < 4:
+                        continue
+                    let maxgsize = sg.length / 2
+
+                    for ci in sg:
+                        if ci is solved:
+                            remove ci from sg
+                            // iterate by index and swap_remove?
+
+                    for r in 2..=maxgsize:
+                        for combo in C^{maxgsize}_{r}:
+                            if combo is naked group:
+                                if combo.length >= 4:
+                                    self.subgroups[si].push(combo)
+                                remove combo from sg
+
+                                remove offending digits
+                                ret = true if changes occurred
+                                continue section loop
+
+                            if combo is hidden group:
+                                ...
+        */}
+
         let mut r = false;
 
         for si in SECTION_RANGE {
