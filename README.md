@@ -27,3 +27,5 @@ TODO:
     The rest of the program takes ~7 ms, ~4 ms of which is intersection_removal.
     This means that group_removal is taking ~95% of the total runtime.
 - rename `r` in Sudoku rules to `ret`
+- split Sudoku graphic stuff into separate file
+  - move comments in main to file?
