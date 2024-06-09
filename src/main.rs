@@ -1,10 +1,6 @@
 use std::time::Instant;
 
-mod cell;
-mod index_manip;
-mod sudoku;
-
-use crate::sudoku::Sudoku;
+use simple_sudoku_generator::sudoku::Sudoku;
 
 // Shamelessly ripped from:
 // https://codegolf.stackexchange.com/questions/126930/draw-a-sudoku-board-using-line-drawing-characters
