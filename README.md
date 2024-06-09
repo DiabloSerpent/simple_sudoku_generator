@@ -27,6 +27,10 @@ TODO:
     The rest of the program takes ~7 ms, ~4 ms of which is intersection_removal.
     This means that group_removal is taking ~95% of the total runtime.
 - rename `r` in Sudoku rules to `ret`
-- split Sudoku graphic stuff into separate file
-  - move comments in main to file?
-- consolidate bench_main and main
+- maybe could make it so that modifying a cell adds them to a list
+  which other functions use to see if they should act or not
+  - would need some way for all functions to process the list individually
+
+
+Helpful website:
+https://www.sudokuwiki.org/Getting_Started
