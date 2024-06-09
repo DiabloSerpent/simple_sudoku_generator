@@ -50,6 +50,24 @@ impl Sudoku {
         }
     }
 
+    pub fn fill_random() -> Self {
+        let mut s = Self::new();
+
+        for i in 0..81 {
+            if s.cells[i].is_solved() {
+                continue;
+            }
+
+            s.cells[i].generate_number();
+
+            s.solve();
+
+            //println!("{s:?}");
+        }
+
+        s
+    }
+
     pub fn check(&self) {
         let mut section_status = [false; 27];
 
