@@ -1,5 +1,3 @@
-use std::fmt;
-
 use crate::cell::{Cell, CellSize, CELL_INIT, DIGIT_RANGE};
 use crate::index_manip::*;
 
@@ -8,6 +6,7 @@ mod hidden_single;
 mod intersection_removal;
 mod naked_single;
 mod group_removal;
+mod graphics;
 
 pub struct Sudoku {
     // May want to replace array w/ set or smth
@@ -66,56 +65,6 @@ impl Sudoku {
         }
 
         s
-    }
-
-    pub fn check(&self) {
-        let mut section_status = [false; 27];
-
-        let mut do_print = false;
-
-        for si in SECTION_RANGE {
-            let sums = self.section_digit_sum[si];
-
-            if sums[1..].iter().position(|&x| x != 1) != None {
-                section_status[si] = true;
-                do_print = true;
-            }
-        }
-
-        if !do_print {
-            println!("No invalid cells");
-            return;
-        }
-        else {
-            println!("Invalid solutions:");
-        }
-
-        println!("       | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |");
-
-        for si in SECTION_RANGE {
-            if si % 9 == 0 {
-                println!("       |---|---|---|---|---|---|---|---|---|");
-            }
-
-            let sums = self.section_digit_sum[si];
-
-            if !section_status[si] {
-                continue;
-            }
-
-            print!("{}: |", of_section(si));
-
-            for j in DIGIT_RANGE {
-                let j = j as usize;
-                if sums[j] == 1 {
-                    print!("   |");
-                }
-                else {
-                    print!(" {} |", sums[j]);
-                }
-            }
-            println!();
-        }
     }
 
     pub fn solve(&mut self) {
@@ -183,101 +132,5 @@ impl Sudoku {
 
         // This method does not modify the sudoku board
         false
-    }
-}
-
-// It's just, so PEAK
-impl fmt::Display for Sudoku {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // This is only intended to display a completed sudoku.
-
-        let top  = "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗\n";
-        let mid  = "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢\n";
-        let boxl = "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣\n";
-        let bot  = "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝\n";
-
-        write!(f, "{}", top)?;
-
-        for i in 0..9 {
-            write!(
-                f, "║ {} │ {} │ {} ║ {} │ {} │ {} ║ {} │ {} │ {} ║\n",
-                self.cells[i*9 + 0].get_number(),
-                self.cells[i*9 + 1].get_number(),
-                self.cells[i*9 + 2].get_number(),
-                self.cells[i*9 + 3].get_number(),
-                self.cells[i*9 + 4].get_number(),
-                self.cells[i*9 + 5].get_number(),
-                self.cells[i*9 + 6].get_number(),
-                self.cells[i*9 + 7].get_number(),
-                self.cells[i*9 + 8].get_number(),
-            )?;
-
-            if i == 8 {
-                write!(f, "{}", bot)?;
-            }
-            else if i % 3 == 2 {
-                write!(f, "{}", boxl)?;
-            }
-            else {
-                write!(f, "{}", mid)?;
-            }
-        }
-
-        Ok(())
-    }
-}
-
-impl fmt::Debug for Sudoku {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // This shows all cells as a collection of digits,
-        // regardless of whether they are already solved.
-
-        let top  = "╔═══════╤═══════╤═══════╦═══════╤═══════╤═══════╦═══════╤═══════╤═══════╗\n";
-        let mid  = "╟───────┼───────┼───────╫───────┼───────┼───────╫───────┼───────┼───────╢\n";
-        let boxl = "╠═══════╪═══════╪═══════╬═══════╪═══════╪═══════╬═══════╪═══════╪═══════╣\n";
-        let bot  = "╚═══════╧═══════╧═══════╩═══════╧═══════╧═══════╩═══════╧═══════╧═══════╝\n";
-        //║       │       │       ║       │       │       ║       │       │       ║
-
-        write!(f, "{}", top)?;
-
-        for ri in 0..9 {
-            for digit_row in 0..3 {
-                for ci in 0..9 {
-                    if ci != 0 {
-                        write!(f, " ")?;
-                    }
-                    if ci % 3 == 0 {
-                        write!(f, "║")?;
-                    }
-                    else {
-                        write!(f, "│")?;
-                    }
-
-                    let cell = self.cells[((ri * 9) + ci) as usize];
-
-                    for di in 0..3 {
-                        if cell.has_digit(digit_row * 3 + di + 1) {
-                            write!(f, " {}", digit_row * 3 + di + 1)?;
-                        }
-                        else {
-                            write!(f, "  ")?;
-                        }
-                    }
-                }
-                write!(f, " ║\n")?;
-            }
-
-            if ri == 8 {
-                write!(f, "{}", bot)?;
-            }
-            else if ri % 3 == 2 {
-                write!(f, "{}", boxl)?;
-            }
-            else {
-                write!(f, "{}", mid)?;
-            }
-        }
-
-        Ok(())
     }
 }
