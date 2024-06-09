@@ -42,8 +42,8 @@ pub struct Sudoku {
 pub const CELL_SOLVED: u8 = 0b00000001;
 
 impl Sudoku {
-    pub fn new() -> Sudoku {
-        Sudoku {
+    pub fn new() -> Self {
+        Self {
             cells: [CELL_INIT; 81],
             cell_flags: [0; 81],
             section_digit_sum: [[0; 10]; 27],
