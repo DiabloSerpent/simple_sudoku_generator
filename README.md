@@ -29,3 +29,4 @@ TODO:
 - rename `r` in Sudoku rules to `ret`
 - split Sudoku graphic stuff into separate file
   - move comments in main to file?
+- consolidate bench_main and main
