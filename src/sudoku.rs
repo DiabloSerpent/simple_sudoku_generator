@@ -13,6 +13,7 @@ pub struct Sudoku {
     pub cells: [Cell; 81],
     cell_flags: [u8; 81],
     section_digit_sum: [[CellSize; 10]; 27],
+    section_subgroups: [Vec<Vec<usize>>; 27],
 }
 
 /* Structure:
@@ -46,6 +47,7 @@ impl Sudoku {
             cells: [CELL_INIT; 81],
             cell_flags: [0; 81],
             section_digit_sum: [[0; 10]; 27],
+            section_subgroups: Self::generate_subgroups(),
         }
     }
 
@@ -65,6 +67,16 @@ impl Sudoku {
         }
 
         s
+    }
+
+    fn generate_subgroups() -> [Vec<Vec<usize>>; 27] {
+        let mut sg: [Vec<Vec<usize>>; 27] = Default::default();
+
+        for si in SECTION_RANGE {
+            sg[si].push(Vec::from(SECTION_INDICES[si]));
+        }
+
+        sg
     }
 
     pub fn solve(&mut self) {

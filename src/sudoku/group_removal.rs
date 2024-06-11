@@ -50,15 +50,14 @@ impl Sudoku {
                     return true
 
                 for sg in self.subgroups[si]:
+                    for ci in sg:
+                        if ci is solved:
+                            remove ci from sg
+
                     // would it be convenient to just remove these?
                     if sg.length < 4:
                         continue
                     let maxgsize = sg.length / 2
-
-                    for ci in sg:
-                        if ci is solved:
-                            remove ci from sg
-                            // iterate by index and swap_remove?
 
                     for r in 2..=maxgsize:
                         for combo in C^{maxgsize}_{r}:
@@ -82,152 +81,156 @@ impl Sudoku {
                 return true;
             }
 
-            let sec = SECTION_INDICES[si];
-            let sec_sums = self.section_digit_sum[si];
+            let sec      = &SECTION_INDICES[si];
+            let sec_sums = &self.section_digit_sum[si];
+            let sec_sgs  = &mut self.section_subgroups[si];
 
-            // No point in checking if there are <4 unsolved cells
-            //
-            // Basically, if there are only 3 cells left, then the largest
-            // group size would be 2. However, there will always be a "group"
-            // of size 1 to complement that group. This size 1 group can be
-            // handled by a simpler function, and thus isn't interesting to
-            // this function.
-            if sec_sums[0] < 4 {
-                continue;
-            }
+            for sg in sec_sgs {
 
-            let mut naked  = false;
-            let mut hidden = false;
-            let mut group = Vec::new();
-            let mut acc = [0; 10];
-
-            'combo: for n in 2..=4 {
-                let mut g   = Vec::with_capacity(n);
-                let mut gc  = Vec::with_capacity(n);
-                let mut max = Vec::with_capacity(n);
-
-                for i in 0..n {
-                    g.push(i);
-                    gc.push(0);  // this value will be discarded
-                    max.push(9 - 1 - i);
-                }
-
-                max.reverse();
-
-                // choose n cells from 9 possible cells
-                loop {
-                    // extract info
-                    acc = [0; 10];
-
-                    for i in 0..n {
-                        gc[i] = sec[g[i]];
+                let mut i = 0;
+                while i < sg.len() {
+                    if self.cells[sg[i]].is_solved() {
+                        sg.swap_remove(i);
                     }
-
-                    'big: loop {
-                        for ci in &gc {
-                            if self.cells[*ci].is_solved() {
-                                // Skip to next iteration
-                                break 'big;
-                            }
-
-                            for d in DIGIT_RANGE {
-                                if self.cells[*ci].has_digit(d) {
-                                    if acc[d as usize] == 0 {
-                                        acc[0] += 1;
-                                    }
-                                    acc[d as usize] += 1;
-                                }
-                            }
-                        }
-
-                        naked = acc[0] == n;
-
-                        let mut sum = 0;
-
-                        for d in DIGIT_RANGE {
-                            let di = d as usize;
-                            if sec_sums[di] == 0 {
-                                continue;
-                            }
-                            sum += if acc[di] == sec_sums[di].into() { 1 }
-                                   else { 0 };
-                        }
-
-                        hidden = sum == n;
-
-                        // handle group type
-                        if naked != hidden {
-                            group = gc;
-                            break 'combo;
-                        }
-
-                        break;
-                    }
-
-                    // I think this iteration management stuff wastes ~5 ms
-                    // total of time. Not sure if it needs to be optimized,
-                    // but computing this at compile time would be doable.
-
-                    // Alternatively, a separate function could compute
-                    // the unsolved cells that each section has and
-                    // this could iterate over just those.
-
-                    // OR, this function could save groups that have been
-                    // already found and remove them from the pool of cells
-                    // to be looked at until they are further modified.
-
-                    // next
-                    let mut i = n;
-
-                    while i > 0 && g[i - 1] == max[i - 1] {
-                        i -= 1;
-                    }
-
-                    if i == 0 {
-                        break;
-                    }
-
-                    g[i - 1] += 1;
-
-                    if i == n {
-                        continue;
-                    }
-
-                    while i < n {
-                        g[i] = g[i - 1] + 1;
+                    else {
                         i += 1;
                     }
                 }
-            }
 
-            if !group.is_empty() {
-                // remove offending digits
+                let maxgsize = sg.len() / 2;
 
-                if naked {
-                    for ci in sec {
-                        if !group.contains(&ci) {
-                            for d in DIGIT_RANGE {
-                                let di = d as usize;
-                                if acc[di] > 0 {
-                                    if self.cells[ci].has_digit(d) {
-                                        r = true;
+                if maxgsize < 2 {
+                    continue;
+                }
+
+                let mut naked  = false;
+                let mut hidden = false;
+                let mut group = None;
+                let mut acc = [0; 10];
+
+                'combo: for n in 2..=maxgsize {
+                    let mut g   = Vec::with_capacity(n);
+                    let mut gc  = Vec::with_capacity(n);
+                    let mut max = Vec::with_capacity(n);
+
+                    for i in 0..n {
+                        g.push(i);
+                        gc.push(0);  // this value will be discarded
+                        max.push(sg.len() - 1 - i);
+                    }
+
+                    max.reverse();
+
+                    // choose n cells from 9 possible cells
+                    loop {
+                        // extract info
+                        acc = [0; 10];
+
+                        for i in 0..n {
+                            gc[i] = sg[g[i]];
+                        }
+
+                        loop {
+                            for ci in &gc {
+                                for d in DIGIT_RANGE {
+                                    if self.cells[*ci].has_digit(d) {
+                                        if acc[d as usize] == 0 {
+                                            acc[0] += 1;
+                                        }
+                                        acc[d as usize] += 1;
                                     }
-                                    self.cells[ci].remove_digit(d);
                                 }
                             }
+
+                            naked = acc[0] == n;
+
+                            let mut sum = 0;
+
+                            for d in DIGIT_RANGE {
+                                let di = d as usize;
+                                if sec_sums[di] == 0 {
+                                    continue;
+                                }
+                                sum += if acc[di] == sec_sums[di].into() { 1 }
+                                       else { 0 };
+                            }
+
+                            hidden = sum == n;
+
+                            // handle group type
+                            if naked != hidden {
+                                group = Some(gc);
+                                break 'combo;
+                            }
+
+                            break;
+                        }
+
+                        // I think this iteration management stuff wastes ~5 ms
+                        // total of time. Not sure if it needs to be optimized,
+                        // but computing this at compile time would be doable.
+
+                        // Alternatively, a separate function could compute
+                        // the unsolved cells that each section has and
+                        // this could iterate over just those.
+
+                        // OR, this function could save groups that have been
+                        // already found and remove them from the pool of cells
+                        // to be looked at until they are further modified.
+
+                        // next
+                        let mut i = n;
+
+                        while i > 0 && g[i - 1] == max[i - 1] {
+                            i -= 1;
+                        }
+
+                        if i == 0 {
+                            break;
+                        }
+
+                        g[i - 1] += 1;
+
+                        if i == n {
+                            continue;
+                        }
+
+                        while i < n {
+                            g[i] = g[i - 1] + 1;
+                            i += 1;
                         }
                     }
                 }
 
-                if hidden {
-                    for ci in group {
-                        for d in DIGIT_RANGE {
-                            let di = d as usize;
-                            if acc[di] > 0 && acc[di] != sec_sums[di].into() {
-                                if self.cells[ci].has_digit(d) {
-                                    r = true;
+                if let Some(group) = group {
+                    // remove offending digits
+
+                    if naked {
+                        for ci in sec {
+                            if !group.contains(&ci) {
+                                for d in DIGIT_RANGE {
+                                    let di = d as usize;
+                                    if acc[di] > 0 {
+                                        if self.cells[*ci].has_digit(d) {
+                                            r = true;
+                                        }
+                                        self.cells[*ci].remove_digit(d);
+                                    }
                                 }
-                                self.cells[ci].remove_digit(d);
+                            }
+                        }
+                    }
+
+                    if hidden {
+                        for ci in &group {
+                            for d in DIGIT_RANGE {
+                                let di = d as usize;
+                                if acc[di] > 0 && acc[di] != sec_sums[di].into() {
+                                    if self.cells[*ci].has_digit(d) {
+                                        r = true;
+                                    }
+                                    self.cells[*ci].remove_digit(d);
+                                }
                             }
                         }
                     }
