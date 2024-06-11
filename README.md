@@ -30,6 +30,7 @@ TODO:
 - maybe could make it so that modifying a cell adds them to a list
   which other functions use to see if they should act or not
   - would need some way for all functions to process the list individually
+- needing to check Cell::has_digit twice while removing a digit is annoying
 
 
 Helpful website:
