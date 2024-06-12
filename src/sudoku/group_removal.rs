@@ -44,34 +44,81 @@ impl Sudoku {
                             continue section loop
         */}
 
-        {/*Algorithm: (unimplemented)
+        {/*Algorithm 2: (unimplemented)
             for si in section_range:
                 if ret and (si % 9 == 0):
                     return true
 
-                for sg in self.subgroups[si]:
+                for sg in section subgroups:
                     for ci in sg:
                         if ci is solved:
                             remove ci from sg
 
-                    // would it be convenient to just remove these?
-                    if sg.length < 4:
-                        continue
                     let maxgsize = sg.length / 2
 
-                    for r in 2..=maxgsize:
-                        for combo in C^{maxgsize}_{r}:
-                            if combo is naked group:
-                                if combo.length >= 4:
-                                    self.subgroups[si].push(combo)
-                                remove combo from sg
+                    if maxgsize < 2:
+                        remove sg
 
-                                remove offending digits
-                                ret = true if changes occurred
-                                continue section loop
+                    comboloop:
+                    for n in 2..=maxgsize:
+                        for combo in choose(maxgsize, n):
+                            is group hidden?
 
-                            if combo is hidden group:
-                                ...
+                            is group naked?
+
+                            if hidden or naked:
+                                break comboloop
+
+                    if naked and not hidden:
+                        remove digits
+
+                    if hidden and not naked:
+                        remove digits
+
+                    if naked or hidden:
+                        remove group from sg
+
+                        if group.length / 2 > 1:
+                            add group to section subgroups
+        */}
+
+        {/*Alg 3: (unimplemented)
+            for n in 2..=4:
+                for combo in choose(9, n):
+                    let digit_combo = combo of digits
+
+                    for section in section range:
+                        let cell_combo = combo of cells in section
+
+                        for cell in cell_combo:
+                            acc |= cell
+
+                        is_naked = acc.count == n
+
+                        if is_naked:
+                            for cell in section:
+                                if cell isnt in cell_combo and cell has digit:
+                                    r = true
+                                    cell.remove_digits(acc)
+
+                            if r:
+                                return true
+
+                        for cell in section:
+                            sum += (digit_combo & cell) == 1
+
+                        is_hidden = sum == n
+
+                        if is_hidden:
+                            for cell in section:
+                                if cell has intersection w/ digit_combo:
+                                    r = true
+                                    cell = cell.intersect(digit_combo)
+
+                            if r:
+                                return true
+
+            return false
         */}
 
         let mut r = false;
