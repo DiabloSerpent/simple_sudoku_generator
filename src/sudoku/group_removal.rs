@@ -85,6 +85,19 @@ impl Sudoku {
         {/*Alg 3: (unimplemented)
             for n in 2..=4:
                 for combo in choose(9, n):
+                    // because naked and hidden groups have
+                    // separate detection mechanisms, I can
+                    // now remove undesired iterations with
+                    // greater accuracy.
+
+                    // For naked groups:
+                    //   a cell w/ more than 4 digits is not worth considering
+
+                    // For hidden groups:
+                    //   a digit with more than 4 cells is not worth considering
+
+                    // idk how exactly to implement tho.
+
                     let digit_combo = combo of digits
 
                     for section in section range:
