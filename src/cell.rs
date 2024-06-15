@@ -18,7 +18,7 @@ use std::ops::RangeInclusive;
 pub type CellSize = u16;
 
 #[derive(Debug, Clone, Copy)]
-pub struct Cell(CellSize);
+pub struct Cell(pub CellSize);
 
 // I actually don't know if Windows is lil-endian or big-endian.
 // I also don't care.
@@ -30,7 +30,7 @@ const _UNUSED_MASK:  CellSize = 0b11000000_00000000;
 
 pub const DIGIT_RANGE: RangeInclusive<CellSize> = 1..=9;
 #[allow(non_snake_case)]
-fn DIGIT(x: CellSize) -> CellSize {
+pub fn DIGIT(x: CellSize) -> CellSize {
     debug_assert!(
         *DIGIT_RANGE.start() <= x && x <= *DIGIT_RANGE.end(),
         "{x} is not a valid digit!"

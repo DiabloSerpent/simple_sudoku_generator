@@ -1,5 +1,5 @@
 use crate::Sudoku;
-use crate::cell::{DIGIT_RANGE};
+use crate::cell::{DIGIT_RANGE, CELL_INIT, Cell, DIGIT, CellSize};
 use crate::index_manip::*;
 
 impl Sudoku {
@@ -92,9 +92,11 @@ impl Sudoku {
 
                     // For naked groups:
                     //   a cell w/ more than 4 digits is not worth considering
+                    //   likewise for cell w/ <2 digits
 
                     // For hidden groups:
-                    //   a digit with more than 4 cells is not worth considering
+                    //   a digit w/ more than 4 cells is not worth considering
+                    //   likewise for digit w/ <2 cells
 
                     // idk how exactly to implement tho.
 
@@ -136,7 +138,7 @@ impl Sudoku {
 
         let mut r = false;
 
-        for si in SECTION_RANGE {
+        {/*for si in SECTION_RANGE {
             if r && (si % 9 == 0) {
                 return true;
             }
@@ -298,7 +300,206 @@ impl Sudoku {
             }
         }
 
-        r
+        r*/}
+
+        //let digit_array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+        // Eventually Important:
+        //   How to tell function to ignore combos based on
+        //   max group size available in section.
+
+        // Eventually Important:
+        //   How to tell function to ignore combos that dont have
+        //   a cell/digit that's been modified.
+
+        // Should encompass:
+        //   - cell/digit isnt solved
+        //   - cell/digit has <4 digits
+        //   - cell/digit isnt part of previously discovered group
+        //     - how to handle cells belonging to size 4 group?
+        //   - has cell been modified?
+        //     - should be handled by separate
+        //let consider_cell  = [[bool; 9]; 27];
+        //let consider_digit = [[bool; 9]; 27];
+
+        for n in 2..=4 {
+            let mut combo = Vec::with_capacity(n);
+            let mut max   = Vec::with_capacity(n);
+
+            for i in 0..n {
+                combo.push(i);
+                max.push(9 - 1 - i);
+            }
+
+            max.reverse();
+
+            //let mut digit_combo = combo.clone();
+            let mut cell_combo  = combo.clone();
+
+            loop { // for combo in choose(9, n)
+                let mut hidden_acc = Cell(0);
+
+                for i in 0..n {
+                    hidden_acc.0 |= DIGIT((combo[i] + 1) as CellSize);
+                }
+
+                for si in SECTION_RANGE {
+                    let sec_cells = &SECTION_INDICES[si];
+                    let sec_sums  = &self.section_digit_sum[si];
+
+                    let mut check_naked  = true;
+                    let mut check_hidden = true;
+
+                    for i in 0..n {
+                        cell_combo[i] = sec_cells[combo[i]];
+                        if self.cells[cell_combo[i]].is_solved() 
+                           || self.cells[cell_combo[i]].get_count() > 4 {
+
+                            check_naked = false;
+                        }
+
+                        if sec_sums[combo[i] + 1] <= 1
+                           || sec_sums[combo[i] + 1] > 4 {
+
+                            check_hidden = false;
+                        }
+                    }
+
+                    if check_naked {    
+                        let mut naked_acc = Cell(0);
+    
+                        for ci in &cell_combo {
+                            naked_acc.0 |= self.cells[*ci].0;
+                        }
+    
+                        let mut sum = 0;
+    
+                        for d in DIGIT_RANGE {
+                            sum += if naked_acc.has_digit(d) { 1 }
+                                   else { 0 };
+                        }
+    
+                        let is_naked = sum == n;
+    
+                        if is_naked {
+                            /*println!("{}: {:?}", of_section(si), cell_combo);
+                            println!("{self:?}");*/
+
+                            for ci in sec_cells {
+                                if !cell_combo.contains(&ci) {
+                                    for d in DIGIT_RANGE {
+                                        if naked_acc.has_digit(d) && self.cells[*ci].has_digit(d) {
+                                            r = true;
+                                            self.cells[*ci].remove_digit(d);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if r {
+                                return true;
+                            }
+                        }
+                    }
+
+                    if check_hidden {
+                        let mut sum = 0;
+
+                        for ci in sec_cells {
+                            sum += if self.cells[*ci].0 & hidden_acc.0 != 0
+                                   { 1 } else { 0 };
+                        }
+
+                        let is_hidden = sum == n;
+
+                        if is_hidden {
+                            /*println!("{}: {}", of_section(si), hidden_acc);
+                            println!("{self:?}");*/
+
+                            for ci in sec_cells {
+                                if self.cells[*ci].0 & hidden_acc.0 != 0 {
+                                    for d in DIGIT_RANGE {
+                                        if !hidden_acc.has_digit(d) && self.cells[*ci].has_digit(d) {
+                                            r = true;
+                                            self.cells[*ci].remove_digit(d);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if r {
+                                /*println!("{}: {}", of_section(si), hidden_acc);
+                                println!("{self:?}");*/
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                /*loop {
+                    for ci in &gc {
+                        for d in DIGIT_RANGE {
+                            if self.cells[*ci].has_digit(d) {
+                                if acc[d as usize] == 0 {
+                                    acc[0] += 1;
+                                }
+                                acc[d as usize] += 1;
+                            }
+                        }
+                    }
+
+                    naked = acc[0] == n;
+
+                    let mut sum = 0;
+
+                    for d in DIGIT_RANGE {
+                        let di = d as usize;
+                        if sec_sums[di] == 0 {
+                            continue;
+                        }
+                        sum += if acc[di] == sec_sums[di].into() { 1 }
+                               else { 0 };
+                    }
+
+                    hidden = sum == n;
+
+                    // handle group type
+                    if naked != hidden {
+                        group = Some(gc);
+                        break 'combo;
+                    }
+
+                    break;
+                }*/
+
+                // #########################################
+                // NEXT COMBO
+                // #########################################
+
+                let mut i = n;
+
+                while i > 0 && combo[i - 1] == max[i - 1] {
+                    i -= 1;
+                }
+
+                if i == 0 {
+                    break;
+                }
+
+                combo[i - 1] += 1;
+
+                if i == n {
+                    continue;
+                }
+
+                while i < n {
+                    combo[i] = combo[i - 1] + 1;
+                    i += 1;
+                }
+            }
+        }
+
+        false
     }
 }
 
