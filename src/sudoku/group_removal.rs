@@ -330,11 +330,13 @@ impl Sudoku {
             for i in 0..9 {
                 let cell = &self.cells[sec_cells[i]];
                 reject_cell[si][i] = cell.is_solved()
-                                     || cell.get_count() > 4;
+                                     || cell.get_count() > 4
+                                     || self.section_cell_groups[si][i];
 
                 let digit = i + 1;
                 reject_digit[si][i] = sec_sums[digit] <= 1
-                                      || sec_sums[digit] > 4;
+                                      || sec_sums[digit] > 4
+                                      || self.section_digit_groups[si][i];
             }
         }
 
@@ -398,6 +400,18 @@ impl Sudoku {
                             /*println!("{}: {:?}", of_section(si), cell_combo);
                             println!("{self:?}");*/
 
+                            if n < 4 {
+                                for i in 0..9 {
+                                    if cell_combo.contains(&sec_cells[i]) {
+                                        self.section_cell_groups[si][i] = true;
+                                    }
+
+                                    if naked_acc.has_digit(i as CellSize + 1) {
+                                        self.section_digit_groups[si][i] = true;
+                                    }
+                                }
+                            }
+
                             for ci in sec_cells {
                                 if !cell_combo.contains(&ci) {
                                     for d in DIGIT_RANGE {
@@ -428,6 +442,18 @@ impl Sudoku {
                         if is_hidden {
                             /*println!("{}: {}", of_section(si), hidden_acc);
                             println!("{self:?}");*/
+
+                            if n < 4 {
+                                for i in 0..9 {
+                                    if self.cells[sec_cells[i]].0 & hidden_acc.0 != 0 {
+                                        self.section_cell_groups[si][i] = true;
+                                    }
+
+                                    if hidden_acc.has_digit(i as CellSize + 1) {
+                                        self.section_digit_groups[si][i] = true;
+                                    }
+                                }
+                            }
 
                             for ci in sec_cells {
                                 if self.cells[*ci].0 & hidden_acc.0 != 0 {
