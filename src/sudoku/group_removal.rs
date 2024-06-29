@@ -347,6 +347,8 @@ impl Sudoku {
                     let sec_cells = &SECTION_INDICES[si];
                     let sec_sums  = &self.section_digit_sum[si];
 
+                    // TODO: continue if n > max group size in section
+
                     let mut check_naked  = true;
                     let mut check_hidden = true;
 
@@ -354,6 +356,8 @@ impl Sudoku {
                         cell_combo[i] = sec_cells[combo[i]];
                         if self.cells[cell_combo[i]].is_solved() 
                            || self.cells[cell_combo[i]].get_count() > 4 {
+                           // TODO: check if cell is part of solved group
+                           //       w/ size <4
 
                             check_naked = false;
                         }
