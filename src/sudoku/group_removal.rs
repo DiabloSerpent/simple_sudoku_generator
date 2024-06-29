@@ -318,7 +318,7 @@ impl Sudoku {
         //   - cell/digit isnt part of previously discovered group
         //     - how to handle cells belonging to size 4 group?
         //   - has cell been modified?
-        //     - should be handled by separate
+        //     - should be handled separately
         //let consider_cell  = [[bool; 9]; 27];
         //let consider_digit = [[bool; 9]; 27];
 
