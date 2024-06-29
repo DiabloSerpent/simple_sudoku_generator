@@ -319,8 +319,24 @@ impl Sudoku {
         //     - how to handle cells belonging to size 4 group?
         //   - has cell been modified?
         //     - should be handled separately
-        //let consider_cell  = [[bool; 9]; 27];
-        //let consider_digit = [[bool; 9]; 27];
+
+        let mut reject_cell  = [[false; 9]; 27];
+        let mut reject_digit = [[false; 9]; 27];
+
+        for si in SECTION_RANGE {
+            let sec_cells = &SECTION_INDICES[si];
+            let sec_sums  = &self.section_digit_sum[si];
+
+            for i in 0..9 {
+                let cell = &self.cells[sec_cells[i]];
+                reject_cell[si][i] = cell.is_solved()
+                                     || cell.get_count() > 4;
+
+                let digit = i + 1;
+                reject_digit[si][i] = sec_sums[digit] <= 1
+                                      || sec_sums[digit] > 4;
+            }
+        }
 
         for n in 2..=4 {
             let mut combo = Vec::with_capacity(n);
@@ -345,7 +361,7 @@ impl Sudoku {
 
                 for si in SECTION_RANGE {
                     let sec_cells = &SECTION_INDICES[si];
-                    let sec_sums  = &self.section_digit_sum[si];
+                    //let sec_sums  = &self.section_digit_sum[si];
 
                     // TODO: continue if n > max group size in section
 
@@ -354,19 +370,12 @@ impl Sudoku {
 
                     for i in 0..n {
                         cell_combo[i] = sec_cells[combo[i]];
-                        if self.cells[cell_combo[i]].is_solved() 
-                           || self.cells[cell_combo[i]].get_count() > 4 {
-                           // TODO: check if cell is part of solved group
-                           //       w/ size <4
 
-                            check_naked = false;
-                        }
+                        check_naked = check_naked && !reject_cell[si][combo[i]];
+                        // TODO: check if cell is part of solved group
+                        //       w/ size <4
 
-                        if sec_sums[combo[i] + 1] <= 1
-                           || sec_sums[combo[i] + 1] > 4 {
-
-                            check_hidden = false;
-                        }
+                        check_hidden = check_hidden && !reject_digit[si][combo[i]];
                     }
 
                     if check_naked {    
