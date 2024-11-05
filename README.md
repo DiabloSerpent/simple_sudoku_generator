@@ -31,6 +31,8 @@ TODO:
   which other functions use to see if they should act or not
   - would need some way for all functions to process the list individually
 - needing to check Cell::has_digit twice while removing a digit is annoying
+- change Cell to use boolean vector of some sort?
+
 
 
 Helpful website:
