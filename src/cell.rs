@@ -148,7 +148,7 @@ impl Cell {
         self.0 &= !DIGIT(digit);
     }
 
-    pub fn remove_digits(&mut self, other: Cell) {
+    pub fn remove_digits(&mut self, _other: Cell) {
         unimplemented!();
     }
 
