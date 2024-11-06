@@ -17,15 +17,6 @@ TODO:
 - Fix/Formalize spacing of definitions
 - figure out a more convenient way to manage the type difference b/t
   usize and CellSize
-- optimize Sudoku::group_removal
-  - make it so that the iteration work is done in separate method
-    (for readability).
-    - need to figure out how to make it not slow
-  - store already discovered groups separately. they can be analyzed only when
-    changed, and also don't need to check outside of group for new subgroups.
-  - according to testing, the group_removal takes ~140 ms.
-    The rest of the program takes ~7 ms, ~4 ms of which is intersection_removal.
-    This means that group_removal is taking ~95% of the total runtime.
 - rename `r` in Sudoku rules to `ret`
 - maybe could make it so that modifying a cell adds them to a list
   which other functions use to see if they should act or not
@@ -34,9 +25,10 @@ TODO:
 - change Cell to use boolean vector of some sort?
 - more robust debugging
   - ie logging the state of a sudoku to a dedicated file as opposed to stdout
+  - kinda depends on rules being separate objects
 - turn the sudoku rules into separate objects
-- make an empty cell constant
 - break up logic of rules into smaller chunks
+- make it so that Sudoku::RULE_ORDER doesn't need to list the size of the array
 
 
 
