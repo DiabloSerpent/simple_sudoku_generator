@@ -6,19 +6,21 @@ use std::ops::RangeInclusive;
     bit 0: if set, cell is considered to be solved
         there should only be one digit set or none
         this also controls the meaning of bits 10-13:
-            if bit 0 is set, they signify the number and the count is 1
+            if bit 0 is set, they signify the number and the count is 1 or 0
             if unset, they signify the count of digits and the number is 0
     bit 1-9: cell can have numbers 1-9
     bit 10-13: the selected number in binary,
                or the count of the digits
-        this should never have a value above decimal 9
+        this should never have a value above decimal 9,
+            except for 0b1111, which means the count is to be ignored.
+                This only applies when the solved bit is not set.
         zero means no valid digit or no selected digit
     bit 14-15: unused
 */
 pub type CellSize = u16;
 
 #[derive(Debug, Clone, Copy)]
-pub struct Cell(pub CellSize);
+pub struct Cell(CellSize);
 
 // I actually don't know if Windows is lil-endian or big-endian.
 // I also don't care.
@@ -41,19 +43,28 @@ fn DIGIT(x: CellSize) -> CellSize {
 
 const NUM_SHIFT:   u16 = 10;
 const COUNT_SHIFT: u16 = NUM_SHIFT;
+const IGNORE_COUNT: u16 = COUNT_MASK;
 
 pub const CELL_INIT: Cell = Cell(DIGIT_MASK | (9 << COUNT_SHIFT));
 pub const CELL_EMPTY: Cell = Cell(0);
+pub const CELL_ACC: Cell = Cell(IGNORE_COUNT);
 
 
 impl Cell {
     pub fn get_number(&self) -> CellSize {
         if self.is_solved() {
+            // Add check for value?
             (self.0 & NUMBER_MASK) >> NUM_SHIFT
         }
         else {
             0
         }
+    }
+
+    // This only checks if count is off. It makes no guarentees as to
+    // the validity of count beyond it being not off.
+    pub fn count_is_off(&self) -> bool {
+        self.0 & COUNT_MASK == IGNORE_COUNT
     }
 
     pub fn get_count(&self) -> CellSize {
@@ -66,13 +77,48 @@ impl Cell {
             }
         }
         else {
+            // Add check for value?
+            debug_assert!(!self.count_is_off(), "Count should be on");
             (self.0 & COUNT_MASK) >> COUNT_SHIFT
         }
     }
 
     // private
     fn set_count(&mut self, c: CellSize) {
+        // Does not check if count is off b/c I don't want to make reset_count
+        // more complicated.
+        
+        debug_assert!(!self.is_solved(), "solved cell can't set count");
+        //debug_assert!((0 <= c && c <= 9) || c == IGNORE_COUNT);
+        // IGNORE_COUNT isn't rshifted, needs special case or consideration
+
         self.0 = (self.0 & !COUNT_MASK) | (c << COUNT_SHIFT);
+    }
+
+    pub fn reset_count(&mut self) {
+        // Cell should be unsolved
+        let mut c = 0;
+        for d in DIGIT_RANGE {
+            if self.has_digit(d) {
+                c += 1;
+            }
+        }
+
+        self.set_count(c);
+    }
+
+    pub fn inverse(&self) -> Cell {
+        debug_assert!(!self.is_solved(), "Can't take inverse of solved cell");
+
+        let mut c = Cell(!self.0 & DIGIT_MASK);
+
+        if self.count_is_off() {
+            Cell(c.0 | IGNORE_COUNT)
+        }
+        else {
+            c.set_count(9 - c.get_count());
+            c
+        }
     }
 
     pub fn has_digit(&self, digit: CellSize) -> bool {
@@ -84,18 +130,25 @@ impl Cell {
             return;
         }
 
-        self.set_count(self.get_count() + 1);
+        if !self.count_is_off() {
+            self.set_count(self.get_count() + 1);
+        }
         self.0 |= DIGIT(digit);
     }
 
     pub fn remove_digit(&mut self, digit: CellSize) {
-        // assert(digit is in digit_range);
         if self.is_solved() || !self.has_digit(digit) {
             return;
         }
 
-        self.set_count(self.get_count() - 1);
+        if !self.count_is_off() {
+            self.set_count(self.get_count() - 1);
+        }
         self.0 &= !DIGIT(digit);
+    }
+
+    pub fn remove_digits(&mut self, other: Cell) {
+        unimplemented!();
     }
 
     pub fn solve_cell(&mut self, digit: CellSize) {
@@ -121,14 +174,30 @@ impl Cell {
         (self.0 & SOLUTION_MASK) != 0
     }
 
-    #[allow(dead_code)]
-    pub fn union(&self, _c: Cell) -> Cell {
-        todo!()
+    pub fn intersects_with(&self, other: Cell) -> bool {
+        (self.0 & other.0) & DIGIT_MASK != 0
     }
 
-    #[allow(dead_code)]
-    pub fn intersection(&self, _c: Cell) -> Cell {
-        todo!()
+    pub fn union(&mut self, other: Cell) {
+        // Maybe this shouldn't panic
+        debug_assert!(!self.is_solved(), "Can't apply union to solved cell");
+
+        self.0 |= other.0 & DIGIT_MASK;
+
+        if !self.count_is_off() {
+            self.reset_count();
+        }
+    }
+
+    pub fn intersection(&mut self, other: Cell) {
+        // Maybe this shouldn't panic
+        debug_assert!(!self.is_solved(), "Can't apply intersection to solved cell");
+
+        self.0 = (self.0 & !DIGIT_MASK) | (other.0 & self.0 & DIGIT_MASK);
+
+        if !self.count_is_off() {
+            self.reset_count();
+        }
     }
 
     pub fn generate_number(&mut self) {

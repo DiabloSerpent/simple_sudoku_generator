@@ -1,5 +1,5 @@
 use crate::Sudoku;
-use crate::cell::{DIGIT_RANGE, CELL_EMPTY, Cell, CellSize};
+use crate::cell::{DIGIT_RANGE, CELL_EMPTY, CELL_ACC, Cell, CellSize};
 use crate::index_manip::*;
 
 impl Sudoku {
@@ -147,20 +147,15 @@ impl Sudoku {
                     }
 
                     if check_naked {    
-                        let mut naked_acc = Cell(0);
+                        let mut naked_acc = CELL_ACC;
     
                         for ci in &cell_combo {
-                            naked_acc.0 |= self.cells[*ci].0;
+                            naked_acc.union(self.cells[*ci]);
                         }
     
-                        let mut sum = 0;
+                        naked_acc.reset_count();
     
-                        for d in DIGIT_RANGE {
-                            sum += if naked_acc.has_digit(d) { 1 }
-                                   else { 0 };
-                        }
-    
-                        let is_naked = sum == n;
+                        let is_naked = naked_acc.get_count() == n as CellSize;
     
                         if is_naked {
                             /*println!("{}: {:?}", of_section(si), cell_combo);
@@ -199,7 +194,7 @@ impl Sudoku {
                         let mut sum = 0;
 
                         for ci in sec_cells {
-                            sum += if self.cells[*ci].0 & hidden_acc.0 != 0
+                            sum += if self.cells[*ci].intersects_with(hidden_acc)
                                    { 1 } else { 0 };
                         }
 
@@ -211,7 +206,7 @@ impl Sudoku {
 
                             if n < 4 {
                                 for i in 0..9 {
-                                    if self.cells[sec_cells[i]].0 & hidden_acc.0 != 0 {
+                                    if self.cells[sec_cells[i]].intersects_with(hidden_acc) {
                                         self.section_cell_groups[si][i] = true;
                                     }
 
@@ -222,7 +217,7 @@ impl Sudoku {
                             }
 
                             for ci in sec_cells {
-                                if self.cells[*ci].0 & hidden_acc.0 != 0 {
+                                if self.cells[*ci].intersects_with(hidden_acc) {
                                     for d in DIGIT_RANGE {
                                         if !hidden_acc.has_digit(d) && self.cells[*ci].has_digit(d) {
                                             r = true;
