@@ -43,6 +43,7 @@ const NUM_SHIFT:   u16 = 10;
 const COUNT_SHIFT: u16 = NUM_SHIFT;
 
 pub const CELL_INIT: Cell = Cell(DIGIT_MASK | (9 << COUNT_SHIFT));
+pub const CELL_EMPTY: Cell = Cell(0);
 
 
 impl Cell {

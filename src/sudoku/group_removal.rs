@@ -1,5 +1,5 @@
 use crate::Sudoku;
-use crate::cell::{DIGIT_RANGE, Cell, DIGIT, CellSize};
+use crate::cell::{DIGIT_RANGE, CELL_EMPTY, Cell, DIGIT, CellSize};
 use crate::index_manip::*;
 
 impl Sudoku {
@@ -120,7 +120,7 @@ impl Sudoku {
             let mut cell_combo  = combo.clone();
 
             loop { // for combo in choose(9, n)
-                let mut hidden_acc = Cell(0);
+                let mut hidden_acc = CELL_EMPTY;
 
                 for i in 0..n {
                     hidden_acc.0 |= DIGIT((combo[i] + 1) as CellSize);
