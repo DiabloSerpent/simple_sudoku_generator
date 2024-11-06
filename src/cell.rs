@@ -30,7 +30,7 @@ const _UNUSED_MASK:  CellSize = 0b11000000_00000000;
 
 pub const DIGIT_RANGE: RangeInclusive<CellSize> = 1..=9;
 #[allow(non_snake_case)]
-pub fn DIGIT(x: CellSize) -> CellSize {
+fn DIGIT(x: CellSize) -> CellSize {
     debug_assert!(
         *DIGIT_RANGE.start() <= x && x <= *DIGIT_RANGE.end(),
         "{x} is not a valid digit!"

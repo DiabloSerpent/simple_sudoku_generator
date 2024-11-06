@@ -1,5 +1,5 @@
 use crate::Sudoku;
-use crate::cell::{DIGIT_RANGE, CELL_EMPTY, Cell, DIGIT, CellSize};
+use crate::cell::{DIGIT_RANGE, CELL_EMPTY, Cell, CellSize};
 use crate::index_manip::*;
 
 impl Sudoku {
@@ -125,7 +125,7 @@ impl Sudoku {
                 let mut hidden_acc = CELL_EMPTY;
 
                 for i in 0..n {
-                    hidden_acc.0 |= DIGIT((combo[i] + 1) as CellSize);
+                    hidden_acc.add_digit(combo[i] as CellSize + 1);
                 }
 
                 for si in SECTION_RANGE {
