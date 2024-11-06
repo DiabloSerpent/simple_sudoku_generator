@@ -176,15 +176,17 @@ impl Sudoku {
                                     }
                                 }
                             }
+                            
+                            let inv_naked_acc = naked_acc.inverse();
 
                             for ci in sec_cells {
-                                if !cell_combo.contains(&ci) {
-                                    for d in DIGIT_RANGE {
-                                        if naked_acc.has_digit(d) && self.cells[*ci].has_digit(d) {
-                                            r = true;
-                                            self.cells[*ci].remove_digit(d);
-                                        }
-                                    }
+                                let cell = &mut self.cells[*ci];
+
+                                if !cell.is_solved()
+                                        && cell.intersects_with(inv_naked_acc)
+                                        && cell.intersects_with(naked_acc) {
+                                    r = true;
+                                    cell.intersection(inv_naked_acc);
                                 }
                             }
 
@@ -220,14 +222,16 @@ impl Sudoku {
                                 }
                             }
 
+                            let inv_hidden_acc = hidden_acc.inverse();
+
                             for ci in sec_cells {
-                                if self.cells[*ci].intersects_with(hidden_acc) {
-                                    for d in DIGIT_RANGE {
-                                        if !hidden_acc.has_digit(d) && self.cells[*ci].has_digit(d) {
-                                            r = true;
-                                            self.cells[*ci].remove_digit(d);
-                                        }
-                                    }
+                                let cell = &mut self.cells[*ci];
+
+                                if cell.is_solved()
+                                        && cell.intersects_with(hidden_acc)
+                                        && cell.intersects_with(inv_hidden_acc) {
+                                    r = true;
+                                    cell.intersection(hidden_acc);
                                 }
                             }
 
