@@ -36,6 +36,7 @@ TODO:
   - ie logging the state of a sudoku to a dedicated file as opposed to stdout
 - turn the sudoku rules into separate objects
 - make an empty cell constant
+- break up logic of rules into smaller chunks
 
 
 
