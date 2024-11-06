@@ -32,6 +32,10 @@ TODO:
   - would need some way for all functions to process the list individually
 - needing to check Cell::has_digit twice while removing a digit is annoying
 - change Cell to use boolean vector of some sort?
+- more robust debugging
+  - ie logging the state of a sudoku to a dedicated file as opposed to stdout
+- turn the sudoku rules into separate objects
+- make an empty cell constant
 
 
 
