@@ -70,32 +70,31 @@ impl Cell {
         }
     }
 
+    // private
+    fn set_count(&mut self, c: CellSize) {
+        self.0 = (self.0 & !COUNT_MASK) | (c << COUNT_SHIFT);
+    }
+
     pub fn has_digit(&self, digit: CellSize) -> bool {
         self.0 & DIGIT(digit) != 0
     }
 
-    pub fn add_digit(&self, digit: CellSize) {
+    pub fn add_digit(&mut self, digit: CellSize) {
         if self.is_solved() || self.has_digit(digit) {
             return;
         }
 
-        let c = self.get_count() + 1;
-        self.0 = (self.0 & !COUNT_MASK) | (c << COUNT_SHIFT);
+        self.set_count(self.get_count() + 1);
         self.0 |= DIGIT(digit);
     }
 
     pub fn remove_digit(&mut self, digit: CellSize) {
         // assert(digit is in digit_range);
-        if self.is_solved() {
+        if self.is_solved() || !self.has_digit(digit) {
             return;
         }
 
-        if self.has_digit(digit) {
-            let c = self.get_count() - 1;
-            self.0 = (self.0 & !COUNT_MASK) | (c << COUNT_SHIFT);
-        }
-
-        // It doesn't matter if the cell has the digit for this operation
+        self.set_count(self.get_count() - 1);
         self.0 &= !DIGIT(digit);
     }
 
