@@ -63,8 +63,6 @@ impl Sudoku {
 
         let mut r = false;
 
-        //let digit_array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
         // Eventually Important:
         //   How to tell function to ignore combos based on
         //   max group size available in section.
@@ -119,7 +117,6 @@ impl Sudoku {
 
             max.reverse();
 
-            //let mut digit_combo = combo.clone();
             let mut cell_combo  = combo.clone();
 
             loop { // for combo in choose(9, n)
@@ -131,7 +128,6 @@ impl Sudoku {
 
                 for si in SECTION_RANGE {
                     let sec_cells = &SECTION_INDICES[si];
-                    //let sec_sums  = &self.section_digit_sum[si];
 
                     // TODO: continue if n > max group size in section
 
