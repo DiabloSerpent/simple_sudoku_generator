@@ -74,6 +74,16 @@ impl Cell {
         self.0 & DIGIT(digit) != 0
     }
 
+    pub fn add_digit(&self, digit: CellSize) {
+        if self.is_solved() || self.has_digit(digit) {
+            return;
+        }
+
+        let c = self.get_count() + 1;
+        self.0 = (self.0 & !COUNT_MASK) | (c << COUNT_SHIFT);
+        self.0 |= DIGIT(digit);
+    }
+
     pub fn remove_digit(&mut self, digit: CellSize) {
         // assert(digit is in digit_range);
         if self.is_solved() {
