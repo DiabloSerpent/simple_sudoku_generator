@@ -107,6 +107,7 @@ impl Cell {
         self.set_count(c);
     }
 
+    // In set terms, the complement
     pub fn inverse(&self) -> Cell {
         debug_assert!(!self.is_solved(), "Can't take inverse of solved cell");
 
