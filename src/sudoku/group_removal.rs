@@ -11,20 +11,24 @@ impl Sudoku {
 
         // the maximum size of a group should be 4, or floor(9 / 2)
 
-        // function should return if a change is detected, but only
-        // when changing the type of section (ie rows to cols, cols to boxes)
+        // function should return immediately after solving a group
+        // if a change is detected
 
         // Def of naked group:
-        // a set of cells whose total count of digits is equal to
+        // a set of cells whose amount of unique digits is equal to
         // the size of the set.
 
         // Def of hidden group:
-        // a set of cells where the amount of digits in the group that
+        // a set of cells where the amount of unique digits in the set that
         // satisfy f(x) equals the amount of cells in the set.
         //
         // let f(x) = true if amount of cells in group that have digit x
         //                    == amount of cells in section that have digit x,
         //            false otherwise
+        // 
+        // Alt def:
+        // A set of digits whose total size equals the amount of cells in a
+        // given section that contain those digits.
 
         {/* Algorithm:
             // 2 is the min group size, 4 is the max
