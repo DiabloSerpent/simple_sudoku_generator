@@ -100,10 +100,12 @@ impl Sudoku {
             }
         }
 
-        /* The primary reason for putting the combination logic in the
+        /*
+        The primary reason for putting the combination logic in the
         outer loop is to make sure the next combo logic isn't called
         more than strictly necessary. I don't think it saves that much
-        runtime overall, but it saves some. */
+        runtime overall, but it saves some.
+        */
 
         // TODO: rename n to groupsize
         for n in 2..=4 {
