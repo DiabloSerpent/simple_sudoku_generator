@@ -26,55 +26,36 @@ impl Sudoku {
         //                    == amount of cells in section that have digit x,
         //            false otherwise
 
-        {/*Alg 3: (unimplemented)
+        {/* Algorithm:
+            // 2 is the min group size, 4 is the max
             for n in 2..=4:
+                // 9 is the max amt of cells/digits in a section
                 for combo in choose(9, n):
-                    // because naked and hidden groups have
-                    // separate detection mechanisms, I can
-                    // now remove undesired iterations with
-                    // greater accuracy.
-
-                    // For naked groups:
-                    //   a cell w/ more than 4 digits is not worth considering
-                    //   likewise for cell w/ <2 digits
-
-                    // For hidden groups:
-                    //   a digit w/ more than 4 cells is not worth considering
-                    //   likewise for digit w/ <2 cells
-
-                    // idk how exactly to implement tho.
-
                     let digit_combo = combo of digits
 
                     for section in section range:
                         let cell_combo = combo of cells in section
 
-                        for cell in cell_combo:
-                            acc |= cell
+                        let acc = a cell with all unique digits in cell_combo
 
-                        is_naked = acc.count == n
-
-                        if is_naked:
+                        if acc.count == n:
                             for cell in section:
-                                if cell isnt in cell_combo and cell has digit:
-                                    r = true
+                                if cell isnt in cell_combo
+                                        and cell intersects with acc:
                                     cell.remove_digits(acc)
 
-                            if r:
+                            if changes were made:
                                 return true
 
-                        for cell in section:
-                            sum += (digit_combo & cell) == 1
+                        let sum = amount of cells in section that
+                                    intersect with digit_combo
 
-                        is_hidden = sum == n
-
-                        if is_hidden:
+                        if sum == n:
                             for cell in section:
-                                if cell has intersection w/ digit_combo:
-                                    r = true
+                                if cell has intersection with digit_combo:
                                     cell = cell.intersect(digit_combo)
 
-                            if r:
+                            if changes were made:
                                 return true
 
             return false
@@ -94,9 +75,10 @@ impl Sudoku {
 
         // Should encompass:
         //   - cell/digit isnt solved
-        //   - cell/digit has <4 digits
+        //   - cell/digit has <4 digits/cells
         //   - cell/digit isnt part of previously discovered group
         //     - how to handle cells belonging to size 4 group?
+        //         - don't
         //   - has cell been modified?
         //     - should be handled separately
 
@@ -120,6 +102,12 @@ impl Sudoku {
             }
         }
 
+        /* The primary reason for putting the combination logic in the
+        outer loop is to make sure the next combo logic isn't called
+        more than strictly necessary. I don't think it saves that much
+        runtime overall, but it saves some. */
+
+        // TODO: rename n to groupsize
         for n in 2..=4 {
             let mut combo = Vec::with_capacity(n);
             let mut max   = Vec::with_capacity(n);
