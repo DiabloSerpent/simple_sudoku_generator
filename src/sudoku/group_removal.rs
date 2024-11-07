@@ -144,8 +144,6 @@ impl Sudoku {
                         cell_combo[i] = sec_cells[combo[i]];
 
                         check_naked = check_naked && !reject_cell[si][combo[i]];
-                        // TODO: check if cell is part of solved group
-                        //       w/ size <4
 
                         check_hidden = check_hidden && !reject_digit[si][combo[i]];
                     }
