@@ -148,7 +148,7 @@ impl Sudoku {
                         check_hidden = check_hidden && !reject_digit[si][combo[i]];
                     }
 
-                    if check_naked {    
+                    if check_naked {
                         let mut naked_acc = CELL_ACC;
     
                         for ci in &cell_combo {
