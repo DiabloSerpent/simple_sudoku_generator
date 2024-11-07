@@ -32,9 +32,8 @@ fn run_until_failure(n: u32) {
     for _ in 0..n {
         let sud = Sudoku::fill_random();
         if !sud.is_valid() {
+            sud.print_validity();
             break;
         }
     }
-
-    sud.print_validity();
 }
