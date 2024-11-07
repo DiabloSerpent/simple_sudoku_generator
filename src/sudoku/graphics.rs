@@ -92,27 +92,25 @@ const _SUDOKU_BOARD: &str = "\
 */
 
 impl Sudoku {
-    pub fn check(&self) {
-        let mut section_status = [false; 27];
-
-        let mut do_print = false;
-
-        for si in SECTION_RANGE {
-            let sums = self.section_digit_sum[si];
-
-            if sums[1..].iter().position(|&x| x != 1) != None {
-                section_status[si] = true;
-                do_print = true;
-            }
+    pub fn print_on_invalid_state(&self) {
+        if !self.is_valid() {
+            self.print_invalid_cells();
         }
+    }
 
-        if !do_print {
+    pub fn print_validity(&self) {
+        if self.is_valid() {
             println!("No invalid cells");
-            return;
         }
         else {
-            println!("Invalid solutions:");
+            self.print_invalid_cells();
         }
+    }
+
+    fn print_invalid_cells(&self) {
+        let sec_stat = self.get_section_status();
+
+        println!("Invalid solutions:");
 
         println!("       | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |");
 
@@ -123,7 +121,7 @@ impl Sudoku {
 
             let sums = self.section_digit_sum[si];
 
-            if !section_status[si] {
+            if !sec_stat[si] {
                 continue;
             }
 

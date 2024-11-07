@@ -16,14 +16,14 @@ fn run_once() {
 
     println!("{}", sud);
 
-    sud.check();
+    sud.print_validity();
 }
 
 #[allow(dead_code, unused_variables)]
 fn run_amount(n: u32) {
     for _ in 0..n {
         let sud = Sudoku::fill_random();
-        sud.check();
+        sud.print_on_invalid_state();
     }
 }
 

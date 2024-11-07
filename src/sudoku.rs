@@ -147,4 +147,42 @@ impl Sudoku {
         // This method does not modify the sudoku board
         false
     }
+
+    pub fn is_solved(&self) -> bool {
+        for i in 0..81 {
+            if !self.cells[i].is_solved() {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    pub fn get_section_status(&self) -> [bool; 27] {
+        let mut section_status = [true; 27];
+
+        for si in SECTION_RANGE {
+            let sums = self.section_digit_sum[si];
+
+            if sums[1..].iter().position(|&x| x != 1) != None {
+                section_status[si] = false;
+            }
+        }
+
+        section_status
+    }
+
+    pub fn is_valid(&self) -> bool {
+        debug_assert!(self.is_solved(), "only solved sudoku can be valid");
+
+        let sec_stat = self.get_section_status();
+
+        for b in sec_stat {
+            if !b {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
