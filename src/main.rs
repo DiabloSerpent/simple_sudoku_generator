@@ -29,5 +29,12 @@ fn run_amount(n: u32) {
 
 #[allow(dead_code, unused_variables)]
 fn run_until_failure(n: u32) {
-    //
+    for _ in 0..n {
+        let sud = Sudoku::fill_random();
+        if !sud.is_valid() {
+            break;
+        }
+    }
+
+    sud.print_validity();
 }
