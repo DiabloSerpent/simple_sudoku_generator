@@ -55,6 +55,7 @@ pub const fn of_box(box_index: BoxIndex) -> [CellIndex; 9] {
 
     r
 }
+#[allow(dead_code, unused_variables)]
 pub fn related_cells(index: CellIndex) -> [CellIndex; 21] {
     // size of returned array will be 9 + 8 + 4
     // maybe start w/ box, then add row/col?
@@ -108,6 +109,7 @@ pub const fn make_section_index() -> [[CellIndex; 9]; 27] {
     temp
 }
 
+#[allow(dead_code)]
 pub fn section_of(s: SectionType) -> SecIndex {
     match s {
         RowSection(i) => i,
