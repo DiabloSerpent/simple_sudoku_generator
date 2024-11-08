@@ -12,7 +12,7 @@ fn main() {
 }
 
 fn run_once() {
-    let sud = Sudoku::fill_random();
+    let sud = Sudoku::fill_incremental();
 
     println!("{}", sud);
 
@@ -22,7 +22,7 @@ fn run_once() {
 #[allow(dead_code, unused_variables)]
 fn run_amount(n: u32) {
     for _ in 0..n {
-        let sud = Sudoku::fill_random();
+        let sud = Sudoku::fill_incremental();
         sud.print_on_invalid_state();
     }
 }
@@ -30,7 +30,7 @@ fn run_amount(n: u32) {
 #[allow(dead_code, unused_variables)]
 fn run_until_failure(n: u32) {
     for _ in 0..n {
-        let sud = Sudoku::fill_random();
+        let sud = Sudoku::fill_incremental();
         if !sud.is_valid() {
             sud.print_validity();
             break;

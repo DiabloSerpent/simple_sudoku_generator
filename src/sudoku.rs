@@ -53,7 +53,7 @@ impl Sudoku {
         }
     }
 
-    pub fn fill_random() -> Self {
+    pub fn fill_incremental() -> Self {
         let mut s = Self::new();
 
         for i in 0..81 {
