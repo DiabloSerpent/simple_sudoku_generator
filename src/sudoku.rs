@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::cell::{Cell, CellSize, CELL_INIT, DIGIT_RANGE};
 use crate::index_manip::*;
 
@@ -66,6 +68,31 @@ impl Sudoku {
             s.solve();
 
             //println!("{s:?}");
+        }
+
+        s
+    }
+
+    pub fn fill_random() -> Self {
+        let mut s = Self::new();
+
+        let mut cell_pool = Vec::from_iter(0..81);
+
+        let mut r = rand::thread_rng();
+
+        while !cell_pool.is_empty() {
+            let i = r.gen_range(0..cell_pool.len());
+
+            if !s.cells[cell_pool[i]].is_solved() {
+
+                s.cells[cell_pool[i]].generate_number();
+            
+                s.solve();
+
+                //println!("{s:?}");
+            }
+
+            cell_pool.swap_remove(i);
         }
 
         s

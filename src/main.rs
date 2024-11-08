@@ -11,6 +11,7 @@ fn main() {
     println!("Program time: {:?}", time.elapsed());
 }
 
+#[allow(dead_code)]
 fn run_once() {
     let sud = Sudoku::fill_incremental();
 
