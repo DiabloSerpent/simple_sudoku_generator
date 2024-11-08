@@ -11,30 +11,59 @@ fn main() {
     println!("Program time: {:?}", time.elapsed());
 }
 
+fn create_sudoku() -> Sudoku {
+    Sudoku::fill_incremental()
+}
+
 #[allow(dead_code)]
 fn run_once() {
-    let sud = Sudoku::fill_incremental();
+    let sud = create_sudoku();
 
     println!("{}", sud);
 
     sud.print_validity();
 }
 
+// 1000 is usually a good number to pick
 #[allow(dead_code, unused_variables)]
-fn run_amount(n: u32) {
-    for _ in 0..n {
-        let sud = Sudoku::fill_incremental();
-        sud.print_on_invalid_state();
+fn run_amount(amt: u32) {
+    let mut failure_count = 0;
+
+    for _ in 0..amt {
+        let sud = create_sudoku();
+
+        if !sud.is_valid() {
+            sud.print_invalid_cells();
+            failure_count += 1;
+        }
     }
+
+    println!("Failure Count: {failure_count}");
 }
 
 #[allow(dead_code, unused_variables)]
-fn run_until_failure(n: u32) {
-    for _ in 0..n {
-        let sud = Sudoku::fill_incremental();
+fn run_until_failure(upper_bound: u32) {
+    let mut have_failure = false;
+    let mut success_count = 0;
+
+    for _ in 0..upper_bound {
+        let sud = create_sudoku();
+
         if !sud.is_valid() {
-            sud.print_validity();
+            println!("{sud}");
+            sud.print_invalid_cells();
+            have_failure = true;
             break;
         }
+        else {
+            success_count += 1;
+        }
+    }
+
+    if have_failure {
+        println!("Successes until failure: {success_count}");
+    }
+    else {
+        println!("No invalid state found");
     }
 }

@@ -107,7 +107,7 @@ impl Sudoku {
         }
     }
 
-    fn print_invalid_cells(&self) {
+    pub fn print_invalid_cells(&self) {
         debug_assert!(self.is_solved(), "only solved sudoku can be invalid");
 
         let sec_stat = self.get_section_status();
