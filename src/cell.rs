@@ -149,7 +149,7 @@ impl Cell {
     }
 
     pub fn remove_digits(&mut self, other: Cell) {
-        self.intersection(Cell(!other.0));
+        self.intersect_with(Cell(!other.0));
     }
 
     pub fn solve_cell(&mut self, digit: CellSize) {
@@ -175,11 +175,11 @@ impl Cell {
         (self.0 & SOLUTION_MASK) != 0
     }
 
-    pub fn intersects_with(&self, other: Cell) -> bool {
+    pub fn has_intersection(&self, other: Cell) -> bool {
         (self.0 & other.0) & DIGIT_MASK != 0
     }
 
-    pub fn union(&mut self, other: Cell) {
+    pub fn union_with(&mut self, other: Cell) {
         // Maybe this shouldn't panic
         debug_assert!(!self.is_solved(), "Can't apply union to solved cell");
 
@@ -190,7 +190,7 @@ impl Cell {
         }
     }
 
-    pub fn intersection(&mut self, other: Cell) {
+    pub fn intersect_with(&mut self, other: Cell) {
         // Maybe this shouldn't panic
         debug_assert!(!self.is_solved(), "Can't apply intersection to solved cell");
 

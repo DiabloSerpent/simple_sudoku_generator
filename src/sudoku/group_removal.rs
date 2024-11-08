@@ -152,7 +152,7 @@ impl Sudoku {
                         let mut naked_acc = CELL_ACC;
     
                         for ci in &cell_combo {
-                            naked_acc.union(self.cells[*ci]);
+                            naked_acc.union_with(self.cells[*ci]);
                         }
     
                         naked_acc.reset_count();
@@ -181,10 +181,10 @@ impl Sudoku {
                                 let cell = &mut self.cells[*ci];
 
                                 if !cell.is_solved()
-                                        && cell.intersects_with(inv_naked_acc)
-                                        && cell.intersects_with(naked_acc) {
+                                        && cell.has_intersection(inv_naked_acc)
+                                        && cell.has_intersection(naked_acc) {
                                     r = true;
-                                    cell.intersection(inv_naked_acc);
+                                    cell.intersect_with(inv_naked_acc);
                                 }
                             }
 
@@ -198,7 +198,7 @@ impl Sudoku {
                         let mut sum = 0;
 
                         for ci in sec_cells {
-                            sum += if self.cells[*ci].intersects_with(hidden_acc)
+                            sum += if self.cells[*ci].has_intersection(hidden_acc)
                                    { 1 } else { 0 };
                         }
 
@@ -210,7 +210,7 @@ impl Sudoku {
 
                             if n < 4 {
                                 for i in 0..9 {
-                                    if self.cells[sec_cells[i]].intersects_with(hidden_acc) {
+                                    if self.cells[sec_cells[i]].has_intersection(hidden_acc) {
                                         self.section_cell_groups[si][i] = true;
                                     }
 
@@ -226,10 +226,10 @@ impl Sudoku {
                                 let cell = &mut self.cells[*ci];
 
                                 if cell.is_solved()
-                                        && cell.intersects_with(hidden_acc)
-                                        && cell.intersects_with(inv_hidden_acc) {
+                                        && cell.has_intersection(hidden_acc)
+                                        && cell.has_intersection(inv_hidden_acc) {
                                     r = true;
-                                    cell.intersection(hidden_acc);
+                                    cell.intersect_with(hidden_acc);
                                 }
                             }
 
