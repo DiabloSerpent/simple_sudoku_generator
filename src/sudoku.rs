@@ -138,7 +138,7 @@ impl Sudoku {
 
     // Each rule returns true if sudoku was modified,
     // false otherwise.
-    const RULE_ORDER: [fn(&mut Self) -> bool; 6] = [
+    const RULE_ORDER: &'static [fn(&mut Self) -> bool] = &[
         Self::cell_solved,
         Self::naked_single,
         Self::update_section_digit_sum,
