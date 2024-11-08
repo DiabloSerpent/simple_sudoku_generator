@@ -2,6 +2,8 @@ use std::time::Instant;
 
 use simple_sudoku_generator::sudoku::Sudoku;
 
+const AMOUNT_RUNS: u32 = 1000;
+
 
 fn main() {
     let time = Instant::now();
@@ -24,12 +26,11 @@ fn run_once() {
     sud.print_validity();
 }
 
-// 1000 is usually a good number to pick
-#[allow(dead_code, unused_variables)]
-fn run_amount(amt: u32) {
+#[allow(dead_code)]
+fn run_amount() {
     let mut failure_count = 0;
 
-    for _ in 0..amt {
+    for _ in 0..AMOUNT_RUNS {
         let sud = create_sudoku();
 
         if !sud.is_valid() {
@@ -41,12 +42,12 @@ fn run_amount(amt: u32) {
     println!("Failure Count: {failure_count}");
 }
 
-#[allow(dead_code, unused_variables)]
-fn run_until_failure(upper_bound: u32) {
+#[allow(dead_code)]
+fn run_until_failure() {
     let mut have_failure = false;
     let mut success_count = 0;
 
-    for _ in 0..upper_bound {
+    for _ in 0..AMOUNT_RUNS {
         let sud = create_sudoku();
 
         if !sud.is_valid() {
