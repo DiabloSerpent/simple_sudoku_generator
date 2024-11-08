@@ -123,7 +123,7 @@ impl Sudoku {
 
             let sums = self.section_digit_sum[si];
 
-            if !sec_stat[si] {
+            if sec_stat[si] {
                 continue;
             }
 
