@@ -148,8 +148,8 @@ impl Cell {
         self.0 &= !DIGIT(digit);
     }
 
-    pub fn remove_digits(&mut self, _other: Cell) {
-        unimplemented!();
+    pub fn remove_digits(&mut self, other: Cell) {
+        self.intersection(Cell(!other.0));
     }
 
     pub fn solve_cell(&mut self, digit: CellSize) {
