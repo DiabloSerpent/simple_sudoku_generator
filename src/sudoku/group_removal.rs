@@ -44,8 +44,7 @@ impl Sudoku {
 
                         if acc.count == n:
                             for cell in section:
-                                if cell isnt in cell_combo
-                                        and cell intersects with acc:
+                                if cell has digits in both acc and !acc:
                                     cell.remove_digits(acc)
 
                             if changes were made:
@@ -56,7 +55,8 @@ impl Sudoku {
 
                         if sum == n:
                             for cell in section:
-                                if cell has intersection with digit_combo:
+                                if cell has digits in both digit_combo
+                                        and !digit_combo:
                                     cell = cell.intersect(digit_combo)
 
                             if changes were made:
