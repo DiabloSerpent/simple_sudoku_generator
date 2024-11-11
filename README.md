@@ -31,6 +31,8 @@ TODO:
   - for easier integration w/ the debugger
   - I don't think adding it as a rule is desirable, although just making it the last rule would be logically correct.
 - Make it so that the digit removal methods in Cell return whether or not a change was detected for greater consolidation of code
+- update intersection_removal to use Cell::remove_digits
+- add optimized run option
 
 
 
