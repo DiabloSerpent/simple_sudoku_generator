@@ -13,6 +13,7 @@ TODO:
 - Fix/Formalize spacing of definitions
 - figure out a more convenient way to manage the type difference b/t
   usize and CellSize
+  - maybe just make the CellSize larger?
 - rename `r` in Sudoku rules to `ret`
 - maybe could make it so that modifying a cell adds them to a list
   which other functions use to see if they should act or not
