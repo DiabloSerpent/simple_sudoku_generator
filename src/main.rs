@@ -2,24 +2,23 @@ use std::time::Instant;
 
 use simple_sudoku_generator::sudoku::Sudoku;
 
-const AMOUNT_RUNS: u32 = 1000;
+// Program modifiers
+const AMOUNT_RUNS:   u32            = 1000;
+const RUN_FUNC:      fn()           = run_once;
+const CREATE_SUDOKU: fn() -> Sudoku = Sudoku::fill_incremental;
 
 
 fn main() {
     let time = Instant::now();
 
-    run_once();
+    RUN_FUNC();
     
     println!("Program time: {:?}", time.elapsed());
 }
 
-fn create_sudoku() -> Sudoku {
-    Sudoku::fill_incremental()
-}
-
 #[allow(dead_code)]
 fn run_once() {
-    let sud = create_sudoku();
+    let sud = CREATE_SUDOKU();
 
     println!("{}", sud);
 
@@ -31,7 +30,7 @@ fn run_amount() {
     let mut failure_count = 0;
 
     for _ in 0..AMOUNT_RUNS {
-        let sud = create_sudoku();
+        let sud = CREATE_SUDOKU();
 
         if !sud.is_valid() {
             sud.print_invalid_cells();
@@ -48,7 +47,7 @@ fn run_until_failure() {
     let mut success_count = 0;
 
     for _ in 0..AMOUNT_RUNS {
-        let sud = create_sudoku();
+        let sud = CREATE_SUDOKU();
 
         if !sud.is_valid() {
             println!("{sud}");
