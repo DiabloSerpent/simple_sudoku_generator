@@ -33,8 +33,9 @@ TODO:
   - I don't think adding it as a rule is desirable, although just making it the last rule would be logically correct.
 - Make it so that the digit removal methods in Cell return whether or not a change was detected for greater consolidation of code
 - update intersection_removal to use Cell::remove_digits
-- add optimized run option to sublime text
 - split up section_digit_sum
+- Figure out what's causing the fill_incremental method to fail 0.2% of the time
+- impl clippy suggestions
 
 
 
