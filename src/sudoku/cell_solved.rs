@@ -1,5 +1,5 @@
 use crate::Sudoku;
-use crate::sudoku::CELL_SOLVED;
+use crate::sudoku::CellSize;
 use crate::index_manip::*;
 
 
