@@ -141,19 +141,21 @@ impl Cell {
         self.0 |= DIGIT(digit);
     }
 
-    pub fn remove_digit(&mut self, digit: CellSize) {
+    pub fn remove_digit(&mut self, digit: CellSize) -> bool {
         if self.is_solved() || !self.has_digit(digit) {
-            return;
+            return false;
         }
 
         if !self.count_is_off() {
             self.set_count(self.get_count() - 1);
         }
         self.0 &= !DIGIT(digit);
+
+        true
     }
 
-    pub fn remove_digits(&mut self, other: Cell) {
-        self.intersect_with(Cell(!other.0));
+    pub fn remove_digits(&mut self, other: Cell) -> bool {
+        self.intersect_with(Cell(!other.0))
     }
 
     pub fn solve_cell(&mut self, digit: CellSize) {
@@ -196,26 +198,39 @@ impl Cell {
         (self.0 & other.0) & DIGIT_MASK != 0
     }
 
-    pub fn union_with(&mut self, other: Cell) {
+    pub fn union_with(&mut self, other: Cell) -> bool {
         // Maybe this shouldn't panic
         debug_assert!(!self.is_solved(), "Can't apply union to solved cell");
 
+        let save = self.0;
+
         self.0 |= other.0 & DIGIT_MASK;
 
-        if !self.count_is_off() {
+        let r = self.0 != save;
+
+        if r && !self.count_is_off() {
             self.reset_count();
         }
+
+        r
     }
 
-    pub fn intersect_with(&mut self, other: Cell) {
+    pub fn intersect_with(&mut self, other: Cell) -> bool {
         // Maybe this shouldn't panic
-        debug_assert!(!self.is_solved(), "Can't apply intersection to solved cell");
+        debug_assert!(!self.is_solved(),
+            "Can't apply intersection to solved cell");
+
+        let save = self.0;
 
         self.0 &= other.0 | !DIGIT_MASK;
 
-        if !self.count_is_off() {
+        let r = self.0 != save
+
+        if r && !self.count_is_off() {
             self.reset_count();
         }
+
+        r
     }
 
     pub fn generate_number(&mut self) {
