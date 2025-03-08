@@ -28,14 +28,12 @@ TODO:
   - ie it measures how much difference there is b/t a solved sudoku and a given sudoku
 - make a gui for looking through sudoku history for debugging
   - or maybe just add some character to the middle of the sudoku for easy ctrl+f
-- Make the randomly solving a cell a rule or more like a rule
-  - for easier integration w/ the debugger
-  - I don't think adding it as a rule is desirable, although just making it the last rule would be logically correct.
 - Make it so that the digit removal methods in Cell return whether or not a change was detected for greater consolidation of code
 - update intersection_removal to use Cell::remove_digits
 - split up section_digit_sum
 - Figure out what's causing the fill_incremental method to fail 0.2% of the time
 - impl clippy suggestions
+- turn Sudoku::cell_flags into an array of bools called `solved_and_checked`
 
 
 
