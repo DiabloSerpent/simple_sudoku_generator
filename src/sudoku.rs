@@ -2,7 +2,7 @@ use rand::Rng;
 
 use crate::cell::{Cell, CellSize, CELL_INIT, DIGIT_RANGE};
 use crate::index_manip::*;
-use crate::history::{HistoryEntry, CellChange};
+use crate::history::{HistoryEntry, EntryType};
 
 mod cell_solved;
 mod hidden_single;
@@ -104,11 +104,9 @@ impl Sudoku {
     fn rs_cell(&mut self, c: usize) {
         self.cells[c].generate_number();
 
-        self.history.push(HistoryEntry::new(
-            "RS Cell",
-            vec![c],
-            self.cells[c],
-            vec![CellChange {id: c, new_cell: self.cells[c]}]));
+        self.history.push(HistoryEntry::from_solution(
+            EntryType::RsCell, c, self.cells[c]));
+        //println!("{}\n{:?}", self.history.last().unwrap(), self);
     }
 
     /*fn generate_subgroups() -> [Vec<Vec<usize>>; 27] {
