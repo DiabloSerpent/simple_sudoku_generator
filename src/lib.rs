@@ -1,5 +1,6 @@
-mod cell;
+pub mod cell;
 mod index_manip;
+pub mod history;
 pub mod sudoku;
 
 use crate::sudoku::Sudoku;

@@ -2,6 +2,7 @@ use rand::Rng;
 
 use crate::cell::{Cell, CellSize, CELL_INIT, DIGIT_RANGE};
 use crate::index_manip::*;
+use crate::history::{HistoryEntry, CellChange};
 
 mod cell_solved;
 mod hidden_single;
@@ -17,6 +18,7 @@ pub struct Sudoku {
     section_digit_sum: [[CellSize; 10]; 27],
     section_cell_groups: [[bool; 9]; 27],
     section_digit_groups: [[bool; 9]; 27],
+    pub history: Vec<HistoryEntry>,
 }
 
 /* Structure:
@@ -52,6 +54,7 @@ impl Sudoku {
             section_digit_sum: [[0; 10]; 27],
             section_cell_groups: [[false; 9]; 27],
             section_digit_groups: [[false; 9]; 27],
+            history: Vec::with_capacity(1000),
         }
     }
 
@@ -100,6 +103,12 @@ impl Sudoku {
 
     fn rs_cell(&mut self, c: usize) {
         self.cells[c].generate_number();
+
+        self.history.push(HistoryEntry::new(
+            "RS Cell",
+            vec![c],
+            self.cells[c],
+            vec![CellChange {id: c, new_cell: self.cells[c]}]));
     }
 
     /*fn generate_subgroups() -> [Vec<Vec<usize>>; 27] {
