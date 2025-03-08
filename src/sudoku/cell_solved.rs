@@ -1,5 +1,7 @@
 use crate::Sudoku;
 use crate::sudoku::CellSize;
+use crate::cell::CELL_ACC;
+use crate::history::{HistoryEntry, CellChange, EntryType};
 use crate::index_manip::*;
 
 
@@ -32,12 +34,18 @@ impl Sudoku {
                     of_box(box_of(i))
                 );
 
+                let mut changes: Vec<usize> = vec![];
+
                 // Cell::remove_digit will check if the cell is solved;
                 // the newly solved cell won't be zeroed by this.
                 for j in 0..9 {
-                    self.cells[irow[j]].remove_digit(to_remove);
-                    self.cells[icol[j]].remove_digit(to_remove);
-                    self.cells[ibox[j]].remove_digit(to_remove);
+                    for c in [irow[j], icol[j], ibox[j]] {
+                        self.handle_removal(c, to_remove, &mut changes);
+                    }
+                }
+
+                if changes.len() > 0 {
+                    self.update_history(i, to_remove, changes);
                 }
             }
         }
@@ -46,5 +54,28 @@ impl Sudoku {
         // so it will never need to loop back
         // to itself. (assuming it always goes first!)
         false
+    }
+
+    // module private
+    fn handle_removal(&mut self, c: usize, d: CellSize, v: &mut Vec<usize>) {
+        if self.cells[c].remove_digit(d) {
+            v.push(c);
+        }
+    }
+
+    // module private
+    fn update_history(&mut self, c: usize, d: CellSize, v: Vec<usize>) {
+        let changes = v.iter().map(|e| {
+            CellChange { id: *e, new_cell: self.cells[*e] }}).collect();
+
+        let mut digit = CELL_ACC.clone();
+        digit.add_digit(d);
+
+        self.history.push(HistoryEntry::new(
+            EntryType::CellSolved,
+            vec![c],
+            digit,
+            changes));
+        //println!("{}\n{:?}", self.history.last().unwrap(), self);
     }
 }

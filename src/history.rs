@@ -6,6 +6,7 @@ use crate::cell::Cell;
 #[derive(Debug)]
 pub enum EntryType {
     RsCell,
+    CellSolved,
     NakedSingle,
     HiddenSingle,
     IntersectionRemoval,
