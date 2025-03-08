@@ -63,7 +63,7 @@ impl Sudoku {
                 continue;
             }
 
-            s.cells[i].generate_number();
+            s.rs_cell(i);
 
             s.solve();
 
@@ -85,7 +85,7 @@ impl Sudoku {
 
             if !s.cells[cell_pool[i]].is_solved() {
 
-                s.cells[cell_pool[i]].generate_number();
+                s.rs_cell(cell_pool[i]);
             
                 s.solve();
 
@@ -96,6 +96,10 @@ impl Sudoku {
         }
 
         s
+    }
+
+    fn rs_cell(&mut self, c: usize) {
+        self.cells[c].generate_number();
     }
 
     /*fn generate_subgroups() -> [Vec<Vec<usize>>; 27] {
