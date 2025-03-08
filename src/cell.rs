@@ -245,6 +245,6 @@ impl Cell {
 
 impl fmt::Display for Cell {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Cell({:0>16b})", self.0)
+        write!(f, "Cell({:0>14b})", self.0)
     }
 }
