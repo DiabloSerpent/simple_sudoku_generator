@@ -224,7 +224,7 @@ impl Cell {
 
         self.0 &= other.0 | !DIGIT_MASK;
 
-        let r = self.0 != save
+        let r = self.0 != save;
 
         if r && !self.count_is_off() {
             self.reset_count();
