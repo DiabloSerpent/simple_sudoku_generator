@@ -18,7 +18,7 @@ impl HistoryEntry {
         }
     }
 
-    pub fn from_solution(cell_index: usize, cell: Cell) -> RetType {
+    pub fn from_solution(cell_index: usize, cell: Cell) -> Self {
         unimplemented!();
     }
 }
