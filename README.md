@@ -33,7 +33,6 @@ TODO:
 - split up section_digit_sum
 - Figure out what's causing the fill_incremental method to fail 0.2% of the time
 - impl clippy suggestions
-- turn Sudoku::cell_flags into an array of bools called `solved_and_checked`
 
 
 

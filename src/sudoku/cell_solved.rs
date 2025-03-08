@@ -16,10 +16,9 @@ impl Sudoku {
         // 
         // Struct memory usage: 81 bools
         for i in 0..81 {
-            if (self.cell_flags[i] & CELL_SOLVED) == 0
-               && self.cells[i].is_solved() {
+            if !self.solved_cell_checked[i] && self.cells[i].is_solved() {
 
-                self.cell_flags[i] |= CELL_SOLVED;
+                self.solved_cell_checked[i] = true;
 
                 let to_remove = self.cells[i].get_number();
 

@@ -14,7 +14,7 @@ mod graphics;
 pub struct Sudoku {
     // May want to replace array w/ set or smth
     pub cells: [Cell; 81],
-    cell_flags: [u8; 81],
+    solved_cell_checked: [bool; 81],
     section_digit_sum: [[CellSize; 10]; 27],
     section_cell_groups: [[bool; 9]; 27],
     section_digit_groups: [[bool; 9]; 27],
@@ -50,7 +50,7 @@ impl Sudoku {
     pub fn new() -> Self {
         Self {
             cells: [CELL_INIT; 81],
-            cell_flags: [0; 81],
+            solved_cell_checked: [false; 81],
             section_digit_sum: [[0; 10]; 27],
             section_cell_groups: [[false; 9]; 27],
             section_digit_groups: [[false; 9]; 27],
