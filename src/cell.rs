@@ -126,6 +126,10 @@ impl Cell {
         self.0 & DIGIT(digit) != 0
     }
 
+    pub fn get_digits(&self) -> CellSize {
+        (self.0 & DIGIT_MASK) >> 1
+    }
+
     pub fn add_digit(&mut self, digit: CellSize) {
         if self.is_solved() || self.has_digit(digit) {
             return;
@@ -173,6 +177,19 @@ impl Cell {
 
     pub fn is_solved(&self) -> bool {
         (self.0 & SOLUTION_MASK) != 0
+    }
+
+    pub fn get_unsolved_copy(&self) -> Cell {
+        let mut c = Cell(self.0);
+
+        if !self.is_solved() {
+            return c;
+        }
+
+        c.0 &= !SOLUTION_MASK & !NUMBER_MASK;
+        c.set_count(1);
+
+        c
     }
 
     pub fn has_intersection(&self, other: Cell) -> bool {
