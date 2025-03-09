@@ -271,4 +271,67 @@ impl Sudoku {
 
         false
     }
+
+    pub fn group_removal_new(&mut self) -> bool {
+        {/* New Algorithm:
+            // first, collect all the different groups for each section which
+            // have no overlapping digits.
+
+            section_subsections: [Vec<Vec<usize>>; 27]
+
+            for each section in section range:
+                let sec_cells = vec copy of cells in section
+
+                subsections = vec![vec![CELL_EMPTY]]
+                    // the first cell in each subsection will be
+                    // the accumulator which is used to detect whether
+                    // a cell belongs or not.
+
+                subsections[0][0].union_with(first cell in sec_cells)
+                subsections[0].push(first cell)
+
+                remove first cell from sec_cells
+
+                for subsection in subsections:
+                    while cells have intersection w/ subsection:
+                        for cell in sec_cells:
+                            if cell intersects with acc:
+                                move cell from sec_cells to subsection
+                            else if cell is solved or has >4 digits:
+                                remove cell from sec_cells
+
+            // alright, onto the real stuff
+
+            for sbs in subsections:
+                for pos in 1..sbs.len()-1:
+                    g = findGroups(sbs[1..], cell at pos, 1, pos)
+                    if g is not null:
+                        removeDigits(section cells, g)
+                        continue to next sbs
+
+            findGroups(id_list: vec<CellSize>, acc: Cell, cell_count, cid):
+                if acc.count or cell_count is > (length of id_list / 2)
+                    return null
+                if acc.count == cell_count:
+                    g = [CELL_EMPTY; cell_count]
+                    g[last] = id_list[cid]
+                    return g
+
+                for id after cid:
+                    g = findGroups(id_list, acc.intersect(cell at id),
+                            cell_count+1, id)
+                    if g is not null, return g
+                return null
+
+            removeDigits(section: [Cell; 9], g: Vec<Cell>):
+                // idk yet.
+                // but I think it should be easy enough.
+        */}
+
+        let mut r = false;
+
+        // code eventually
+
+        r
+    }
 }
