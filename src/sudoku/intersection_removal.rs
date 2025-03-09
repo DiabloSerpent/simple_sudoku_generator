@@ -12,7 +12,7 @@ impl Sudoku {
 
         let mut r = false;
 
-        for si in 0..18 {
+        for si in SECTION_ROW_START..SECTION_COL_END {
             // Only check section if there are at least 2 unsolved cells
             if self.section_digit_sum[si][0] < 2 {
                 continue;
@@ -78,7 +78,7 @@ impl Sudoku {
             }
         }
 
-        for si in 18..27 {
+        for si in SECTION_BOX_START..SECTION_BOX_END {
             if self.section_digit_sum[si][0] < 2 {
                 continue;
             }
