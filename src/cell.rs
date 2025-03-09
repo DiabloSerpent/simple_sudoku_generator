@@ -67,6 +67,11 @@ impl Cell {
         self.0 & COUNT_MASK == IGNORE_COUNT
     }
 
+    pub fn turn_count_off(&mut self) {
+        // This kinda relies on IGNORE_COUNT being all 1s but whatever
+        self.0 |= IGNORE_COUNT;
+    }
+
     pub fn get_count(&self) -> CellSize {
         if self.is_solved() {
             if self.0 & DIGIT_MASK == 0 {
@@ -89,14 +94,17 @@ impl Cell {
         // more complicated.
         
         debug_assert!(!self.is_solved(), "solved cell can't set count");
-        //debug_assert!((0 <= c && c <= 9) || c == IGNORE_COUNT);
-        // IGNORE_COUNT isn't rshifted, needs special case or consideration
+        // According to rust compiler, c must be >= 0 b/c of its type
+        // so checking it is pointless. However, it should be noted
+        // that c should be >= 0.
+        debug_assert!(c <= 9);
 
         self.0 = (self.0 & !COUNT_MASK) | (c << COUNT_SHIFT);
     }
 
     pub fn reset_count(&mut self) {
         // Cell should be unsolved
+
         let mut c = 0;
         for d in DIGIT_RANGE {
             if self.has_digit(d) {
@@ -198,37 +206,50 @@ impl Cell {
         (self.0 & other.0) & DIGIT_MASK != 0
     }
 
-    pub fn union_with(&mut self, other: Cell) -> bool {
+    pub fn union(&self, other: Cell) -> Cell {
         // Maybe this shouldn't panic
-        debug_assert!(!self.is_solved(), "Can't apply union to solved cell");
+        debug_assert!(!self.is_solved() && !other.is_solved(),
+            "Can't apply union to solved cell");
 
-        let save = self.0;
+        let mut c = Cell(self.0 | (other.0 & DIGIT_MASK));
 
-        self.0 |= other.0 & DIGIT_MASK;
-
-        let r = self.0 != save;
-
-        if r && !self.count_is_off() {
-            self.reset_count();
+        if c.0 != self.0 && !c.count_is_off() {
+            c.reset_count();
         }
+
+        c
+    }
+
+    pub fn intersect(&self, other: Cell) -> Cell {
+        // Maybe this shouldn't panic
+        debug_assert!(!self.is_solved() && !other.is_solved(),
+            "Can't apply intersection to solved cell");
+
+        let mut c = Cell(self.0 & (other.0 | !DIGIT_MASK));
+
+        if c.0 != self.0 && !c.count_is_off() {
+            c.reset_count();
+        }
+
+        c
+    }
+
+    pub fn union_with(&mut self, other: Cell) -> bool {
+        let nc = self.union(other);
+
+        let r = self.0 != nc.0;
+
+        self.0 = nc.0;
 
         r
     }
 
     pub fn intersect_with(&mut self, other: Cell) -> bool {
-        // Maybe this shouldn't panic
-        debug_assert!(!self.is_solved(),
-            "Can't apply intersection to solved cell");
+        let nc = self.intersect(other);
 
-        let save = self.0;
+        let r = self.0 != nc.0;
 
-        self.0 &= other.0 | !DIGIT_MASK;
-
-        let r = self.0 != save;
-
-        if r && !self.count_is_off() {
-            self.reset_count();
-        }
+        self.0 = nc.0;
 
         r
     }
