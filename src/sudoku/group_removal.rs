@@ -344,12 +344,12 @@ impl Sudoku {
         let mut r = false;
 
         //println!("##################################################");
-        //let mut has_sbs = false;
 
         for si in SECTION_RANGE {
             let sec_cells = &SECTION_INDICES[si];
 
-            let subsections = self.get_subsections(Vec::from(sec_cells));
+            let subsections = self.get_subsections(sec_cells);
+            //println!("{:?}", subsections);
 
             for sb in &subsections {
                 let mgs = max_group_size_of(sb.len());
@@ -360,19 +360,24 @@ impl Sudoku {
                 
                 for pos in 0..sb.len()-1 {
                     let mb = self.find_groups(sb, self.cells[sb[pos]], 1, pos);
-                    
+
                     if let Some(g) = mb {
-                        self.remove_digits(*sec_cells, g);
+                        r = self.remove_digits(sec_cells, g) || r;
                         break;
                     }
                 }
+            }
+
+            if r {
+                break;
             }
         }
 
         r
     }
 
-    fn get_subsections(&self, mut sec_cells: Vec<usize>) -> Vec<Vec<usize>> {
+    fn get_subsections(&self, sec_cells: &[usize; 9]) -> Vec<Vec<usize>> {
+        let mut sec_cells = Vec::from(sec_cells);
         let mut sbs_acc = vec![CELL_ACC];
         let mut sbs = vec![];
 
@@ -438,7 +443,7 @@ impl Sudoku {
         Some(vec![])
     }
 
-    fn remove_digits(&mut self, section: [usize; 9], g: Vec<usize>) {
-        ()
+    fn remove_digits(&mut self, section: &[usize; 9], g: Vec<usize>) -> bool {
+        false
     }
 }
