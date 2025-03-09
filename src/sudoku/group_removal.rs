@@ -358,6 +358,7 @@ impl Sudoku {
                     continue;
                 }
                 
+                //println!("{sb:?}");
                 for pos in 0..sb.len()-1 {
                     let mb = self.find_groups(sb, self.cells[sb[pos]], 1, pos);
 
@@ -386,7 +387,7 @@ impl Sudoku {
             let cell = self.cells[sec_cells[ci]];
 
             if cell.is_solved()
-                    || usize::from(cell.get_count()) > MAX_GROUP_SIZE {
+                    /*|| usize::from(cell.get_count()) > MAX_GROUP_SIZE*/ {
                 sec_cells.swap_remove(ci);
             }
             else {
@@ -439,11 +440,40 @@ impl Sudoku {
     }
 
     fn find_groups(&self, id_list: &Vec<usize>, acc: Cell,
-                    cell_count: u32, cid: usize) -> Option<Vec<usize>> {
-        Some(vec![])
+                    cell_count: usize, cid: usize) -> Option<Vec<usize>> {
+        let mgs = max_group_size_of(id_list.len());
+        //println!("count: {cell_count}  cid: {cid}  cell: {}", id_list[cid]);
+
+        // Rust's handling of integers is kinda getting on my nerves
+        let acc_count = usize::from(acc.get_count());
+
+        if acc_count > mgs || cell_count > mgs {
+            return None;
+        }
+        else if acc_count == cell_count {
+            let mut output = vec![0; cell_count];
+
+            output[cell_count-1] = id_list[cid];
+            //println!("\ncid: {} cell_id: {}", cid, id_list[cid]);
+
+            return Some(output);
+        }
+
+        for nid in (cid+1)..id_list.len() {
+            if let Some(mut output) = self.find_groups(
+                    id_list, acc.union(self.cells[id_list[nid]]),
+                    cell_count+1, nid) {
+                output[cell_count-1] = id_list[cid];
+                //println!("cid: {} cell_id: {}", cid, id_list[cid]);
+                return Some(output);
+            }
+        }
+
+        None
     }
 
     fn remove_digits(&mut self, section: &[usize; 9], g: Vec<usize>) -> bool {
+        //println!("{:?}\n{self:?}", g);
         false
     }
 }
