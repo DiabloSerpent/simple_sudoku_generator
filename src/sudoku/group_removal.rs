@@ -1,6 +1,15 @@
 use crate::Sudoku;
-use crate::cell::{CELL_EMPTY, CELL_ACC, CellSize};
+use crate::cell::{Cell, CELL_EMPTY, CELL_ACC, CellSize};
 use crate::index_manip::*;
+
+
+const MIN_GROUP_SIZE: usize = 2;
+const MAX_GROUP_SIZE: usize = 4;
+
+fn max_group_size_of(s: usize) -> usize {
+    s / 2
+}
+
 
 impl Sudoku {
     pub fn group_removal(&mut self) -> bool {
@@ -273,6 +282,10 @@ impl Sudoku {
     }
 
     pub fn group_removal_new(&mut self) -> bool {
+        // This alg only handles naked groups, but I think it should
+        // be easy enough to modify for hidden groups if I get a lil
+        // wacky with it.
+
         {/* New Algorithm:
             // first, collect all the different groups for each section which
             // have no overlapping digits.
@@ -330,8 +343,93 @@ impl Sudoku {
 
         let mut r = false;
 
-        // code eventually
+        //println!("##################################################");
+        //let mut has_sbs = false;
+
+        for si in SECTION_RANGE {
+            let sec_cells = &SECTION_INDICES[si];
+
+            let subsections = self.get_subsections(Vec::from(sec_cells));
+
+            for sb in &subsections {
+                let mgs = max_group_size_of(sb.len());
+
+                if mgs < MIN_GROUP_SIZE {
+                    continue;
+                }
+                //
+            }
+        }
 
         r
+    }
+
+    fn get_subsections(&self, mut sec_cells: Vec<usize>) -> Vec<Vec<usize>> {
+        let mut sbs_acc = vec![CELL_ACC];
+        let mut sbs = vec![];
+
+        let mut ci = 0;
+        while ci < sec_cells.len() {
+            let cell = self.cells[sec_cells[ci]];
+
+            if cell.is_solved() || cell.get_count() > 4 {
+                sec_cells.swap_remove(ci);
+            }
+            else {
+                ci += 1;
+            }
+        }
+
+        if sec_cells.is_empty() {
+            return sbs;
+        }
+
+        sbs_acc[0].union_with(self.cells[sec_cells[0]]);
+        sbs.push(vec![sec_cells.swap_remove(0)]);
+
+        let mut sbsi = 0;
+        while sbsi < sbs.len() {
+            let sb  = &mut sbs[sbsi];
+            let acc = &mut sbs_acc[sbsi];
+
+            let mut has_intersection = true;
+            while has_intersection {
+                has_intersection = false;
+
+                let mut ci = 0;
+                while ci < sec_cells.len() {
+                    let cell = self.cells[sec_cells[ci]];
+
+                    if cell.has_intersection(*acc) {
+                        acc.union_with(cell);
+                        sb.push(sec_cells.swap_remove(ci));
+                        has_intersection = true;
+                    }
+
+                    ci += 1;
+                }
+            }
+
+            if sec_cells.is_empty() {
+                break;
+            }
+
+            sbs_acc.push(CELL_ACC);
+            sbs_acc[sbsi+1].union_with(self.cells[sec_cells[0]]);
+            sbs.push(vec![sec_cells.swap_remove(0)]);
+            
+            sbsi += 1;
+        }
+
+        sbs
+    }
+
+    fn find_groups(id_list: Vec<CellSize>, acc: Cell,
+                    cell_count: u32, cid: usize) {
+        unimplemented!();
+    }
+
+    fn remove_digits(section: [Cell; 9], g: Vec<Cell>) {
+        unimplemented!();
     }
 }

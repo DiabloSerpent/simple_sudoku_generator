@@ -156,6 +156,7 @@ impl Sudoku {
         Self::hidden_single,
         Self::intersection_removal,
         Self::group_removal,
+        //Self::group_removal_new,
     ];
 
     fn update_section_digit_sum(&mut self) -> bool {
