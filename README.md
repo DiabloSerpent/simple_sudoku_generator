@@ -28,11 +28,11 @@ TODO:
   - ie it measures how much difference there is b/t a solved sudoku and a given sudoku
 - make a gui for looking through sudoku history for debugging
   - or maybe just add some character to the middle of the sudoku for easy ctrl+f
-- Make it so that the digit removal methods in Cell return whether or not a change was detected for greater consolidation of code
 - update intersection_removal to use Cell::remove_digits
 - split up section_digit_sum
 - Figure out what's causing the fill_incremental method to fail 0.2% of the time
 - impl clippy suggestions
+- update Sudoku structure comment to remove cell_flag
 
 
 
