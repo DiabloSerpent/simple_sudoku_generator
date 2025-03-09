@@ -357,7 +357,15 @@ impl Sudoku {
                 if mgs < MIN_GROUP_SIZE {
                     continue;
                 }
-                //
+                
+                for pos in 0..sb.len()-1 {
+                    let mb = self.find_groups(sb, self.cells[sb[pos]], 1, pos);
+                    
+                    if let Some(g) = mb {
+                        self.remove_digits(*sec_cells, g);
+                        break;
+                    }
+                }
             }
         }
 
@@ -372,7 +380,8 @@ impl Sudoku {
         while ci < sec_cells.len() {
             let cell = self.cells[sec_cells[ci]];
 
-            if cell.is_solved() || cell.get_count() > 4 {
+            if cell.is_solved()
+                    || usize::from(cell.get_count()) > MAX_GROUP_SIZE {
                 sec_cells.swap_remove(ci);
             }
             else {
@@ -424,12 +433,12 @@ impl Sudoku {
         sbs
     }
 
-    fn find_groups(id_list: Vec<CellSize>, acc: Cell,
-                    cell_count: u32, cid: usize) {
-        unimplemented!();
+    fn find_groups(&self, id_list: &Vec<usize>, acc: Cell,
+                    cell_count: u32, cid: usize) -> Option<Vec<usize>> {
+        Some(vec![])
     }
 
-    fn remove_digits(section: [Cell; 9], g: Vec<Cell>) {
-        unimplemented!();
+    fn remove_digits(&mut self, section: [usize; 9], g: Vec<usize>) {
+        ()
     }
 }
