@@ -474,6 +474,23 @@ impl Sudoku {
 
     fn remove_digits(&mut self, section: &[usize; 9], g: Vec<usize>) -> bool {
         //println!("{:?}\n{self:?}", g);
+
+        let mut acc = CELL_ACC;
+
+        for cid in g {
+            acc.union_with(self.cells[cid]);
+        }
+
+        let inv_acc = acc.inverse();
+
+        for sid in *section {
+            let cell = self.cells[sid];
+
+            if cell.has_intersection(acc) && cell.has_intersection(inv_acc) {
+                self.cells[sid].remove_digits(acc);
+            }
+        }
+
         false
     }
 }
