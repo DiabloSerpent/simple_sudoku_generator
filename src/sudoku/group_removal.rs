@@ -14,6 +14,46 @@ fn max_group_size_of(s: usize) -> usize {
     s - 2
 }
 
+#[derive(Debug)]
+struct Subsection {
+    acc: Cell,
+    total_cells: usize,
+    cand_cells: Vec<Cell>,
+    cand_ids: Vec<usize>,
+    mgs: usize,
+}
+
+impl Subsection {
+    fn new() -> Self {
+        Self {
+            acc: CELL_ACC,
+            total_cells: 0,
+            cand_cells: Vec::with_capacity(9),
+            cand_ids: Vec::with_capacity(9),
+            mgs: 0,
+        }
+    }
+
+    fn add_cell(&mut self, cid: usize, c: Cell) {
+        self.acc.union_with(c);
+        if usize::from(c.get_count()) < MAX_GROUP_SIZE {
+            self.cand_ids.push(cid);
+            self.cand_cells.push(c);
+        }
+        
+        self.total_cells += 1;
+    }
+
+    fn cell_belongs(&self, c: Cell) -> bool {
+        self.acc.has_intersection(c)
+    }
+
+    fn calc_mgs(&mut self) {
+        self.mgs = min(self.cand_ids.len(),
+                        max_group_size_of(self.total_cells));
+    }
+}
+
 
 impl Sudoku {
     pub fn group_removal(&mut self) -> bool {
@@ -349,38 +389,54 @@ impl Sudoku {
 
         let mut r = false;
 
-        //println!("##################################################");
+        // println!("##################################################");
 
         for si in SECTION_RANGE {
             let sec_cells = &SECTION_INDICES[si];
 
-            let subsections = self.get_subsections(sec_cells);
-            //println!("{:?}", subsections);
+            let mut vec_sc = Vec::from(sec_cells);
 
-            let mut total_unsolved = 0;
-            for sc in *sec_cells {
-                if !self.cells[sc].is_solved() {
-                    total_unsolved += 1;
+            let mut i = 0;
+            while i < vec_sc.len() {
+                if self.cells[vec_sc[i]].is_solved() {
+                    vec_sc.swap_remove(i);
+                }
+                else {
+                    i += 1;
                 }
             }
 
-            if total_unsolved < MIN_GROUP_SIZE {
+            if vec_sc.len() <= MIN_GROUP_SIZE {
                 continue;
             }
 
-            let section_mgs = max_group_size_of(total_unsolved);
+            let section_mgs = max_group_size_of(vec_sc.len());
+
+            if section_mgs < MIN_GROUP_SIZE {
+                continue;
+            }
+
+            // println!("{}: {vec_sc:?}", of_section(si));
+
+            let subsections = self.get_subsections(vec_sc);
+            // println!("{:?}", subsections);
 
             for sb in &subsections {
-                if sb.len() < MIN_GROUP_SIZE {
+                if sb.mgs < MIN_GROUP_SIZE {
                     continue;
                 }
+                // println!("{sb:?}");
 
                 //let mgs = max_group_size_of(sb.len());
                 
                 //println!("{sb:?}");
-                for pos in 0..sb.len()-1 {
-                    let mb = self.find_groups(sb, self.cells[sb[pos]], 1,
-                                pos, section_mgs);
+                for pos in 0..sb.cand_ids.len()-1 {
+                    // println!("  {pos}  {}", sb.cand_cells[pos]);
+                    // for ci in &sb.candidates {
+                    //     println!("{}", !self.cells[sb.cell_ids[*ci]].is_solved());
+                    // }
+
+                    let mb = self.find_groups(sb, sb.cand_cells[pos], 1, pos);
 
                     if let Some(g) = mb {
                         // println!("Naked group (new):");
@@ -403,12 +459,12 @@ impl Sudoku {
         r
     }
 
-    fn get_subsections(&self, sec_cells: &[usize; 9]) -> Vec<Vec<usize>> {
-        let mut sec_cells = Vec::from(sec_cells);
-        let mut sbs_acc = vec![CELL_ACC];
-        let mut sbs = vec![];
+    fn get_subsections(&self, mut sec_cells: Vec<usize>) -> Vec<Subsection> {
+        //let mut sec_cells = Vec::from(sec_cells);
+        //let mut sbs_acc = vec![CELL_ACC];
+        let mut sbs = vec![Subsection::new()];
 
-        let mut ci = 0;
+        /*let mut ci = 0;
         while ci < sec_cells.len() {
             let cell = self.cells[sec_cells[ci]];
 
@@ -419,19 +475,21 @@ impl Sudoku {
             else {
                 ci += 1;
             }
-        }
+        }*/
 
-        if sec_cells.is_empty() {
+        /*if sec_cells.is_empty() {
             return sbs;
-        }
+        }*/
 
-        sbs_acc[0].union_with(self.cells[sec_cells[0]]);
-        sbs.push(vec![sec_cells.swap_remove(0)]);
+        let cid = sec_cells.swap_remove(0);
+        sbs[0].add_cell(cid, self.cells[cid]);
+
+        //sbs_acc[0].union_with(self.cells[sec_cells[0]]);
+        //sbs.push(vec![]);
 
         let mut sbsi = 0;
         while sbsi < sbs.len() {
             let sb  = &mut sbs[sbsi];
-            let acc = &mut sbs_acc[sbsi];
 
             let mut has_intersection = true;
             while has_intersection {
@@ -439,37 +497,45 @@ impl Sudoku {
 
                 let mut ci = 0;
                 while ci < sec_cells.len() {
-                    let cell = self.cells[sec_cells[ci]];
+                    let cell_id = sec_cells[ci];
+                    let cell = self.cells[cell_id];
 
-                    if cell.has_intersection(*acc) {
-                        acc.union_with(cell);
-                        sb.push(sec_cells.swap_remove(ci));
+                    if sb.cell_belongs(cell) {
+                        sb.add_cell(cell_id, cell);
+                        sec_cells.swap_remove(ci);
                         has_intersection = true;
                     }
-
-                    ci += 1;
+                    else {
+                        ci += 1;
+                    }
                 }
             }
+
+            sb.calc_mgs();
 
             if sec_cells.is_empty() {
                 break;
             }
 
-            sbs_acc.push(CELL_ACC);
-            sbs_acc[sbsi+1].union_with(self.cells[sec_cells[0]]);
-            sbs.push(vec![sec_cells.swap_remove(0)]);
-            
             sbsi += 1;
+
+            sbs.push(Subsection::new());
+
+            let cid = sec_cells.swap_remove(0);
+            sbs[sbsi].add_cell(cid, self.cells[cid]);
+
+            // sbs_acc.push(CELL_ACC);
+            // sbs_acc[sbsi+1].union_with(self.cells[sec_cells[0]]);
+            // sbs.push(vec![]);
         }
 
         sbs
     }
 
-    fn find_groups(&self, id_list: &Vec<usize>, acc: Cell,
-                    cell_count: usize, cid: usize,
-                    max_depth: usize) -> Option<Vec<usize>> {
+    fn find_groups(&self, context: &Subsection, acc: Cell,
+                    cell_count: usize, cid: usize) -> Option<Vec<usize>> {
         // This could be moved out of the function.
-        let max_gs = min(id_list.len(), max_depth);
+        // let max_gs = min(id_list.len(), max_depth);
         //println!("count: {cell_count}  cid: {cid}  cell: {}", id_list[cid]);
 
         // Rust's handling of integers is kinda getting on my nerves
@@ -477,23 +543,25 @@ impl Sudoku {
 
         let max_count = max(acc_count, cell_count);
 
-        if max_count > max_gs {
+        // println!("    {acc}, {acc_count}, {cell_count}");
+
+        if max_count > context.mgs {
             return None;
         }
         else if acc_count == cell_count {
             let mut output = vec![0; cell_count];
 
-            output[cell_count-1] = id_list[cid];
+            output[cell_count-1] = context.cand_ids[cid];
             //println!("\ncid: {} cell_id: {}", cid, id_list[cid]);
 
             return Some(output);
         }
 
-        for nid in (cid+1)..id_list.len() {
+        for nid in (cid+1)..context.cand_ids.len() {
             if let Some(mut output) = self.find_groups(
-                    id_list, acc.union(self.cells[id_list[nid]]),
-                    cell_count+1, nid, max_depth) {
-                output[cell_count-1] = id_list[cid];
+                    context, acc.union(context.cand_cells[nid]),
+                    cell_count+1, nid) {
+                output[cell_count-1] = context.cand_ids[cid];
                 //println!("cid: {} cell_id: {}", cid, id_list[cid]);
                 return Some(output);
             }

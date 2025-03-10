@@ -163,7 +163,7 @@ impl Cell {
     }
 
     pub fn remove_digits(&mut self, other: Cell) -> bool {
-        self.intersect_with(Cell(!other.0))
+        self.intersect_with(other.inverse())
     }
 
     pub fn solve_cell(&mut self, digit: CellSize) {
