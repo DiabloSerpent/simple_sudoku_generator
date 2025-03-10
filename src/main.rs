@@ -3,7 +3,7 @@ use std::time::Instant;
 use simple_sudoku_generator::sudoku::Sudoku;
 
 // Program modifiers
-const AMOUNT_RUNS:   u32            = 1000;
+const AMOUNT_RUNS:   u32            = 5000;
 const RUN_FUNC:      fn()           = run_once;
 const CREATE_SUDOKU: fn() -> Sudoku = Sudoku::fill_incremental;
 
