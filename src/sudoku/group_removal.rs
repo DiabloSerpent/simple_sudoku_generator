@@ -1,13 +1,17 @@
+use std::cmp::{max, min};
+
 use crate::Sudoku;
 use crate::cell::{Cell, CELL_EMPTY, CELL_ACC, CellSize};
 use crate::index_manip::*;
+use crate::history::CellChange;
 
 
 const MIN_GROUP_SIZE: usize = 2;
-const MAX_GROUP_SIZE: usize = 4;
+const MAX_GROUP_SIZE: usize = 7;
 
 fn max_group_size_of(s: usize) -> usize {
-    s / 2
+    //println!("{s}");
+    s - 2
 }
 
 
@@ -169,8 +173,9 @@ impl Sudoku {
                         let is_naked = naked_acc.get_count() == n as CellSize;
     
                         if is_naked {
-                            /*println!("{}: {:?}", of_section(si), cell_combo);
-                            println!("{self:?}");*/
+                            // println!("Naked group (old):");
+                            // println!("{}: {:?}", of_section(si), cell_combo);
+                            // println!("{self:?}");
 
                             if n < 4 {
                                 for i in 0..9 {
@@ -198,7 +203,7 @@ impl Sudoku {
                             }
 
                             if r {
-                                return true;
+                                return /*false*/ true;
                             }
                         }
                     }
@@ -214,7 +219,8 @@ impl Sudoku {
                         let is_hidden = sum == n;
 
                         if is_hidden {
-                            /*println!("{}: {}", of_section(si), hidden_acc);
+                            /*println!("Hidden group:");
+                            println!("{}: {}", of_section(si), hidden_acc);
                             println!("{self:?}");*/
 
                             if n < 4 {
@@ -243,9 +249,9 @@ impl Sudoku {
                             }
 
                             if r {
-                                /*println!("{}: {}", of_section(si), hidden_acc);
-                                println!("{self:?}");*/
-                                return true;
+                                // println!("{}: {}", of_section(si), hidden_acc);
+                                // println!("{self:?}");
+                                return /*false*/ true;
                             }
                         }
                     }
@@ -351,20 +357,40 @@ impl Sudoku {
             let subsections = self.get_subsections(sec_cells);
             //println!("{:?}", subsections);
 
-            for sb in &subsections {
-                let mgs = max_group_size_of(sb.len());
+            let mut total_unsolved = 0;
+            for sc in *sec_cells {
+                if !self.cells[sc].is_solved() {
+                    total_unsolved += 1;
+                }
+            }
 
-                if mgs < MIN_GROUP_SIZE {
+            if total_unsolved < MIN_GROUP_SIZE {
+                continue;
+            }
+
+            let section_mgs = max_group_size_of(total_unsolved);
+
+            for sb in &subsections {
+                if sb.len() < MIN_GROUP_SIZE {
                     continue;
                 }
+
+                //let mgs = max_group_size_of(sb.len());
                 
                 //println!("{sb:?}");
                 for pos in 0..sb.len()-1 {
-                    let mb = self.find_groups(sb, self.cells[sb[pos]], 1, pos);
+                    let mb = self.find_groups(sb, self.cells[sb[pos]], 1,
+                                pos, section_mgs);
 
                     if let Some(g) = mb {
+                        // println!("Naked group (new):");
+                        // println!("{} {:?}\n{self:?}", of_section(si), g);
+
                         r = self.remove_digits(sec_cells, g) || r;
-                        break;
+                        if r {
+                            // println!("Changes made:\n{self:?}");
+                            break;
+                        }
                     }
                 }
             }
@@ -387,7 +413,7 @@ impl Sudoku {
             let cell = self.cells[sec_cells[ci]];
 
             if cell.is_solved()
-                    /*|| usize::from(cell.get_count()) > MAX_GROUP_SIZE*/ {
+                    || usize::from(cell.get_count()) > MAX_GROUP_SIZE {
                 sec_cells.swap_remove(ci);
             }
             else {
@@ -440,14 +466,18 @@ impl Sudoku {
     }
 
     fn find_groups(&self, id_list: &Vec<usize>, acc: Cell,
-                    cell_count: usize, cid: usize) -> Option<Vec<usize>> {
-        let mgs = max_group_size_of(id_list.len());
+                    cell_count: usize, cid: usize,
+                    max_depth: usize) -> Option<Vec<usize>> {
+        // This could be moved out of the function.
+        let max_gs = min(id_list.len(), max_depth);
         //println!("count: {cell_count}  cid: {cid}  cell: {}", id_list[cid]);
 
         // Rust's handling of integers is kinda getting on my nerves
         let acc_count = usize::from(acc.get_count());
 
-        if acc_count > mgs || cell_count > mgs {
+        let max_count = max(acc_count, cell_count);
+
+        if max_count > max_gs {
             return None;
         }
         else if acc_count == cell_count {
@@ -462,7 +492,7 @@ impl Sudoku {
         for nid in (cid+1)..id_list.len() {
             if let Some(mut output) = self.find_groups(
                     id_list, acc.union(self.cells[id_list[nid]]),
-                    cell_count+1, nid) {
+                    cell_count+1, nid, max_depth) {
                 output[cell_count-1] = id_list[cid];
                 //println!("cid: {} cell_id: {}", cid, id_list[cid]);
                 return Some(output);
@@ -473,7 +503,9 @@ impl Sudoku {
     }
 
     fn remove_digits(&mut self, section: &[usize; 9], g: Vec<usize>) -> bool {
-        //println!("{:?}\n{self:?}", g);
+        /*if true {
+            return false;
+        }*/
 
         let mut acc = CELL_ACC;
 
@@ -483,14 +515,20 @@ impl Sudoku {
 
         let inv_acc = acc.inverse();
 
+        let mut changes: Vec<CellChange> = vec![];
+
         for sid in *section {
             let cell = self.cells[sid];
 
-            if cell.has_intersection(acc) && cell.has_intersection(inv_acc) {
-                self.cells[sid].remove_digits(acc);
+            if !cell.is_solved() && cell.has_intersection(acc)
+                    && cell.has_intersection(inv_acc) {
+                if self.cells[sid].remove_digits(acc) {
+                    changes.push(CellChange {id: sid,
+                        new_cell: self.cells[sid]});
+                }
             }
         }
 
-        false
+        !changes.is_empty()
     }
 }
