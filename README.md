@@ -21,7 +21,7 @@ TODO:
 - change Cell to use boolean vector of some sort?
 - more robust debugging
   - ie logging the state of a sudoku to a dedicated file as opposed to stdout
-  - kinda depends on rules being separate objects
+  - currently partially finished, should tie it in w/ refactoring rule logic
 - turn the sudoku rules into separate objects
 - break up logic of rules into smaller chunks
 - make a function that quantifies the incorrectness of a sudoku
@@ -30,9 +30,17 @@ TODO:
   - or maybe just add some character to the middle of the sudoku for easy ctrl+f
 - update intersection_removal to use Cell::remove_digits
 - split up section_digit_sum
-- Figure out what's causing the fill_incremental method to fail 0.2% of the time
 - impl clippy suggestions
 - update Sudoku structure comment to remove cell_flag
+- clean up group_removal file
+  - remove old method, clean up print stmts/dead code, rewrite pseudocode
+  - refactor find_group to use breaadth-first instead of depth-first search
+  - maybe change the code to also look for hidden groups?
+    - not necessary, but possible, might be a lil quicker (and more fun)
+    - I could also just look for hidden pairs
+  - rename MAX_GROUP_SIZE to MAX_NAKED_GROUP_SIZE? Would be more accurate
+- rename Sudoku to SudokuSolver and then create a Sudoku or SudokuBoard type
+  alias for greater clarity
 
 
 
