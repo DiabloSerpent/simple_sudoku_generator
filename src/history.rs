@@ -3,7 +3,7 @@ use itertools::Itertools;
 
 use crate::cell::Cell;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum EntryType {
     RsCell,
     CellSolved,
