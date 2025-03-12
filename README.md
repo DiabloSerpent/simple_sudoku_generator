@@ -18,12 +18,17 @@ TODO:
 - maybe could make it so that modifying a cell adds them to a list
   which other functions use to see if they should act or not
   - would need some way for all functions to process the list individually
+  - use bit flag array per cell/section that is updated after a cell is
+    modified, using `register_change` method.
+  - could remove the need for the `solved_cell_checked` array.
 - change Cell to use boolean vector of some sort?
 - more robust debugging
   - ie logging the state of a sudoku to a dedicated file as opposed to stdout
   - currently partially finished, should tie it in w/ refactoring rule logic
 - turn the sudoku rules into separate objects
+  - might delete
 - break up logic of rules into smaller chunks
+  - partially done
 - make a function that quantifies the incorrectness of a sudoku
   - ie it measures how much difference there is b/t a solved sudoku and a given sudoku
 - make a gui for looking through sudoku history for debugging
@@ -32,15 +37,20 @@ TODO:
 - split up section_digit_sum
 - impl clippy suggestions
 - update Sudoku structure comment to remove cell_flag
+  - and remove CELL_SOLVED const
 - clean up group_removal file
   - remove old method, clean up print stmts/dead code, rewrite pseudocode
-  - refactor find_group to use breaadth-first instead of depth-first search
+  - refactor find_group to use breadth-first instead of depth-first search
   - maybe change the code to also look for hidden groups?
     - not necessary, but possible, might be a lil quicker (and more fun)
     - I could also just look for hidden pairs
   - rename MAX_GROUP_SIZE to MAX_NAKED_GROUP_SIZE? Would be more accurate
+  - remove `section_digit_groups` and `section_cell_groups` vars
 - rename Sudoku to SudokuSolver and then create a Sudoku or SudokuBoard type
   alias for greater clarity
+- update intersection_removal algorithm
+- add `register_change(id: usize)` function to Sudoku to make creating a
+  CellChange array easier.
 
 
 
