@@ -10,7 +10,6 @@ const MIN_GROUP_SIZE: usize = 2;
 const MAX_GROUP_SIZE: usize = 7;
 
 fn max_group_size_of(s: usize) -> usize {
-    //println!("{s}");
     s - 2
 }
 
@@ -36,6 +35,7 @@ impl Subsection {
 
     fn add_cell(&mut self, cid: usize, c: Cell) {
         self.acc.union_with(c);
+
         if usize::from(c.get_count()) < MAX_GROUP_SIZE {
             self.cand_ids.push(cid);
             self.cand_cells.push(c);
@@ -50,7 +50,47 @@ impl Subsection {
 
     fn calc_mgs(&mut self) {
         self.mgs = min(self.cand_ids.len(),
-                        max_group_size_of(self.total_cells));
+                       max_group_size_of(self.total_cells));
+    }
+
+    fn find_group(&self) -> Option<Vec<usize>> {
+        for pos in 0..self.cand_ids.len()-1 {
+            if let Some(g) = self.find_group_r(self.cand_cells[pos], 1, pos) {
+                return Some(g);
+            }
+        }
+
+        None
+    }
+
+    fn find_group_r(&self, acc: Cell, cell_count: usize,
+                        cid: usize) -> Option<Vec<usize>> {
+        // Rust's handling of integers is kinda getting on my nerves
+        let acc_count = usize::from(acc.get_count());
+
+        let max_count = max(acc_count, cell_count);
+
+        if max_count > self.mgs {
+            return None;
+        }
+        else if acc_count == cell_count {
+            let mut output = vec![0; cell_count];
+
+            output[cell_count-1] = self.cand_ids[cid];
+
+            return Some(output);
+        }
+
+        for nid in (cid+1)..self.cand_ids.len() {
+            if let Some(mut output) = self.find_group_r(
+                    acc.union(self.cand_cells[nid]),
+                    cell_count+1, nid) {
+                output[cell_count-1] = self.cand_ids[cid];
+                return Some(output);
+            }
+        }
+
+        None
     }
 }
 
@@ -387,10 +427,6 @@ impl Sudoku {
                 // but I think it should be easy enough.
         */}
 
-        let mut r = false;
-
-        // println!("##################################################");
-
         for si in SECTION_RANGE {
             let sec_cells = &SECTION_INDICES[si];
 
@@ -406,6 +442,9 @@ impl Sudoku {
                 }
             }
 
+            // B/c max_group_size_of uses subtraction, it has a possibility
+            // of hitting an error (usize can't be <0), which would be
+            // annoying to handle without using multiple if stmts like so.
             if vec_sc.len() <= MIN_GROUP_SIZE {
                 continue;
             }
@@ -416,80 +455,34 @@ impl Sudoku {
                 continue;
             }
 
-            // println!("{}: {vec_sc:?}", of_section(si));
-
             let subsections = self.get_subsections(vec_sc);
-            // println!("{:?}", subsections);
 
             for sb in &subsections {
                 if sb.mgs < MIN_GROUP_SIZE {
                     continue;
                 }
-                // println!("{sb:?}");
 
-                //let mgs = max_group_size_of(sb.len());
-                
-                //println!("{sb:?}");
-                for pos in 0..sb.cand_ids.len()-1 {
-                    // println!("  {pos}  {}", sb.cand_cells[pos]);
-                    // for ci in &sb.candidates {
-                    //     println!("{}", !self.cells[sb.cell_ids[*ci]].is_solved());
-                    // }
-
-                    let mb = self.find_groups(sb, sb.cand_cells[pos], 1, pos);
-
-                    if let Some(g) = mb {
-                        // println!("Naked group (new):");
-                        // println!("{} {:?}\n{self:?}", of_section(si), g);
-
-                        r = self.remove_digits(sec_cells, g) || r;
-                        if r {
-                            // println!("Changes made:\n{self:?}");
-                            break;
-                        }
+                if let Some(g) = sb.find_group() {
+                    // This if stmt is basically a formality, if the
+                    // algorithm finds a group then it is one that
+                    // changes the board.
+                    if self.handle_group(sec_cells, g) {
+                        return true;
                     }
                 }
             }
-
-            if r {
-                break;
-            }
         }
 
-        r
+        false
     }
 
     fn get_subsections(&self, mut sec_cells: Vec<usize>) -> Vec<Subsection> {
-        //let mut sec_cells = Vec::from(sec_cells);
-        //let mut sbs_acc = vec![CELL_ACC];
-        let mut sbs = vec![Subsection::new()];
+        let mut sbs = vec![];
 
-        /*let mut ci = 0;
-        while ci < sec_cells.len() {
-            let cell = self.cells[sec_cells[ci]];
-
-            if cell.is_solved()
-                    || usize::from(cell.get_count()) > MAX_GROUP_SIZE {
-                sec_cells.swap_remove(ci);
-            }
-            else {
-                ci += 1;
-            }
-        }*/
-
-        /*if sec_cells.is_empty() {
-            return sbs;
-        }*/
-
-        let cid = sec_cells.swap_remove(0);
-        sbs[0].add_cell(cid, self.cells[cid]);
-
-        //sbs_acc[0].union_with(self.cells[sec_cells[0]]);
-        //sbs.push(vec![]);
-
-        let mut sbsi = 0;
-        while sbsi < sbs.len() {
-            let sb  = &mut sbs[sbsi];
+        while !sec_cells.is_empty() {
+            let mut sb = Subsection::new();
+            let cid = sec_cells.swap_remove(0);
+            sb.add_cell(cid, self.cells[cid]);
 
             let mut has_intersection = true;
             while has_intersection {
@@ -513,68 +506,13 @@ impl Sudoku {
 
             sb.calc_mgs();
 
-            if sec_cells.is_empty() {
-                break;
-            }
-
-            sbsi += 1;
-
-            sbs.push(Subsection::new());
-
-            let cid = sec_cells.swap_remove(0);
-            sbs[sbsi].add_cell(cid, self.cells[cid]);
-
-            // sbs_acc.push(CELL_ACC);
-            // sbs_acc[sbsi+1].union_with(self.cells[sec_cells[0]]);
-            // sbs.push(vec![]);
+            sbs.push(sb);
         }
 
         sbs
     }
 
-    fn find_groups(&self, context: &Subsection, acc: Cell,
-                    cell_count: usize, cid: usize) -> Option<Vec<usize>> {
-        // This could be moved out of the function.
-        // let max_gs = min(id_list.len(), max_depth);
-        //println!("count: {cell_count}  cid: {cid}  cell: {}", id_list[cid]);
-
-        // Rust's handling of integers is kinda getting on my nerves
-        let acc_count = usize::from(acc.get_count());
-
-        let max_count = max(acc_count, cell_count);
-
-        // println!("    {acc}, {acc_count}, {cell_count}");
-
-        if max_count > context.mgs {
-            return None;
-        }
-        else if acc_count == cell_count {
-            let mut output = vec![0; cell_count];
-
-            output[cell_count-1] = context.cand_ids[cid];
-            //println!("\ncid: {} cell_id: {}", cid, id_list[cid]);
-
-            return Some(output);
-        }
-
-        for nid in (cid+1)..context.cand_ids.len() {
-            if let Some(mut output) = self.find_groups(
-                    context, acc.union(context.cand_cells[nid]),
-                    cell_count+1, nid) {
-                output[cell_count-1] = context.cand_ids[cid];
-                //println!("cid: {} cell_id: {}", cid, id_list[cid]);
-                return Some(output);
-            }
-        }
-
-        None
-    }
-
-    fn remove_digits(&mut self, section: &[usize; 9], g: Vec<usize>) -> bool {
-        /*if true {
-            return false;
-        }*/
-
+    fn handle_group(&mut self, section: &[usize; 9], g: Vec<usize>) -> bool {
         let mut acc = CELL_ACC;
 
         for cid in g {
@@ -589,11 +527,11 @@ impl Sudoku {
             let cell = self.cells[sid];
 
             if !cell.is_solved() && cell.has_intersection(acc)
-                    && cell.has_intersection(inv_acc) {
-                if self.cells[sid].remove_digits(acc) {
-                    changes.push(CellChange {id: sid,
-                        new_cell: self.cells[sid]});
-                }
+                                 && cell.has_intersection(inv_acc)
+                                 && self.cells[sid].remove_digits(acc) {
+                changes.push(CellChange {
+                    id: sid,
+                    new_cell: self.cells[sid]});
             }
         }
 
