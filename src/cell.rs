@@ -234,6 +234,19 @@ impl Cell {
         c
     }
 
+    pub fn xor(&self, other: Cell) -> Cell {
+        debug_assert!(!self.is_solved() && !other.is_solved(),
+            "Can't apply intersection to solved cell");
+        
+        let mut c = Cell(self.0 ^ (other.0 & DIGIT_MASK));
+
+        if c.0 != self.0 && !c.count_is_off() {
+            c.reset_count();
+        }
+
+        c
+    }
+
     pub fn union_with(&mut self, other: Cell) -> bool {
         let nc = self.union(other);
 
