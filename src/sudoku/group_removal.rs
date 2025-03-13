@@ -47,7 +47,7 @@ const MIN_GROUP_SIZE: usize = 2;
 const MAX_GROUP_SIZE: usize = 7;
 
 fn max_group_size_of(s: usize) -> usize {
-    s - 2
+    s - MIN_GROUP_SIZE
 }
 
 
