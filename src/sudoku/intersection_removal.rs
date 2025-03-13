@@ -99,19 +99,13 @@ impl Sudoku {
                                     id2: (usize, usize)) -> bool {
         let mut r = false;
 
-        // TODO: DESTROY code repetition
-        for cid in &bd[id1.0][id1.1] {
-            let cell = &mut self.cells[*cid];
-            
-            if !cell.is_solved() {
-                r = cell.remove_digits(ds) || r;
-            }
-        }
-        for cid in &bd[id2.0][id2.1] {
-            let cell = &mut self.cells[*cid];
-            
-            if !cell.is_solved() {
-                r = cell.remove_digits(ds) || r;
+        for (x, y) in [id1, id2] {
+            for cid in &bd[x][y] {
+                let cell = &mut self.cells[*cid];
+                
+                if !cell.is_solved() {
+                    r = cell.remove_digits(ds) || r;
+                }
             }
         }
 
