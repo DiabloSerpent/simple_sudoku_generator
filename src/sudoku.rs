@@ -16,8 +16,6 @@ pub struct Sudoku {
     pub cells: [Cell; 81],
     solved_cell_checked: [bool; 81],
     section_digit_sum: [[CellSize; 10]; 27],
-    section_cell_groups: [[bool; 9]; 27],
-    section_digit_groups: [[bool; 9]; 27],
     pub history: Vec<HistoryEntry>,
 }
 
@@ -52,8 +50,6 @@ impl Sudoku {
             cells: [CELL_INIT; 81],
             solved_cell_checked: [false; 81],
             section_digit_sum: [[0; 10]; 27],
-            section_cell_groups: [[false; 9]; 27],
-            section_digit_groups: [[false; 9]; 27],
             history: Vec::with_capacity(1000),
         }
     }
@@ -155,8 +151,7 @@ impl Sudoku {
         Self::update_section_digit_sum,
         Self::hidden_single,
         Self::intersection_removal,
-        //Self::group_removal,
-        Self::group_removal_new,
+        Self::group_removal,
     ];
 
     fn update_section_digit_sum(&mut self) -> bool {

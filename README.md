@@ -38,14 +38,11 @@ TODO:
 - impl clippy suggestions
 - update Sudoku structure comment to remove cell_flag
   - and remove CELL_SOLVED const
-- clean up group_removal file
-  - remove old method, clean up print stmts/dead code, rewrite pseudocode
-  - refactor find_group to use breadth-first instead of depth-first search
+- refactor find_group to use breadth-first instead of depth-first search
   - maybe change the code to also look for hidden groups?
     - not necessary, but possible, might be a lil quicker (and more fun)
     - I could also just look for hidden pairs
-  - rename MAX_GROUP_SIZE to MAX_NAKED_GROUP_SIZE? Would be more accurate
-  - remove `section_digit_groups` and `section_cell_groups` vars
+- rename MAX_GROUP_SIZE to MAX_NAKED_GROUP_SIZE? Would be more accurate
 - rename Sudoku to SudokuSolver and then create a Sudoku or SudokuBoard type
   alias for greater clarity
 - update intersection_removal algorithm
