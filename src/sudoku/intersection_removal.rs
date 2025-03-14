@@ -2,6 +2,9 @@ use crate::Sudoku;
 use crate::index_manip::*;
 use crate::cell::{DIGIT_RANGE, CELL_ACC, Cell, CELL_EMPTY};
 
+// TODO: add pseudocode/explanation
+
+
 const INDEX_MATRIX: [[[[usize; 3]; 3]; 3]; 6] = make_id_matrix();
 
 const fn make_id_matrix() -> [[[[usize; 3]; 3]; 3]; 6] {
@@ -47,16 +50,18 @@ impl Sudoku {
                     let (nx1, nx2) = ((x+1)%3, (x+2)%3);
                     let (ny1, ny2) = ((y+1)%3, (y+2)%3);
 
-                    let other_sec = trio_mat[nx1][y].union(trio_mat[nx2][y]);
-                    let other_box = trio_mat[x][ny1].union(trio_mat[x][ny2]);
+                    let other_box = trio_mat[nx1][y].union(trio_mat[nx2][y]);
+                    let other_sec = trio_mat[x][ny1].union(trio_mat[x][ny2]);
 
-                    let ds = trio.intersect(other_sec.xor(other_box));
+                    let ds = trio.intersect(other_box.xor(other_sec));
 
                     let mut r = false;
-                    if ds.has_intersection(other_sec) {
+                    if ds.has_intersection(other_box) {
+                        // println!("Box-Line Group: {:?}\n{self:?}", bd[x][y]);
                         r = self.handle_intersection(bd, ds, (nx1, y), (nx2, y));
                     }
-                    else if ds.has_intersection(other_box) {
+                    else if ds.has_intersection(other_sec) {
+                        // println!("Pointing Group: {:?}\n{self:?}", bd[x][y]);
                         r = self.handle_intersection(bd, ds, (x, ny1), (x, ny2));
                     }
 
@@ -64,6 +69,7 @@ impl Sudoku {
                     // dealing with cells that may have been updated is
                     // a hassle.
                     if r {
+                        // println!("Changes made:\n{self:?}");
                         return true;
                     }
                 }
@@ -94,6 +100,7 @@ impl Sudoku {
         trio_mat
     }
 
+    // TODO: rename?
     fn handle_intersection(&mut self, bd: &[[[usize; 3]; 3]; 3],
                                     ds: Cell, id1: (usize, usize),
                                     id2: (usize, usize)) -> bool {
@@ -105,6 +112,7 @@ impl Sudoku {
                 
                 if !cell.is_solved() {
                     r = cell.remove_digits(ds) || r;
+                    // TODO: integrate w/ history
                 }
             }
         }
@@ -112,6 +120,7 @@ impl Sudoku {
         r
     }
 
+    // TODO: remove
     pub fn intersection_removal_old(&mut self) -> bool {
         // Remove digits that are outside of an intersection.
 
