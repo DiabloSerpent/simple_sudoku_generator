@@ -23,7 +23,7 @@ pub struct HistoryEntry {
     pub changes: Vec<CellChange>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct CellChange {
     pub id: usize,
     pub new_cell: Cell,

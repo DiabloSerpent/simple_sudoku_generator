@@ -2,7 +2,7 @@ use rand::Rng;
 
 use crate::cell::{Cell, CellSize, CELL_INIT, DIGIT_RANGE};
 use crate::index_manip::*;
-use crate::history::{HistoryEntry, EntryType};
+use crate::history::{HistoryEntry, EntryType, CellChange};
 
 mod cell_solved;
 mod hidden_single;
@@ -16,6 +16,7 @@ pub struct Sudoku {
     pub cells: [Cell; 81],
     solved_cell_checked: [bool; 81],
     section_digit_sum: [[CellSize; 10]; 27],
+    cell_change_stack: Vec<CellChange>,
     pub history: Vec<HistoryEntry>,
 }
 
@@ -50,6 +51,7 @@ impl Sudoku {
             cells: [CELL_INIT; 81],
             solved_cell_checked: [false; 81],
             section_digit_sum: [[0; 10]; 27],
+            cell_change_stack: Vec::with_capacity(27),
             history: Vec::with_capacity(1000),
         }
     }
@@ -114,6 +116,43 @@ impl Sudoku {
 
         sg
     }*/
+
+    pub fn register_change(&mut self, id: usize) {
+        self.cell_change_stack.push(CellChange {
+            id,
+            new_cell: self.cells[id],
+        });
+    }
+
+    pub fn has_changes(&self) -> bool {
+        !self.cell_change_stack.is_empty()
+    }
+
+    pub fn add_history_entry(&mut self, name: EntryType,
+                             cells: Vec<usize>, digits: Cell) {
+        debug_assert!(self.has_changes(),
+            "self.cell_change_stack shouldn't be empty");
+
+        self.history.push(HistoryEntry {
+            name,
+            cells,
+            digits,
+            changes: self.cell_change_stack.clone(),
+        });
+
+        self.cell_change_stack.clear();
+    }
+
+    pub fn add_history_entry_if_changes(&mut self, name: EntryType,
+                                cells: Vec<usize>, digits: Cell) -> bool {
+        let r = self.has_changes();
+
+        if r {
+            self.add_history_entry(name, cells, digits);
+        }
+
+        r
+    }
 
     pub fn solve(&mut self) {
         // Idea:
