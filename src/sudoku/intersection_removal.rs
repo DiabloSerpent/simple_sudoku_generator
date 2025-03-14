@@ -57,19 +57,20 @@ impl Sudoku {
 
                     let mut r = false;
                     if ds.has_intersection(other_box) {
-                        // println!("Box-Line Group: {:?}\n{self:?}", bd[x][y]);
-                        r = self.handle_intersection(bd, ds, (nx1, y), (nx2, y));
+                        // Box-Line Group
+                        r = self.handle_intersection(bd, ds, (nx1, y),
+                                                             (nx2, y));
                     }
                     else if ds.has_intersection(other_sec) {
-                        // println!("Pointing Group: {:?}\n{self:?}", bd[x][y]);
-                        r = self.handle_intersection(bd, ds, (x, ny1), (x, ny2));
+                        // Pointing Group
+                        r = self.handle_intersection(bd, ds, (x, ny1),
+                                                             (x, ny2));
                     }
 
                     // Early return b/c its prolly quicker overall and
                     // dealing with cells that may have been updated is
                     // a hassle.
                     if r {
-                        // println!("Changes made:\n{self:?}");
                         return true;
                     }
                 }
@@ -100,7 +101,6 @@ impl Sudoku {
         trio_mat
     }
 
-    // TODO: rename?
     fn handle_intersection(&mut self, bd: &[[[usize; 3]; 3]; 3],
                                     ds: Cell, id1: (usize, usize),
                                     id2: (usize, usize)) -> bool {
