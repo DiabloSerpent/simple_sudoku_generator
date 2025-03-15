@@ -22,18 +22,10 @@ TODO:
     modified, using `register_change` method.
   - could remove the need for the `solved_cell_checked` array.
 - change Cell to use boolean vector of some sort?
-- more robust debugging
-  - ie logging the state of a sudoku to a dedicated file as opposed to stdout
-  - currently partially finished, should tie it in w/ refactoring rule logic
-- turn the sudoku rules into separate objects
-  - might delete
-- break up logic of rules into smaller chunks
-  - partially done
 - make a function that quantifies the incorrectness of a sudoku
   - ie it measures how much difference there is b/t a solved sudoku and a given sudoku
 - make a gui for looking through sudoku history for debugging
   - or maybe just add some character to the middle of the sudoku for easy ctrl+f
-- update intersection_removal to use Cell::remove_digits
 - split up section_digit_sum
 - impl clippy suggestions
 - update Sudoku structure comment to remove cell_flag
@@ -45,9 +37,14 @@ TODO:
 - rename MAX_GROUP_SIZE to MAX_NAKED_GROUP_SIZE? Would be more accurate
 - rename Sudoku to SudokuSolver and then create a Sudoku or SudokuBoard type
   alias for greater clarity
-- update intersection_removal algorithm
-- add `register_change(id: usize)` function to Sudoku to make creating a
-  CellChange array easier.
+- remove combo_iter.rs file
+- add `Sudoku::add_history_entry_from_solution` method
+  - and refactor naked_single to use it
+- change debug print of Sudoku to highlight solved cells
+- make it so that group_removal will write a HiddenGroup where a human
+  would recognize it.
+- test moving group_removal above intersection_removal in `Sudoku::RULE_ORDER`
+- change Cell to overload bitwise operators instead of using some methods
 
 
 
