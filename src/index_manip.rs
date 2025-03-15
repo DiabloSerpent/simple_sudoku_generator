@@ -64,14 +64,17 @@ pub fn related_cells(index: CellIndex) -> [CellIndex; 21] {
 }
 
 pub const SECTION_START:     usize = 0;
-pub const SECTION_COL_START: usize = 9;
-pub const SECTION_BOX_START: usize = 18;
-pub const SECTION_END:       usize = 27;
 pub const SECTION_ROW_START: usize = SECTION_START;
 #[allow(dead_code)]
 pub const SECTION_ROW_END:   usize = SECTION_COL_START;
+pub const SECTION_COL_START: usize = 9;
+#[allow(dead_code)]
 pub const SECTION_COL_END:   usize = SECTION_BOX_START;
+#[allow(dead_code)]
+pub const SECTION_BOX_START: usize = 18;
+#[allow(dead_code)]
 pub const SECTION_BOX_END:   usize = SECTION_END;
+pub const SECTION_END:       usize = 27;
 pub const SECTION_RANGE: Range<SecIndex> = SECTION_START..SECTION_END;
 
 pub enum SectionType {
