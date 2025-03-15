@@ -23,10 +23,8 @@ impl Sudoku {
 
                             self.cells[ci].solve_cell(j);
 
-                            self.history.push(HistoryEntry::from_solution(
-                                    EntryType::HiddenSingle,
-                                    ci,
-                                    self.cells[ci]));
+                            self.add_history_entry_from_solution(
+                                        EntryType::HiddenSingle, ci);
 
                             r = true;
 

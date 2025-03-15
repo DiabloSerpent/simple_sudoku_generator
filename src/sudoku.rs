@@ -102,8 +102,7 @@ impl Sudoku {
     fn rs_cell(&mut self, c: usize) {
         self.cells[c].generate_number();
 
-        self.history.push(HistoryEntry::from_solution(
-            EntryType::RsCell, c, self.cells[c]));
+        self.add_history_entry_from_solution(EntryType::RsCell, c);
         //println!("{}\n{:?}", self.history.last().unwrap(), self);
     }
 
@@ -141,6 +140,20 @@ impl Sudoku {
         });
 
         self.cell_change_stack.clear();
+    }
+
+    pub fn add_history_entry_from_solution(&mut self, name: EntryType,
+                                                      id: usize) {
+        debug_assert!(!self.has_changes(),
+            "self.cell_change_stack should be empty");
+
+        let cell = self.cells[id];
+
+        self.history.push(HistoryEntry {
+            name,
+            cells: vec![id],
+            digits: cell.get_unsolved_copy().inverse(),
+            changes: vec![CellChange {id, new_cell: cell}]});
     }
 
     pub fn add_history_entry_if_changes(&mut self, name: EntryType,

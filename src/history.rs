@@ -32,25 +32,6 @@ pub struct CellChange {
 }
 
 
-impl HistoryEntry {
-    pub fn new(n: EntryType, cs: Vec<usize>, ds: Cell, ch: Vec<CellChange>) -> Self {
-        Self {
-            name: n,
-            cells: cs,
-            digits: ds,
-            changes: ch,
-        }
-    }
-
-    pub fn from_solution(n: EntryType, cell_index: usize, cell: Cell) -> Self {
-        Self::new(
-            n,
-            vec![cell_index],
-            cell.get_unsolved_copy().inverse(),
-            vec![CellChange {id: cell_index, new_cell: cell}])
-    }
-}
-
 impl fmt::Display for HistoryEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "HistoryEntry: {:?}\n", self.name)?;

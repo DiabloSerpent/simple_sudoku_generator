@@ -31,16 +31,8 @@ impl Sudoku {
 
                 self.cells[i].solve_cell(digit);
 
-                self.register_change(i);
-
-                self.add_history_entry(
-                        EntryType::NakedSingle,
-                        vec![i],
-                        // This might be an odd choice, but the digit pattern
-                        // var is supposed to show which digits have been
-                        // removed.
-                        // And in this case, there are no such digits.
-                        CELL_EMPTY);
+                self.add_history_entry_from_solution(
+                                EntryType::NakedSingle, i);
 
                 r = true;
             }
