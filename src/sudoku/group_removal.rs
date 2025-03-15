@@ -3,7 +3,7 @@ use std::cmp::{max, min};
 use crate::Sudoku;
 use crate::cell::{Cell, CELL_ACC};
 use crate::index_manip::*;
-use crate::history::{HistoryEntry, CellChange, EntryType};
+use crate::history::EntryType;
 
 /* Goal of group_removal:
     Look for groups of digits in the sudoku board.
@@ -229,31 +229,16 @@ impl Sudoku {
 
         let inv_acc = acc.inverse();
 
-        let mut changes: Vec<CellChange> = vec![];
-
         for sid in *section {
             let cell = self.cells[sid];
 
             if !cell.is_solved() && cell.has_intersection(acc)
                                  && cell.has_intersection(inv_acc)
                                  && self.cells[sid].remove_digits(acc) {
-                changes.push(CellChange {
-                    id: sid,
-                    new_cell: self.cells[sid]});
+                self.register_change(sid);
             }
         }
 
-        if !changes.is_empty() {
-            self.history.push(HistoryEntry::new(
-                EntryType::NakedGroup,
-                g,
-                acc,
-                changes));
-
-            true
-        }
-        else {
-            false
-        }
+        self.add_history_entry_if_changes(EntryType::NakedGroup, g, acc)
     }
 }
