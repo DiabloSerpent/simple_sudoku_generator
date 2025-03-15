@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::Sudoku;
-use crate::cell::DIGIT_RANGE;
+use crate::cell::{DIGIT_RANGE, Cell, CellSize};
 use crate::index_manip::*;
 
 // Shamelessly ripped from:
@@ -184,6 +184,37 @@ impl fmt::Display for Sudoku {
     }
 }
 
+
+struct CellBigDisplay(Cell);
+
+impl CellBigDisplay {
+    fn get_row(&self, i: CellSize) -> String {
+        if self.0.is_solved() {
+            if i == 1 {
+                format!("  <{}> ", self.0.get_number())
+            }
+            else {
+                "      ".to_string()
+            }
+        }
+        else {
+            format!(" {} {} {}", self.num_or_space(i*3 + 1),
+                                 self.num_or_space(i*3 + 2),
+                                 self.num_or_space(i*3 + 3))
+        }
+    }
+
+    fn num_or_space(&self, i: CellSize) -> String {
+        if self.0.has_digit(i) {
+            format!("{i}")
+        }
+        else {
+            " ".to_string()
+        }
+    }
+}
+
+
 impl fmt::Debug for Sudoku {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // This shows all cells as a collection of digits,
@@ -203,6 +234,7 @@ impl fmt::Debug for Sudoku {
                     if ci != 0 {
                         write!(f, " ")?;
                     }
+
                     if ci % 3 == 0 {
                         write!(f, "║")?;
                     }
@@ -210,16 +242,9 @@ impl fmt::Debug for Sudoku {
                         write!(f, "│")?;
                     }
 
-                    let cell = self.cells[((ri * 9) + ci) as usize];
+                    let cell = CellBigDisplay(self.cells[ri*9 + ci]);
 
-                    for di in 0..3 {
-                        if cell.has_digit(digit_row * 3 + di + 1) {
-                            write!(f, " {}", digit_row * 3 + di + 1)?;
-                        }
-                        else {
-                            write!(f, "  ")?;
-                        }
-                    }
+                    write!(f, "{}", cell.get_row(digit_row))?;
                 }
                 write!(f, " ║\n")?;
             }
