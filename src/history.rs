@@ -9,7 +9,9 @@ pub enum EntryType {
     CellSolved,
     NakedSingle,
     HiddenSingle,
-    IntersectionRemoval,
+    //IntersectionRemoval,
+    PointedGroup,
+    BoxLineReduction,
     NakedGroup,
     HiddenGroup,
 }

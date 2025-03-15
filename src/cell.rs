@@ -138,6 +138,10 @@ impl Cell {
         (self.0 & DIGIT_MASK) >> 1
     }
 
+    pub fn has_digits(&self) -> bool {
+        self.0 & DIGIT_MASK != 0
+    }
+
     pub fn add_digit(&mut self, digit: CellSize) {
         if self.is_solved() || self.has_digit(digit) {
             return;

@@ -1,6 +1,7 @@
 use crate::Sudoku;
 use crate::index_manip::*;
 use crate::cell::{DIGIT_RANGE, CELL_ACC, Cell, CELL_EMPTY};
+use crate::sudoku::EntryType;
 
 // TODO: add pseudocode/explanation
 
@@ -55,16 +56,19 @@ impl Sudoku {
 
                     let ds = trio.intersect(other_box.xor(other_sec));
 
+                    let ds_box = ds.intersect(other_box);
+                    let ds_sec = ds.intersect(other_sec);
+
                     let mut r = false;
-                    if ds.has_intersection(other_box) {
-                        // Box-Line Group
-                        r = self.handle_intersection(bd, ds, (nx1, y),
-                                                             (nx2, y));
+                    if ds_box.has_digits() {
+                        r = self.handle_intersection(
+                            bd, ds_box, (x, y),
+                            nx1, nx2, EntryType::BoxLineReduction);
                     }
-                    else if ds.has_intersection(other_sec) {
-                        // Pointing Group
-                        r = self.handle_intersection(bd, ds, (x, ny1),
-                                                             (x, ny2));
+                    if ds_sec.has_digits() {
+                        r = self.handle_intersection(
+                            bd, ds_sec, (x, y),
+                            ny1, ny2, EntryType::PointedGroup) || r;
                     }
 
                     // Early return b/c its prolly quicker overall and
@@ -102,19 +106,39 @@ impl Sudoku {
     }
 
     fn handle_intersection(&mut self, bd: &[[[usize; 3]; 3]; 3],
-                                    ds: Cell, id1: (usize, usize),
-                                    id2: (usize, usize)) -> bool {
-        let mut r = false;
+                                      ds:  Cell,
+                                      (x, y): (usize, usize),
+                                      id1: usize, id2: usize,
+                                      t:   EntryType) -> bool {
+        let to_check = match t {
+            EntryType::BoxLineReduction => [(id1, y), (id2, y)],
+            EntryType::PointedGroup     => [(x, id1), (x, id2)],
+            _ => panic!("{:?} is not a valid value here", t),
+        };
 
-        for (x, y) in [id1, id2] {
-            for cid in &bd[x][y] {
+        for (i, j) in to_check {
+            for cid in &bd[i][j] {
                 let cell = &mut self.cells[*cid];
                 
-                if !cell.is_solved() {
-                    r = cell.remove_digits(ds) || r;
-                    // TODO: integrate w/ history
+                if !cell.is_solved() && cell.remove_digits(ds) {
+                    self.register_change(*cid);
                 }
             }
+        }
+
+        let r = self.has_changes();
+
+        if r {
+            let mut v = Vec::new();
+
+            for c in bd[x][y] {
+                let cell = self.cells[c];
+                if !cell.is_solved() && ds.has_intersection(cell) {
+                    v.push(c);
+                }
+            }
+
+            self.add_history_entry(t, v, ds);
         }
 
         r
