@@ -185,35 +185,36 @@ impl fmt::Display for Sudoku {
 }
 
 
-struct CellBigDisplay(Cell);
-
-impl CellBigDisplay {
-    fn get_row(&self, i: CellSize) -> String {
-        if self.0.is_solved() {
-            if i == 1 {
-                format!("  <{}> ", self.0.get_number())
+impl Sudoku {
+    fn write_digit_row(&self, f: &mut fmt::Formatter,
+                              c: Cell, dr: CellSize) -> fmt::Result {
+        if c.is_solved() {
+            if dr == 1 {
+                write!(f, "  <{}> ", c.get_number())?;
             }
             else {
-                "      ".to_string()
+                write!(f, "      ")?;
             }
         }
         else {
-            format!(" {} {} {}", self.num_or_space(i*3 + 1),
-                                 self.num_or_space(i*3 + 2),
-                                 self.num_or_space(i*3 + 3))
+            for i in 1..=3 {
+                self.write_num(f, c, dr*3 + i)?;
+            }
         }
+
+        Ok(())
     }
 
-    fn num_or_space(&self, i: CellSize) -> String {
-        if self.0.has_digit(i) {
-            format!("{i}")
+    fn write_num(&self, f: &mut fmt::Formatter,
+                        c: Cell, i: CellSize) -> fmt::Result {
+        if c.has_digit(i) {
+            write!(f, " {i}")
         }
         else {
-            " ".to_string()
+            write!(f, "  ")
         }
     }
 }
-
 
 impl fmt::Debug for Sudoku {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -242,9 +243,9 @@ impl fmt::Debug for Sudoku {
                         write!(f, "│")?;
                     }
 
-                    let cell = CellBigDisplay(self.cells[ri*9 + ci]);
+                    let cell = self.cells[ri*9 + ci];
 
-                    write!(f, "{}", cell.get_row(digit_row))?;
+                    self.write_digit_row(f, cell, digit_row)?;
                 }
                 write!(f, " ║\n")?;
             }
