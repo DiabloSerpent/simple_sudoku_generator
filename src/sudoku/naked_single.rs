@@ -1,5 +1,6 @@
 use crate::Sudoku;
-use crate::cell::DIGIT_RANGE;
+use crate::cell::{DIGIT_RANGE, CELL_EMPTY};
+use crate::sudoku::EntryType;
 
 impl Sudoku {
     pub fn naked_single(&mut self) -> bool {
@@ -12,25 +13,36 @@ impl Sudoku {
             if !self.cells[i].is_solved() {
                 let c = self.cells[i].get_count();
 
-                if c == 1 {
-                    let mut digit = 0;
+                if c > 1 {
+                    continue;
+                }
 
+                let mut digit = 0;
+
+                // if c == 0, then ignore this part
+                if c == 1 {
                     for d in DIGIT_RANGE {
                         if self.cells[i].has_digit(d) {
                             digit = d;
                             break;
                         }
                     }
-
-                    self.cells[i].solve_cell(digit);
-
-                    r = true;
                 }
-                else if c == 0 {
-                    self.cells[i].solve_cell(0);
 
-                    r = true;
-                }
+                self.cells[i].solve_cell(digit);
+
+                self.register_change(i);
+
+                self.add_history_entry(
+                        EntryType::NakedSingle,
+                        vec![i],
+                        // This might be an odd choice, but the digit pattern
+                        // var is supposed to show which digits have been
+                        // removed.
+                        // And in this case, there are no such digits.
+                        CELL_EMPTY);
+
+                r = true;
             }
         }
 
