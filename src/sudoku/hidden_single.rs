@@ -1,7 +1,7 @@
 use crate::Sudoku;
 use crate::index_manip::*;
 use crate::cell::DIGIT_RANGE;
-use crate::history::{HistoryEntry, EntryType};
+use crate::history::EntryType;
 
 impl Sudoku {
     pub fn hidden_single(&mut self) -> bool {

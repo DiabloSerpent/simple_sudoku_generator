@@ -1,5 +1,5 @@
 use crate::Sudoku;
-use crate::cell::{DIGIT_RANGE, CELL_EMPTY};
+use crate::cell::DIGIT_RANGE;
 use crate::sudoku::EntryType;
 
 impl Sudoku {
