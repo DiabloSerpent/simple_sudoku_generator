@@ -31,7 +31,7 @@ const fn get_box_ids(i: usize, offset: usize) -> [[[usize; 3]; 3]; 3] {
                 c += 1;
             }
             os += 1;
-        } 
+        }
         s += 1;
     }
 
@@ -62,13 +62,15 @@ impl Sudoku {
                     let mut r = false;
                     if ds_box.has_digits() {
                         r = self.handle_intersection(
-                            bd, ds_box, (x, y),
-                            nx1, nx2, EntryType::BoxLineReduction);
+                                EntryType::BoxLineReduction,
+                                bd, ds_box,
+                                (x, y), nx1, nx2);
                     }
                     if ds_sec.has_digits() {
                         r = self.handle_intersection(
-                            bd, ds_sec, (x, y),
-                            ny1, ny2, EntryType::PointedGroup) || r;
+                                EntryType::PointedGroup,
+                                bd, ds_sec,
+                                (x, y), ny1, ny2) || r;
                     }
 
                     // Early return b/c its prolly quicker overall and
@@ -105,15 +107,15 @@ impl Sudoku {
         trio_mat
     }
 
-    fn handle_intersection(&mut self, bd: &[[[usize; 3]; 3]; 3],
-                                      ds:  Cell,
+    fn handle_intersection(&mut self, t:  EntryType,
+                                      bd: &[[[usize; 3]; 3]; 3],
+                                      ds: Cell,
                                       (x, y): (usize, usize),
-                                      id1: usize, id2: usize,
-                                      t:   EntryType) -> bool {
+                                      id1: usize, id2: usize) -> bool {
         let to_check = match t {
             EntryType::BoxLineReduction => [(id1, y), (id2, y)],
             EntryType::PointedGroup     => [(x, id1), (x, id2)],
-            _ => panic!("{:?} is not a valid value here", t),
+            _ => panic!("{t:?} is not a valid value here"),
         };
 
         for (i, j) in to_check {
