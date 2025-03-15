@@ -6,6 +6,7 @@ use simple_sudoku_generator::sudoku::Sudoku;
 const AMOUNT_RUNS:   u32            = 5000;
 const RUN_FUNC:      fn()           = run_once;
 const CREATE_SUDOKU: fn() -> Sudoku = Sudoku::fill_incremental;
+const PRINT_HISTORY: bool           = true;
 
 
 fn main() {
@@ -19,6 +20,8 @@ fn main() {
 #[allow(dead_code)]
 fn run_once() {
     let sud = CREATE_SUDOKU();
+
+    print_history(&sud);
 
     println!("{}", sud);
 
@@ -50,6 +53,7 @@ fn run_until_failure() {
         let sud = CREATE_SUDOKU();
 
         if !sud.is_valid() {
+            print_history(&sud);
             println!("{sud}");
             sud.print_invalid_cells();
             have_failure = true;
@@ -65,5 +69,22 @@ fn run_until_failure() {
     }
     else {
         println!("No invalid state found");
+    }
+}
+
+fn print_history(sud: &Sudoku) {
+    if !PRINT_HISTORY {
+        return;
+    }
+
+    let mut new_sud = Sudoku::new();
+
+    println!("{new_sud}");
+
+    for h in &sud.history {
+        for cc in &h.changes {
+            new_sud.cells[cc.id] = cc.new_cell;
+        }
+        println!("{h}\n{new_sud:?}");
     }
 }
