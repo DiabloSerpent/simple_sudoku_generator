@@ -55,13 +55,6 @@ pub const fn of_box(box_index: BoxIndex) -> [CellIndex; 9] {
 
     r
 }
-#[allow(dead_code, unused_variables)]
-pub fn related_cells(index: CellIndex) -> [CellIndex; 21] {
-    // size of returned array will be 9 + 8 + 4
-    // maybe start w/ box, then add row/col?
-    // It may also just be too complicated to exclude duplicates
-    todo!()
-}
 
 pub const SECTION_START:     usize = 0;
 pub const SECTION_ROW_START: usize = SECTION_START;
@@ -78,22 +71,20 @@ pub const SECTION_END:       usize = 27;
 pub const SECTION_RANGE: Range<SecIndex> = SECTION_START..SECTION_END;
 
 pub enum SectionType {
-    RowSection(RowIndex),
-    ColSection(ColIndex),
-    BoxSection(BoxIndex),
+    Row(RowIndex),
+    Col(ColIndex),
+    Box(BoxIndex),
 }
 
 impl fmt::Display for SectionType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            RowSection(i) => write!(f, "Row {}", i + 1),
-            ColSection(i) => write!(f, "Col {}", i + 1),
-            BoxSection(i) => write!(f, "Box {}", i + 1),
+            SectionType::Row(i) => write!(f, "Row {}", i + 1),
+            SectionType::Col(i) => write!(f, "Col {}", i + 1),
+            SectionType::Box(i) => write!(f, "Box {}", i + 1),
         }
     }
 }
-
-pub use SectionType::*;
 
 pub const SECTION_INDICES: [[CellIndex; 9]; 27] = make_section_index();
 
@@ -124,9 +115,9 @@ pub const fn make_section_index() -> [[CellIndex; 9]; 27] {
 #[allow(dead_code)]
 pub fn section_of(s: SectionType) -> SecIndex {
     match s {
-        RowSection(i) => i,
-        ColSection(i) => i + 9,
-        BoxSection(i) => i + 18,
+        SectionType::Row(i) => i,
+        SectionType::Col(i) => i + 9,
+        SectionType::Box(i) => i + 18,
     }
 }
 
@@ -134,9 +125,9 @@ pub fn of_section(si: SecIndex) -> SectionType {
     let i = si % 9;
 
     match si / 9 {
-        0 => RowSection(i),
-        1 => ColSection(i),
-        2 => BoxSection(i),
+        0 => SectionType::Row(i),
+        1 => SectionType::Col(i),
+        2 => SectionType::Box(i),
         _ => panic!("Invalid section index {si}")
     }
 }

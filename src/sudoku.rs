@@ -11,9 +11,11 @@ mod naked_single;
 mod group_removal;
 mod graphics;
 
+
+pub type SudokuBoard = [Cell; 81];
+
 pub struct Sudoku {
-    // May want to replace array w/ set or smth
-    pub cells: [Cell; 81],
+    pub cells: SudokuBoard,
     solved_cell_checked: [bool; 81],
     section_digit_sum: [[CellSize; 10]; 27],
     cell_change_stack: Vec<CellChange>,
@@ -26,14 +28,9 @@ pub struct Sudoku {
         index 80 is the bottom right.
         Read left to right, top to bottom.
 
-    cell_flags:
-        flags associated with each individual cell,
-        used by the sudoku rule associated functions.
-        For each element:
-            bit 0:
-                used by cell_solved()
-                1 denotes a cell that already has a solution
-                and was checked by cell_solved(), 0 otherwise
+    solved_cell_checked:
+        used by cell_solved() to flag which cells have already been
+        checked by the code.
 
     section_digit_sum:
         sum of each digit in each section
@@ -41,16 +38,28 @@ pub struct Sudoku {
         each element will have:
             first entry: sum of entries in the section w/ sum above 1
             entries 1-9: sum of count per section corresponding to each digit
+
+    cell_change_stack:
+        helper var that is used to keep track of changes made by rules in
+        an unobtrusive way
+
+    history:
+        a complete record of changes made by the solving process
 */
 
-pub const CELL_SOLVED: u8 = 0b00000001;
+// Not sure if this is going to be useful, but I might as well keep it here.
+impl Default for Sudoku {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl Sudoku {
     pub fn new() -> Self {
         Self {
             cells: [CELL_INIT; 81],
             solved_cell_checked: [false; 81],
-            section_digit_sum: [[0; 10]; 27],
+            section_digit_sum: [[9; 10]; 27],
             cell_change_stack: Vec::with_capacity(27),
             history: Vec::with_capacity(1000),
         }
@@ -67,8 +76,6 @@ impl Sudoku {
             s.rs_cell(i);
 
             s.solve();
-
-            //println!("{s:?}");
         }
 
         s
@@ -89,8 +96,6 @@ impl Sudoku {
                 s.rs_cell(cell_pool[i]);
             
                 s.solve();
-
-                //println!("{s:?}");
             }
 
             cell_pool.swap_remove(i);
@@ -103,18 +108,7 @@ impl Sudoku {
         self.cells[c].generate_number();
 
         self.add_history_entry_from_solution(EntryType::RsCell, c);
-        //println!("{}\n{:?}", self.history.last().unwrap(), self);
     }
-
-    /*fn generate_subgroups() -> [Vec<Vec<usize>>; 27] {
-        let mut sg: [Vec<Vec<usize>>; 27] = Default::default();
-
-        for si in SECTION_RANGE {
-            sg[si].push(Vec::from(SECTION_INDICES[si]));
-        }
-
-        sg
-    }*/
 
     pub fn register_change(&mut self, id: usize) {
         self.cell_change_stack.push(CellChange {
@@ -241,7 +235,7 @@ impl Sudoku {
             }
         }
 
-        return true;
+        true
     }
 
     pub fn get_section_status(&self) -> [bool; 27] {
@@ -250,7 +244,7 @@ impl Sudoku {
         for si in SECTION_RANGE {
             let sums = self.section_digit_sum[si];
 
-            if sums[1..].iter().position(|&x| x != 1) != None {
+            if sums[1..].iter().any(|&x| x != 1) {
                 section_status[si] = false;
             }
         }
@@ -269,6 +263,6 @@ impl Sudoku {
             }
         }
 
-        return true;
+        true
     }
 }

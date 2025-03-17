@@ -1,12 +1,28 @@
 use std::time::Instant;
 
 use simple_sudoku_generator::sudoku::Sudoku;
+use simple_sudoku_generator::history::EntryType;
 
 // Program modifiers
 const AMOUNT_RUNS:   u32            = 5000;
 const RUN_FUNC:      fn()           = run_once;
 const CREATE_SUDOKU: fn() -> Sudoku = Sudoku::fill_incremental;
-const PRINT_HISTORY: bool           = true;
+const PRINT_HISTORY: bool           = false;
+
+// Controls which history entries will be displayed
+#[allow(non_snake_case)]
+const fn DISPLAY_ENTRY_TYPE(he: EntryType) -> bool {
+    use EntryType::*; match he {
+        RsCell           => true,
+        CellSolved       => true,
+        NakedSingle      => true,
+        HiddenSingle     => true,
+        PointedGroup     => true,
+        BoxLineReduction => true,
+        NakedGroup       => true,
+        HiddenGroup      => true,
+    }
+}
 
 
 fn main() {
@@ -85,6 +101,9 @@ fn print_history(sud: &Sudoku) {
         for cc in &h.changes {
             new_sud.cells[cc.id] = cc.new_cell;
         }
-        println!("{h}\n{new_sud:?}");
+
+        if DISPLAY_ENTRY_TYPE(h.name) {
+            println!("{h}\n{new_sud:?}");
+        }
     }
 }

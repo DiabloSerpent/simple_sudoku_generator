@@ -11,7 +11,6 @@ TODO:
 - figure out what information exactly is needed from index_manip
   to see what changes can be made to make it more convenient to use
 - add method to Sudoku struct that initializes from an array of cells
-- Fix/Formalize spacing of definitions
 - figure out a more convenient way to manage the type difference b/t
   usize and CellSize
   - maybe just make the CellSize larger?
@@ -26,16 +25,10 @@ TODO:
 - make a gui for looking through sudoku history for debugging
   - or maybe just add some character to the middle of the sudoku for easy ctrl+f
 - split up section_digit_sum
-- impl clippy suggestions
-- update Sudoku structure comment to remove cell_flag
-  - and remove CELL_SOLVED const
 - refactor find_group to use breadth-first instead of depth-first search
   - maybe change the code to also look for hidden groups?
     - not necessary, but possible, might be a lil quicker (and more fun)
     - I could also just look for hidden pairs
-- rename MAX_GROUP_SIZE to MAX_NAKED_GROUP_SIZE? Would be more accurate
-- rename Sudoku to SudokuSolver and then create a Sudoku or SudokuBoard type
-  alias for greater clarity
 - make it so that group_removal will write a HiddenGroup where a human
   would recognize it.
 - change Cell to overload bitwise operators instead of using some methods
@@ -45,6 +38,8 @@ TODO:
 - make intersection_removal emit different history entries based on each digit
   contained in the intersection
 - make `ROW_INDICIES`, `COL_INDICES`, and `BOX_INDICES` vars?
+- make more helper methods in Cell struct to make code less repetitive
+  - and maybe break up code blocks for readability?
 
 
 

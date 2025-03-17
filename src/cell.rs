@@ -53,7 +53,7 @@ pub const CELL_ACC:   Cell = Cell(IGNORE_COUNT);
 impl Cell {
     pub fn get_number(&self) -> CellSize {
         if self.is_solved() {
-            // Add check for value?
+            // TODO: Add check for value?
             (self.0 & NUMBER_MASK) >> NUM_SHIFT
         }
         else {
@@ -93,17 +93,17 @@ impl Cell {
         // Does not check if count is off b/c I don't want to make reset_count
         // more complicated.
         
-        debug_assert!(!self.is_solved(), "solved cell can't set count");
+        debug_assert!(!self.is_solved(), "Solved cell can't set count");
         // According to rust compiler, c must be >= 0 b/c of its type
         // so checking it is pointless. However, it should be noted
         // that c should be >= 0.
-        debug_assert!(c <= 9);
+        debug_assert!(c <= 9, "Invalid value of count: {c}");
 
         self.0 = (self.0 & !COUNT_MASK) | (c << COUNT_SHIFT);
     }
 
     pub fn reset_count(&mut self) {
-        // Cell should be unsolved
+        // Cell should be unsolved (guaranteed by calling set_count)
 
         let mut c = 0;
         for d in DIGIT_RANGE {
@@ -131,7 +131,7 @@ impl Cell {
     }
 
     pub fn has_digit(&self, digit: CellSize) -> bool {
-        // check to make sure cell isn't solved?
+        // TODO: check to make sure cell isn't solved?
         self.0 & DIGIT(digit) != 0
     }
 
@@ -140,7 +140,7 @@ impl Cell {
     }
 
     pub fn has_digits(&self) -> bool {
-        // check to make sure cell isn't solved?
+        // TODO: check to make sure cell isn't solved?
         self.0 & DIGIT_MASK != 0
     }
 
@@ -181,7 +181,7 @@ impl Cell {
 
         debug_assert!(
             digit == 0 || self.has_digit(digit),
-            "digit {digit} is not available in {self}"
+            "Digit {digit} is not available in {self}"
         );
 
         self.0 = ((self.0 & !DIGIT_MASK) & !COUNT_MASK)

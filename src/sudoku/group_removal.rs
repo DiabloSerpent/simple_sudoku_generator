@@ -29,6 +29,10 @@ use crate::history::EntryType;
 // A set of digits whose total size equals the amount of cells in a
 // given section that contain those digits.
 
+// Other nice info:
+// Within a given section, each naked/hidden group will have an opposite
+// hidden/naked group.
+
 /* Algorithm:
     for each section:
         Break the section into subsections, where each subsection
@@ -43,8 +47,8 @@ use crate::history::EntryType;
 */
 
 
-const MIN_GROUP_SIZE: usize = 2;
-const MAX_GROUP_SIZE: usize = 7;
+const MIN_GROUP_SIZE:       usize = 2;
+const MAX_NAKED_GROUP_SIZE: usize = 7;
 
 fn max_group_size_of(s: usize) -> usize {
     s - MIN_GROUP_SIZE
@@ -74,7 +78,7 @@ impl Subsection {
     fn add_cell(&mut self, cid: usize, c: Cell) {
         self.acc.union_with(c);
 
-        if usize::from(c.get_count()) < MAX_GROUP_SIZE {
+        if usize::from(c.get_count()) < MAX_NAKED_GROUP_SIZE {
             self.cand_ids.push(cid);
             self.cand_cells.push(c);
         }

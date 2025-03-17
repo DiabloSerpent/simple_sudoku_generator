@@ -3,13 +3,13 @@ use itertools::Itertools;
 
 use crate::cell::Cell;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum EntryType {
     RsCell,
     CellSolved,
     NakedSingle,
     HiddenSingle,
-    //IntersectionRemoval,
+    // IntersectionRemoval,
     PointedGroup,
     BoxLineReduction,
     NakedGroup,
@@ -34,10 +34,10 @@ pub struct CellChange {
 
 impl fmt::Display for HistoryEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "HistoryEntry: {:?}\n", self.name)?;
-        write!(f, "    cells: {:?}", self.cells)?;
-        write!(f, "    digits: {:0>9b}\n", self.digits.get_digits())?;
-        write!(f, "    changes: [{}]", self.changes.iter().format(", "))
+        writeln!(f, "HistoryEntry: {:?}",  self.name)?;
+        write!(f,   "    cells: {:?}",     self.cells)?;
+        writeln!(f, "    digits: {:0>9b}", self.digits.get_digits())?;
+        write!(f,   "    changes: [{}]",   self.changes.iter().format(", "))
     }
 }
 

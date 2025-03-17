@@ -3,9 +3,20 @@ use crate::index_manip::*;
 use crate::cell::{CELL_ACC, Cell, CELL_EMPTY};
 use crate::sudoku::EntryType;
 
-// TODO: add pseudocode/explanation
+// Definition of pointed group:
+// A set of digits within cells that share the same box and row or column,
+// where the digits are only present within the set and not the box.
+// 
+// This means the digits within the same row/column can be eliminated.
+
+// Definition of box-line reduction:
+// A set of digits within cells that share the same box and row or column,
+// where the digits are only present within the set and not the row/column.
+// 
+// This means the digits within the same box can be eliminated.
 
 
+// TODO: Create BoxDivision type?
 const INDEX_MATRIX: [[[[usize; 3]; 3]; 3]; 6] = make_id_matrix();
 
 const fn make_id_matrix() -> [[[[usize; 3]; 3]; 3]; 6] {

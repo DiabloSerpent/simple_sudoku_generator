@@ -1,6 +1,6 @@
 use crate::Sudoku;
 use crate::index_manip::*;
-use crate::cell::DIGIT_RANGE;
+use crate::cell::{DIGIT_RANGE, CellSize};
 use crate::history::EntryType;
 
 impl Sudoku {
@@ -17,24 +17,32 @@ impl Sudoku {
                 let count = sums[j as usize];
 
                 if count == 1 {
-                    for ci in SECTION_INDICES[si] {
-                        if !self.cells[ci].is_solved()
-                           && self.cells[ci].has_digit(j) {
-
-                            self.cells[ci].solve_cell(j);
-
-                            self.add_history_entry_from_solution(
-                                        EntryType::HiddenSingle, ci);
-
-                            r = true;
-
-                            break;
-                        }
+                    // It seems like an if stmt is more efficient than the
+                    // r = stmt || r; thingy I was trying to do.
+                    if self.find_hidden_single(si, j) {
+                        r = true;
                     }
                 }
             }
         }
 
         r
+    }
+
+    fn find_hidden_single(&mut self, si: usize, digit: CellSize) -> bool {
+        for ci in SECTION_INDICES[si] {
+            if !self.cells[ci].is_solved()
+                    && self.cells[ci].has_digit(digit) {
+
+                self.cells[ci].solve_cell(digit);
+
+                self.add_history_entry_from_solution(
+                            EntryType::HiddenSingle, ci);
+
+                return true;
+            }
+        }
+
+        false
     }
 }
