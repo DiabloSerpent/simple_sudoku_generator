@@ -61,7 +61,7 @@ impl Cell {
         }
     }
 
-    // This only checks if count is off. It makes no guarentees as to
+    // This only checks if count is off. It makes no guarantees as to
     // the validity of count beyond it being not off.
     pub fn count_is_off(&self) -> bool {
         self.0 & COUNT_MASK == IGNORE_COUNT
@@ -131,6 +131,7 @@ impl Cell {
     }
 
     pub fn has_digit(&self, digit: CellSize) -> bool {
+        // check to make sure cell isn't solved?
         self.0 & DIGIT(digit) != 0
     }
 
@@ -139,6 +140,7 @@ impl Cell {
     }
 
     pub fn has_digits(&self) -> bool {
+        // check to make sure cell isn't solved?
         self.0 & DIGIT_MASK != 0
     }
 
@@ -150,6 +152,7 @@ impl Cell {
         if !self.count_is_off() {
             self.set_count(self.get_count() + 1);
         }
+
         self.0 |= DIGIT(digit);
     }
 
@@ -161,6 +164,7 @@ impl Cell {
         if !self.count_is_off() {
             self.set_count(self.get_count() - 1);
         }
+
         self.0 &= !DIGIT(digit);
 
         true
@@ -201,7 +205,10 @@ impl Cell {
         }
 
         c.0 &= !SOLUTION_MASK & !NUMBER_MASK;
-        c.set_count(1);
+
+        if c.has_digits() {
+            c.set_count(1);
+        }
 
         c
     }
@@ -240,7 +247,7 @@ impl Cell {
 
     pub fn xor(&self, other: Cell) -> Cell {
         debug_assert!(!self.is_solved() && !other.is_solved(),
-            "Can't apply intersection to solved cell");
+            "Can't apply xor to solved cell");
         
         let mut c = Cell(self.0 ^ (other.0 & DIGIT_MASK));
 
