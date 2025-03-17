@@ -7,6 +7,7 @@ TODO:
 - add a variable to Sudoku struct that, per section, per digit,
   lists the cells that belong to each digit
   - this could remove the need for the Sudoku::section_digit_sum variable
+  - maybe use the Cell struct?
 - figure out what information exactly is needed from index_manip
   to see what changes can be made to make it more convenient to use
 - add method to Sudoku struct that initializes from an array of cells
@@ -14,14 +15,12 @@ TODO:
 - figure out a more convenient way to manage the type difference b/t
   usize and CellSize
   - maybe just make the CellSize larger?
-- rename `r` in Sudoku rules to `ret`
 - maybe could make it so that modifying a cell adds them to a list
   which other functions use to see if they should act or not
   - would need some way for all functions to process the list individually
   - use bit flag array per cell/section that is updated after a cell is
     modified, using `register_change` method.
   - could remove the need for the `solved_cell_checked` array.
-- change Cell to use boolean vector of some sort?
 - make a function that quantifies the incorrectness of a sudoku
   - ie it measures how much difference there is b/t a solved sudoku and a given sudoku
 - make a gui for looking through sudoku history for debugging
@@ -37,14 +36,15 @@ TODO:
 - rename MAX_GROUP_SIZE to MAX_NAKED_GROUP_SIZE? Would be more accurate
 - rename Sudoku to SudokuSolver and then create a Sudoku or SudokuBoard type
   alias for greater clarity
-- remove combo_iter.rs file
-- add `Sudoku::add_history_entry_from_solution` method
-  - and refactor naked_single to use it
-- change debug print of Sudoku to highlight solved cells
 - make it so that group_removal will write a HiddenGroup where a human
   would recognize it.
-- test moving group_removal above intersection_removal in `Sudoku::RULE_ORDER`
 - change Cell to overload bitwise operators instead of using some methods
+- make rng more random? idk.
+- make group_removal remove more digits if the found group can be applied to
+  a different section or if it uncovers a group that can remove digits in another section
+- make intersection_removal emit different history entries based on each digit
+  contained in the intersection
+- make `ROW_INDICIES`, `COL_INDICES`, and `BOX_INDICES` vars?
 
 
 
