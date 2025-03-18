@@ -30,9 +30,9 @@ const NUMBER_MASK:   CellSize = 0b00111100_00000000;
 const COUNT_MASK:    CellSize = NUMBER_MASK;
 const _UNUSED_MASK:  CellSize = 0b11000000_00000000;
 
-pub const DIGIT_RANGE: RangeInclusive<CellSize> = 1..=9;
+pub const DIGIT_RANGE: RangeInclusive<usize> = 1..=9;
 #[allow(non_snake_case)]
-fn DIGIT(x: CellSize) -> CellSize {
+fn DIGIT(x: usize) -> CellSize {
     debug_assert!(
         *DIGIT_RANGE.start() <= x && x <= *DIGIT_RANGE.end(),
         "{x} is not a valid digit!"
@@ -51,10 +51,10 @@ pub const CELL_ACC:   Cell = Cell(IGNORE_COUNT);
 
 
 impl Cell {
-    pub fn get_number(&self) -> CellSize {
+    pub fn get_number(&self) -> usize {
         if self.is_solved() {
             // TODO: Add check for value?
-            (self.0 & NUMBER_MASK) >> NUM_SHIFT
+            ((self.0 & NUMBER_MASK) >> NUM_SHIFT).into()
         }
         else {
             0
@@ -130,7 +130,7 @@ impl Cell {
         }
     }
 
-    pub fn has_digit(&self, digit: CellSize) -> bool {
+    pub fn has_digit(&self, digit: usize) -> bool {
         // TODO: check to make sure cell isn't solved?
         self.0 & DIGIT(digit) != 0
     }
@@ -144,7 +144,7 @@ impl Cell {
         self.0 & DIGIT_MASK != 0
     }
 
-    pub fn add_digit(&mut self, digit: CellSize) {
+    pub fn add_digit(&mut self, digit: usize) {
         if self.is_solved() || self.has_digit(digit) {
             return;
         }
@@ -156,7 +156,7 @@ impl Cell {
         self.0 |= DIGIT(digit);
     }
 
-    pub fn remove_digit(&mut self, digit: CellSize) -> bool {
+    pub fn remove_digit(&mut self, digit: usize) -> bool {
         if self.is_solved() || !self.has_digit(digit) {
             return false;
         }
@@ -174,7 +174,7 @@ impl Cell {
         self.intersect_with(other.inverse())
     }
 
-    pub fn solve_cell(&mut self, digit: CellSize) {
+    pub fn solve_cell(&mut self, digit: usize) {
         if self.is_solved() {
             return;
         }
@@ -189,7 +189,8 @@ impl Cell {
 
         // A cell being solved to 0 should be allowed
         if digit != 0 {
-            self.0 |= DIGIT(digit) | (digit << NUM_SHIFT);
+            let cs_digit = digit as CellSize;
+            self.0 |= DIGIT(digit) | (cs_digit << NUM_SHIFT);
         }
     }
 

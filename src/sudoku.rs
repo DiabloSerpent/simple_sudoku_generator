@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::cell::{Cell, CellSize, CELL_INIT, DIGIT_RANGE};
+use crate::cell::{Cell, CELL_INIT, DIGIT_RANGE};
 use crate::index_manip::*;
 use crate::history::{HistoryEntry, EntryType, CellChange};
 
@@ -17,7 +17,7 @@ pub type SudokuBoard = [Cell; 81];
 pub struct Sudoku {
     pub cells: SudokuBoard,
     solved_cell_checked: [bool; 81],
-    section_digit_sum: [[CellSize; 10]; 27],
+    section_digit_sum: [[usize; 10]; 27],
     cell_change_stack: Vec<CellChange>,
     pub history: Vec<HistoryEntry>,
 }
@@ -210,8 +210,6 @@ impl Sudoku {
             for ci in SECTION_INDICES[si] {
                 for di in DIGIT_RANGE {
                     if self.cells[ci].has_digit(di) {
-                        let di = di as usize;
-
                         if temp[di] == 1 {
                             temp[0] += 1;
                         }

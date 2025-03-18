@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::Sudoku;
-use crate::cell::{DIGIT_RANGE, Cell, CellSize};
+use crate::cell::{DIGIT_RANGE, Cell};
 use crate::index_manip::*;
 
 // Shamelessly ripped from:
@@ -130,7 +130,6 @@ impl Sudoku {
             print!("{}: |", of_section(si));
 
             for j in DIGIT_RANGE {
-                let j = j as usize;
                 if sums[j] == 1 {
                     print!("   |");
                 }
@@ -188,7 +187,7 @@ impl fmt::Display for Sudoku {
 // Helper methods for Debug print
 impl Sudoku {
     fn write_digit_row(&self, f: &mut fmt::Formatter,
-                              c: Cell, dr: CellSize) -> fmt::Result {
+                              c: Cell, dr: usize) -> fmt::Result {
         if c.is_solved() {
             if dr == 1 {
                 write!(f, "  <{}> ", c.get_number())?;
@@ -207,7 +206,7 @@ impl Sudoku {
     }
 
     fn write_num(&self, f: &mut fmt::Formatter,
-                        c: Cell, i: CellSize) -> fmt::Result {
+                        c: Cell, i: usize) -> fmt::Result {
         if c.has_digit(i) {
             write!(f, " {i}")
         }

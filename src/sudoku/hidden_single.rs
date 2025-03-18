@@ -1,6 +1,6 @@
 use crate::Sudoku;
 use crate::index_manip::*;
-use crate::cell::{DIGIT_RANGE, CellSize};
+use crate::cell::DIGIT_RANGE;
 use crate::history::EntryType;
 
 impl Sudoku {
@@ -14,7 +14,7 @@ impl Sudoku {
             let sums = self.section_digit_sum[si];
 
             for j in DIGIT_RANGE {
-                let count = sums[j as usize];
+                let count = sums[j];
 
                 if count == 1 {
                     // It seems like an if stmt is more efficient than the
@@ -29,7 +29,7 @@ impl Sudoku {
         r
     }
 
-    fn find_hidden_single(&mut self, si: usize, digit: CellSize) -> bool {
+    fn find_hidden_single(&mut self, si: usize, digit: usize) -> bool {
         for ci in SECTION_INDICES[si] {
             if !self.cells[ci].is_solved()
                     && self.cells[ci].has_digit(digit) {
