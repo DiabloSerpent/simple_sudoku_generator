@@ -1,7 +1,7 @@
 use std::cmp::{max, min};
 
 use crate::Sudoku;
-use crate::cell::{Cell, CELL_ACC};
+use crate::cell::{Cell, CELL_ACC, CELL_EMPTY};
 use crate::index_manip::*;
 use crate::history::EntryType;
 
@@ -96,23 +96,20 @@ impl Subsection {
     }
 
     fn find_group(&self) -> Option<Vec<usize>> {
-        for pos in 0..self.cand_ids.len()-1 {
-            if let Some(g) = self.find_group_r(self.cand_cells[pos], 1, pos) {
-                return Some(g);
-            }
-        }
-
-        None
+        self.find_group_r(CELL_EMPTY, 0, 0, self.mgs)
     }
 
-    fn find_group_r(&self, acc: Cell, cell_count: usize,
-                        cid: usize) -> Option<Vec<usize>> {
+    fn find_group_r(&self, acc: Cell,  cell_count: usize,
+                           cid: usize, max_depth: usize) -> Option<Vec<usize>> {
         // Rust's handling of integers is kinda getting on my nerves
         let acc_count = usize::from(acc.get_count());
 
         let max_count = max(acc_count, cell_count);
 
-        if max_count > self.mgs {
+        if cell_count < MIN_GROUP_SIZE {
+            // Ignore following if stmts.
+        }
+        else if max_count > max_depth {
             return None;
         }
         else if acc_count == cell_count {
@@ -123,16 +120,37 @@ impl Subsection {
             return Some(output);
         }
 
-        for nid in (cid+1)..self.cand_ids.len() {
-            if let Some(mut output) = self.find_group_r(
-                    acc.union(self.cand_cells[nid]),
-                    cell_count+1, nid) {
-                output[cell_count-1] = self.cand_ids[cid];
-                return Some(output);
-            }
+        let mut out   = None;
+        let mut depth = max_depth;
+
+        let id_range = if cell_count == 0 {
+            cid..(self.cand_ids.len()-1)
+        }
+        else {
+            (cid+1)..self.cand_ids.len()
+        };
+
+        for nid in id_range {
+            let Some(r) = self.find_group_r(
+                                    acc.union(self.cand_cells[nid]),
+                                    cell_count+1, nid, depth)
+                          else { continue };
+
+            // Once a group is found, only look for other smaller groups
+            depth = r.len() - 1;
+            out   = Some(r);
         }
 
-        None
+        if let Some(mut g) = out {
+            if cell_count > 0 {
+                g[cell_count-1] = self.cand_ids[cid];
+            }
+
+            Some(g)
+        }
+        else {
+            None
+        }
     }
 }
 
