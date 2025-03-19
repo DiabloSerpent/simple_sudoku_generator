@@ -11,9 +11,6 @@ TODO:
 - figure out what information exactly is needed from index_manip
   to see what changes can be made to make it more convenient to use
 - add method to Sudoku struct that initializes from an array of cells
-- figure out a more convenient way to manage the type difference b/t
-  usize and CellSize
-  - maybe just make the CellSize larger?
 - maybe could make it so that modifying a cell adds them to a list
   which other functions use to see if they should act or not
   - would need some way for all functions to process the list individually
@@ -25,10 +22,9 @@ TODO:
 - make a gui for looking through sudoku history for debugging
   - or maybe just add some character to the middle of the sudoku for easy ctrl+f
 - split up section_digit_sum
-- refactor find_group to use breadth-first instead of depth-first search
-  - maybe change the code to also look for hidden groups?
+- maybe change find_group code to also look for hidden groups?
     - not necessary, but possible, might be a lil quicker (and more fun)
-    - I could also just look for hidden pairs
+    - mb have that functionality packed into SubSection?
 - make it so that group_removal will write a HiddenGroup where a human
   would recognize it.
 - change Cell to overload bitwise operators instead of using some methods
