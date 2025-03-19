@@ -65,6 +65,23 @@ impl Sudoku {
         }
     }
 
+    pub fn from_solutions(sol_arr: [usize; 81]) -> Self {
+        let mut s = Self::new();
+
+        for i in 0..81 {
+            // Unfortunately the sudoku can't tell if the cell should be
+            // undeveloped or solved to 0. But the solve() method can be
+            // called to remedy that.
+            if sol_arr[i] != 0 {
+                let mut c = CELL_INIT;
+                c.solve_cell(sol_arr[i]);
+                s.cells[i] = c;
+            }
+        }
+
+        s
+    }
+
     pub fn fill_incremental() -> Self {
         let mut s = Self::new();
 
