@@ -131,14 +131,14 @@ impl Subsection {
         };
 
         for nid in id_range {
-            let Some(r) = self.find_group_r(
+            if let Some(r) = self.find_group_r(
                                     acc.union(self.cand_cells[nid]),
-                                    cell_count+1, nid, depth)
-                          else { continue };
-
-            // Once a group is found, only look for other smaller groups
-            depth = r.len() - 1;
-            out   = Some(r);
+                                    cell_count+1, nid, depth) {
+                
+                // Once a group is found, only look for other smaller groups
+                depth = r.len() - 1;
+                out   = Some(r);
+            }
         }
 
         if let Some(mut g) = out {
