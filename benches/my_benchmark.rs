@@ -12,7 +12,7 @@ criterion_group!{
     config  = Criterion::default()
               .sample_size(500)
               .warm_up_time(Duration::from_secs(10))
-              .measurement_time(Duration::from_secs(45));
+              .measurement_time(Duration::from_secs(60));
     targets = criterion_benchmark
 }
 criterion_main!(benches);
