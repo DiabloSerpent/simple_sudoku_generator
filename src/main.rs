@@ -51,6 +51,8 @@ fn run_amount() {
     for _ in 0..AMOUNT_RUNS {
         let sud = CREATE_SUDOKU();
 
+        print_history(&sud);
+
         if !sud.is_valid() {
             sud.print_invalid_cells();
             failure_count += 1;
