@@ -36,6 +36,7 @@ TODO:
 - make `ROW_INDICIES`, `COL_INDICES`, and `BOX_INDICES` vars?
 - make more helper methods in Cell struct to make code less repetitive
   - and maybe break up code blocks for readability?
+- reorganize larger rules so that the entry point is near the top of the file
 
 
 
