@@ -91,7 +91,7 @@ const _SUDOKU_BOARD: &str = "\
 ╚═════╧═════╧═════╩═════╧═════╧═════╩═════╧═════╧═════╝
 */
 
-const SOLUTION_TEMPLATE: [usize; 81] = [
+const _SOLUTION_TEMPLATE: [usize; 81] = [
     0, 0, 0,  0, 0, 0,  0, 0, 0,
     0, 0, 0,  0, 0, 0,  0, 0, 0,
     0, 0, 0,  0, 0, 0,  0, 0, 0,
